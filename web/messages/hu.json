@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "MANAS 2026",
+    "unofficial": "Nem hivatalos app",
+    "tagline": "Psychedelic Tribal Gathering"
+  },
+  "nav": {
+    "timetable": "Időrend",
+    "now": "Most",
+    "map": "Térkép"
+  },
+  "common": {
+    "loading": "Betöltés…",
+    "offline": "Offline — mentett adatok",
+    "error": "Nem sikerült betölteni",
+    "retry": "Újra",
+    "break": "Szünet",
+    "allStages": "Összes színpad",
+    "today": "Ma"
+  },
+  "timetable": {
+    "title": "Időrend",
+    "empty": "Az időrend hamarosan",
+    "tba": "A fellépők hamarosan"
+  },
+  "now": {
+    "title": "Most",
+    "live": "ÉLŐ",
+    "playingNow": "Most megy",
+    "upNext": "Következik",
+    "nothing": "Most nincs program",
+    "until": "eddig: {time}",
+    "from": "ettől: {time}",
+    "countdown": "A fesztiválig",
+    "ended": "Jövőre találkozunk",
+    "days": "nap",
+    "hours": "óra",
+    "minutes": "perc",
+    "seconds": "mp"
+  },
+  "map": {
+    "title": "Térkép",
+    "locate": "Hol vagyok",
+    "locating": "Keresés…",
+    "saveTent": "Sátram mentése",
+    "tentSaved": "Sátor elmentve",
+    "findTent": "Sátram megkeresése",
+    "clearTent": "Sátor törlése",
+    "you": "Te",
+    "tent": "A sátram",
+    "legend": "Jelmagyarázat",
+    "registration": "Regisztráció szükséges",
+    "outsideArea": "Úgy tűnik, a fesztivál területén kívül vagy",
+    "noGeo": "A helymeghatározás nem elérhető ezen az eszközön"
+  },
+  "groups": {
+    "stage": "Színpadok",
+    "facility": "Szolgáltatások",
+    "integration": "Integrációs helyszínek",
+    "area": "Területek"
+  },
+  "lang": {
+    "switch": "Nyelv",
+    "en": "EN",
+    "hu": "HU"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "stages": "Színpadok — sorrend és láthatóság",
+    "hint": "Rendezd át a színpad-oszlopokat, és rejtsd el, amelyiket nem követed.",
+    "moveUp": "Fel",
+    "moveDown": "Le",
+    "show": "Mutat",
+    "hide": "Elrejt",
+    "done": "Kész"
+  }
+}

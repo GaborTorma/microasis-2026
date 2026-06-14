@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/*
+  Manas 2026 — green is the festival's signature colour. Deep forest base,
+  living-green accent, teal and warm-ember secondary pops. Per-stage tints
+  (Portal / Field / Bowl) still come from the DB so each column reads distinct.
+*/
+@theme {
+  --color-ink: #0c1611;
+  --color-ink-2: #122017;
+  --color-ink-3: #1a2e22;
+  --color-line: #2b4736;
+  --color-cream: #edf4ec;
+  --color-cream-dim: #aec8b6;
+  --color-cream-faint: #6d8c79;
+  --color-sun: #5ec98a;
+  --color-leaf: #3f9d6a;
+  --color-teal: #46b3a3;
+  --color-ember: #e0913f;
+  --color-clay: #c9742f;
+  --color-plum: #7a5b9e;
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-body), sans-serif;
+
+  --radius-xl: 1.1rem;
+}
+
+:root {
+  color-scheme: dark;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --nav-h: 4.25rem;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-ink);
+  background-image:
+    radial-gradient(60% 48% at 16% 6%, rgba(46, 107, 74, 0.55), transparent 70%),
+    radial-gradient(52% 42% at 90% 12%, rgba(70, 179, 163, 0.32), transparent 70%),
+    radial-gradient(82% 60% at 50% 106%, rgba(30, 82, 56, 0.6), transparent 72%),
+    radial-gradient(40% 30% at 90% 84%, rgba(94, 201, 138, 0.14), transparent 70%);
+  background-attachment: fixed;
+  color: var(--color-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+::selection {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+/* Slim, warm scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 99px;
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+/* Frosted card surface used across views. */
+@utility card {
+  background: color-mix(in oklab, var(--color-ink-2) 86%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-line) 80%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+/* Hide scrollbar (used by the synced stage-header scroller). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Subtle pulsing dot for the live/now indicator. */
+@keyframes manas-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+.pulse-dot {
+  animation: manas-pulse 1.8s ease-in-out infinite;
+}

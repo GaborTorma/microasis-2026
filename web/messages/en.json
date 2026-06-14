@@ -1,0 +1,77 @@
+{
+  "app": {
+    "title": "MANAS 2026",
+    "unofficial": "Unofficial guide",
+    "tagline": "Psychedelic Tribal Gathering"
+  },
+  "nav": {
+    "timetable": "Timetable",
+    "now": "Now",
+    "map": "Map"
+  },
+  "common": {
+    "loading": "Loading…",
+    "offline": "Offline — showing saved data",
+    "error": "Couldn't load data",
+    "retry": "Retry",
+    "break": "Break",
+    "allStages": "All stages",
+    "today": "Today"
+  },
+  "timetable": {
+    "title": "Timetable",
+    "empty": "Schedule coming soon",
+    "tba": "Line-up to be announced"
+  },
+  "now": {
+    "title": "Now",
+    "live": "LIVE",
+    "playingNow": "On now",
+    "upNext": "Up next",
+    "nothing": "Nothing scheduled right now",
+    "until": "until {time}",
+    "from": "from {time}",
+    "countdown": "Festival begins in",
+    "ended": "See you next year",
+    "days": "days",
+    "hours": "hrs",
+    "minutes": "min",
+    "seconds": "sec"
+  },
+  "map": {
+    "title": "Map",
+    "locate": "Locate me",
+    "locating": "Locating…",
+    "saveTent": "Save my tent",
+    "tentSaved": "Tent saved",
+    "findTent": "Find my tent",
+    "clearTent": "Clear tent",
+    "you": "You",
+    "tent": "My tent",
+    "legend": "Legend",
+    "registration": "Registration required",
+    "outsideArea": "You appear to be outside the festival area",
+    "noGeo": "Location not available on this device"
+  },
+  "groups": {
+    "stage": "Stages",
+    "facility": "Facilities",
+    "integration": "Integration Spaces",
+    "area": "Areas"
+  },
+  "lang": {
+    "switch": "Language",
+    "en": "EN",
+    "hu": "HU"
+  },
+  "settings": {
+    "title": "Settings",
+    "stages": "Stages — order & visibility",
+    "hint": "Reorder the stage columns and hide the ones you don't follow.",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "show": "Show",
+    "hide": "Hide",
+    "done": "Done"
+  }
+}
