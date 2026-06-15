@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Coffee, Sparkles, Star } from "lucide-react";
+import { Coffee, Sparkles, Volume2 } from "lucide-react";
 import { useSchedule } from "@/lib/useSchedule";
 import { useNow } from "@/lib/useNow";
 import { hhmm, mmdd, tx, weekdayLong } from "@/lib/format";
@@ -355,7 +355,9 @@ function EventBlock({
     );
   }
 
-  const KindIcon = event.kind === "ceremony" ? Star : event.kind === "workshop" ? Sparkles : null;
+  // Workshops show sparkles; everything else (music / ceremony) a loud speaker.
+  const KindIcon = event.kind === "workshop" ? Sparkles : Volume2;
+  const iconPx = Math.round(11 * scale);
 
   return (
     <div
@@ -381,10 +383,10 @@ function EventBlock({
             {hhmm(event.startsAt, locale)}
           </span>
           {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-sun" />}
+          <KindIcon size={iconPx} className="ml-auto shrink-0" style={{ color: stage.accent }} />
         </div>
       )}
       <div className="flex items-start gap-1 leading-[1.05]">
-        {KindIcon && !tight && <KindIcon size={11} className="mt-0.5 shrink-0 text-cream-dim" />}
         {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-sun" />}
         <span
           className={`font-display font-semibold ${
