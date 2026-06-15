@@ -14,10 +14,10 @@ public enum Fmt {
     /// "HH:mm" in festival-local time.
     public static func hhmm(_ date: Date) -> String { timeFormatter().string(from: date) }
 
-    /// "HH:mm – HH:mm" (end optional).
+    /// "HH:mm – HH:mm" (end optional), with spaces around the dash.
     public static func range(_ start: Date, _ end: Date?) -> String {
         guard let end else { return hhmm(start) }
-        return "\(hhmm(start))–\(hhmm(end))"
+        return "\(hhmm(start)) – \(hhmm(end))"
     }
 
     /// Parse a festival-day string ("YYYY-MM-DD") to a stable Date (Budapest noon).

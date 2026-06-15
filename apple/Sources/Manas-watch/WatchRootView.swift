@@ -84,7 +84,9 @@ struct WatchRootView: View {
                         Image(systemName: kindSymbol(event.kind))
                             .font(.system(size: 17))
                             .foregroundStyle(Color(hex: stage.accent))
+                            .frame(width: 24, height: 20)   // fixed box → icon size never shifts the row
                     }
+                    .frame(height: 20)
                 }
                 // ── Act name: fills the remaining space and shrinks to fit it,
                 //    so it never pushes the block above. ──
