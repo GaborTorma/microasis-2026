@@ -9,6 +9,23 @@ struct WatchSettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section(L.t("settings.language", settings.locale)) {
+                    ForEach(AppLocale.allCases, id: \.self) { loc in
+                        Button {
+                            settings.locale = loc
+                        } label: {
+                            HStack {
+                                Text(loc.label).font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(settings.locale == loc ? Theme.sun : Theme.cream)
+                                Spacer()
+                                if settings.locale == loc {
+                                    Image(systemName: "checkmark").foregroundStyle(Theme.sun)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
                 Section(L.t("settings.stages", settings.locale)) {
                     ForEach(Array(stages.enumerated()), id: \.element.id) { index, stage in
                         HStack(spacing: 6) {

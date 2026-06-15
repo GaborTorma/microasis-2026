@@ -71,17 +71,20 @@ struct WatchRootView: View {
                 .lineLimit(1).minimumScaleFactor(0.7)
 
             if let event {
-                Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(Theme.creamDim)
-                HStack(spacing: 4) {
-                    Text(Fmt.range(event.startsAt, event.endsAt))
-                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(Theme.cream)
-                    Spacer(minLength: 2)
-                    Image(systemName: kindSymbol(event.kind))
-                        .font(.system(size: 17))
-                        .foregroundStyle(Color(hex: stage.accent))
+                // Date + time-range belong together → keep them tight.
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Theme.creamDim)
+                    HStack(spacing: 4) {
+                        Text(Fmt.range(event.startsAt, event.endsAt))
+                            .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                            .foregroundStyle(Theme.cream)
+                        Spacer(minLength: 2)
+                        Image(systemName: kindSymbol(event.kind))
+                            .font(.system(size: 17))
+                            .foregroundStyle(Color(hex: stage.accent))
+                    }
                 }
                 Text(event.title.text(settings.locale))
                     .font(.system(size: 21, weight: .bold, design: .rounded))

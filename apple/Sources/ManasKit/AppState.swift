@@ -23,8 +23,16 @@ public final class Settings: ObservableObject {
     public init() {
         order = defaults.stringArray(forKey: Key.order) ?? []
         hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
-        locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? .hu
+        locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
         columns = (defaults.object(forKey: Key.columns) as? Int) ?? 3
+    }
+
+    /// Default language follows the device: Hungarian device ⇒ HU, else EN.
+    public static var deviceDefaultLocale: AppLocale {
+        let code = Locale.current.language.languageCode?.identifier
+            ?? Locale.preferredLanguages.first.map { String($0.prefix(2)) }
+            ?? "en"
+        return code.hasPrefix("hu") ? .hu : .en
     }
 
     /// Clamp the stored preference to what's actually available (≤ visible stages).

@@ -30,6 +30,7 @@ public enum L {
         "common.offline": ("Offline – mentett adat", "Offline – cached data"),
         "settings.title": ("Beállítások", "Settings"),
         "settings.stages": ("Színpadok", "Stages"),
+        "settings.language": ("Nyelv", "Language"),
         "settings.reorderHint": ("Húzd a sorrend módosításához", "Drag to reorder"),
         "settings.done": ("Kész", "Done"),
         "days.short": ("nap", "day"),
