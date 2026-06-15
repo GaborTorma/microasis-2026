@@ -76,7 +76,7 @@ struct WatchRootView: View {
                     .foregroundStyle(Theme.creamDim)
                 HStack(spacing: 4) {
                     Text(Fmt.range(event.startsAt, event.endsAt))
-                        .font(.system(size: 19, weight: .bold, design: .monospaced))
+                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
                         .foregroundStyle(Theme.cream)
                     Spacer(minLength: 2)
                     Image(systemName: kindSymbol(event.kind))
@@ -86,14 +86,8 @@ struct WatchRootView: View {
                 Text(event.title.text(settings.locale))
                     .font(.system(size: 21, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
-                    .lineLimit(4).minimumScaleFactor(0.6)
+                    .lineLimit(5).minimumScaleFactor(0.55)
                     .fixedSize(horizontal: false, vertical: true)
-                if event.kind == EventKind.workshop {
-                    let chip = Theme.chip(event.langAvailability)
-                    Text(chip.label).font(.system(size: 10, weight: .bold))
-                        .padding(.horizontal, 6).padding(.vertical, 2)
-                        .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
-                }
             } else {
                 Text(L.t("watch.noEvents", settings.locale))
                     .font(.footnote).foregroundStyle(Theme.creamDim)
@@ -103,6 +97,15 @@ struct WatchRootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(.horizontal, 4)
+        .overlay(alignment: .bottomTrailing) {
+            if let event, event.kind == EventKind.workshop {
+                let chip = Theme.chip(event.langAvailability)
+                Text(chip.label).font(.system(size: 11, weight: .bold))
+                    .padding(.horizontal, 7).padding(.vertical, 3)
+                    .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
+                    .padding(.trailing, 2).padding(.bottom, 16)
+            }
+        }
     }
 
     private var stageDots: some View {
