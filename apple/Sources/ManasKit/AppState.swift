@@ -40,6 +40,12 @@ public final class Settings: ObservableObject {
         min(max(columns, 1), max(1, min(maxColumns, n)))
     }
 
+    /// Step the zoom by `delta` columns (more = +1, fewer = −1), clamped to the
+    /// 1…available range. The single owner of the column-count contract.
+    public func adjustColumns(by delta: Int, visibleStages n: Int) {
+        columns = min(max(effectiveColumns(visibleStages: n) + delta, 1), max(1, min(maxColumns, n)))
+    }
+
     public func toggleHidden(_ slug: String) {
         if hidden.contains(slug) { hidden.remove(slug) } else { hidden.insert(slug) }
     }

@@ -47,7 +47,7 @@ private struct StageNowCard: View {
     let locale: AppLocale
 
     var body: some View {
-        let live = events.first { $0.startsAt <= now && ($0.endsAt ?? $0.startsAt) > now }
+        let live = events.first { $0.isLive(at: now) }
         let next = events.first { $0.startsAt > now }
         let color = Color(hex: stage.color)
         let accent = Color(hex: stage.accent)
@@ -113,10 +113,10 @@ private struct Countdown: View {
     var body: some View {
         let total = max(0, Int(until.timeIntervalSince(now)))
         let cells: [(Int, String)] = [
-            (total / 86400, settings.locale == .hu ? "nap" : "days"),
-            (total % 86400 / 3600, settings.locale == .hu ? "óra" : "hrs"),
-            (total % 3600 / 60, settings.locale == .hu ? "perc" : "min"),
-            (total % 60, settings.locale == .hu ? "mp" : "sec"),
+            (total / 86400, L.t("time.days", settings.locale)),
+            (total % 86400 / 3600, L.t("time.hours", settings.locale)),
+            (total % 3600 / 60, L.t("time.minutes", settings.locale)),
+            (total % 60, L.t("time.seconds", settings.locale)),
         ]
         VStack(spacing: 24) {
             Text(L.t("now.countdown", settings.locale).uppercased())

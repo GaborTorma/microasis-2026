@@ -77,19 +77,15 @@ struct HeaderBar: View {
                     }
                 }
             }
-            .padding(2)
-            .background(Theme.ink2.opacity(0.7), in: Capsule())
-            .overlay(Capsule().stroke(Theme.line))
+            .pillBar()
 
             // Zoom = how many stage columns are shown at once (− more, + fewer).
             if showZoom {
                 HStack(spacing: 0) {
-                    zoomButton("minus", enabled: eff < maxCols) { settings.columns = min(maxCols, eff + 1) }
-                    zoomButton("plus", enabled: eff > 1) { settings.columns = max(1, eff - 1) }
+                    zoomButton("minus", enabled: eff < maxCols) { settings.adjustColumns(by: 1, visibleStages: stageCount) }
+                    zoomButton("plus", enabled: eff > 1) { settings.adjustColumns(by: -1, visibleStages: stageCount) }
                 }
-                .padding(2)
-                .background(Theme.ink2.opacity(0.7), in: Capsule())
-                .overlay(Capsule().stroke(Theme.line))
+                .pillBar()
             }
 
             Button { showSettings = true } label: {
@@ -113,5 +109,14 @@ struct HeaderBar: View {
                 .opacity(enabled ? 1 : 0.3)
         }
         .disabled(!enabled)
+    }
+}
+
+private extension View {
+    /// The rounded "pill bar" container shared by the header's segmented controls.
+    func pillBar() -> some View {
+        padding(2)
+            .background(Theme.ink2.opacity(0.7), in: Capsule())
+            .overlay(Capsule().stroke(Theme.line))
     }
 }

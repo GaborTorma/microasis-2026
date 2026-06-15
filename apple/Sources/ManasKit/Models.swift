@@ -44,6 +44,8 @@ public struct EventDTO: Codable, Identifiable, Hashable, Sendable {
     public var isBreak: Bool { kind == EventKind.breakGap }
     /// Events that actually occupy a slot a watcher would care about.
     public var isPlayable: Bool { kind != EventKind.breakGap }
+    /// On stage at `now` (open-ended events count only at their start instant).
+    public func isLive(at now: Date) -> Bool { startsAt <= now && (endsAt ?? startsAt) > now }
 }
 
 public struct FestivalDTO: Codable, Hashable, Sendable {

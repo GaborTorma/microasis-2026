@@ -169,7 +169,7 @@ struct WatchRootView: View {
     }
 
     private func defaultIndex(in evs: [EventDTO]) -> Int {
-        if let i = evs.firstIndex(where: { $0.startsAt <= now && ($0.endsAt ?? $0.startsAt) > now }) { return i }
+        if let i = evs.firstIndex(where: { $0.isLive(at: now) }) { return i }
         if let i = evs.firstIndex(where: { $0.startsAt > now }) { return i }
         return 0
     }

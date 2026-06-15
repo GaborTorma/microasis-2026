@@ -174,7 +174,7 @@ struct TimetableView: View {
             Color.clear.frame(width: gutterW, height: g.total)
             anchorTrack(g)
             ForEach(g.hours, id: \.self) { date in
-                if Fmt.hhmm(date) != "00:00" {
+                if !Fmt.isMidnight(date) {
                     Text(Fmt.hhmm(date))
                         .font(.system(size: 10 * scale, design: .monospaced))
                         .foregroundStyle(Theme.creamFaint).fixedSize()
@@ -268,7 +268,7 @@ private struct Grid {
         self.hours = h
 
         var divs: [(String, Date)] = [(Fmt.festivalDay(start), start)]
-        for m in h where Fmt.hhmm(m) == "00:00" { divs.append((Fmt.festivalDay(m), m)) }
+        for m in h where Fmt.isMidnight(m) { divs.append((Fmt.festivalDay(m), m)) }
         self.dividers = divs
     }
 
