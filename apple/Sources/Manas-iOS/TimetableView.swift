@@ -131,19 +131,25 @@ struct TimetableView: View {
         let end = min(leadingIdx + effCols, stages.count)
         let visible = stages.indices.contains(leadingIdx) ? Array(stages[leadingIdx..<end]) : []
         return VStack(spacing: 3) {
+            // Position dots — ABOVE the stage headers, centred over the columns.
+            if effCols < stages.count {
+                HStack(spacing: 0) {
+                    Color.clear.frame(width: gutterW, height: 4)
+                    HStack(spacing: 5) {
+                        ForEach(stages.indices, id: \.self) { i in
+                            let on = i >= leadingIdx && i < leadingIdx + effCols
+                            Capsule()
+                                .fill(on ? Theme.sun : Theme.creamFaint.opacity(0.4))
+                                .frame(width: on ? 10 : 5, height: 4)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
             HStack(spacing: 0) {
                 Color.clear.frame(width: gutterW, height: headerH)
                 ForEach(visible) { stageHeader($0, cw: colW) }
                 Spacer(minLength: 0)
-            }
-            if effCols < stages.count {
-                HStack(spacing: 5) {
-                    ForEach(stages.indices, id: \.self) { i in
-                        Capsule()
-                            .fill(i >= leadingIdx && i < leadingIdx + effCols ? Theme.sun : Theme.creamFaint.opacity(0.4))
-                            .frame(width: i >= leadingIdx && i < leadingIdx + effCols ? 10 : 5, height: 4)
-                    }
-                }
             }
         }
         .padding(.bottom, 2)
