@@ -16,7 +16,10 @@ struct WatchRootView: View {
     private let tick = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
     private var stages: [StageDTO] { settings.orderedVisible(store.data?.stages ?? []) }
-    private var stage: StageDTO? { stages.indices.contains(stageIndex) ? stages[stageIndex] : stages.first }
+    /// `stageIndex` clamped into the current visible range — used everywhere so
+    /// the card and the dots always agree (e.g. after hiding the active stage).
+    private var currentIndex: Int { stages.isEmpty ? 0 : min(max(stageIndex, 0), stages.count - 1) }
+    private var stage: StageDTO? { stages.indices.contains(currentIndex) ? stages[currentIndex] : nil }
     private var stageEvents: [EventDTO] { stage.map { store.events(forStage: $0.slug) } ?? [] }
     private var event: EventDTO? {
         let e = stageEvents
@@ -119,7 +122,7 @@ struct WatchRootView: View {
         HStack(spacing: 4) {
             ForEach(stages.indices, id: \.self) { i in
                 Circle()
-                    .fill(i == stageIndex ? Theme.sun : Theme.creamFaint.opacity(0.5))
+                    .fill(i == currentIndex ? Theme.sun : Theme.creamFaint.opacity(0.5))
                     .frame(width: 5, height: 5)
             }
         }
@@ -150,7 +153,7 @@ struct WatchRootView: View {
     private func switchStage(_ delta: Int) {
         guard !stages.isEmpty else { return }
         let anchor = event?.startsAt
-        stageIndex = (stageIndex + delta + stages.count) % stages.count
+        stageIndex = (currentIndex + delta + stages.count) % stages.count
         let evs = stageEvents
         if let anchor { eventIndex = indexForTime(anchor, in: evs) }
         else { eventIndex = defaultIndex(in: evs) }
