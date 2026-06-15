@@ -26,11 +26,14 @@ public struct APIClient: Sendable {
         return value
     }
 
-    // MARK: Offline cache (best-effort)
+    // MARK: Offline cache
 
+    /// Persisted in Application Support (not Caches) so the OS never purges it
+    /// under storage pressure — the schedule must survive offline, including a
+    /// watch with no phone and no signal once it has loaded once.
     private static func cacheURL(_ name: String) -> URL? {
         try? FileManager.default
-            .url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             .appendingPathComponent("manas-\(name)")
     }
 
