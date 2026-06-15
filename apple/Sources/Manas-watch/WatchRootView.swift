@@ -65,13 +65,13 @@ struct WatchRootView: View {
     @ViewBuilder
     private func card(_ stage: StageDTO) -> some View {
         VStack(alignment: .leading, spacing: 6) {
+            // ── Fixed top block: stage / date / time / icon never move ──
             Text(stage.name.uppercased())
                 .font(.system(size: 17, weight: .heavy, design: .rounded))
                 .foregroundStyle(Color(hex: stage.accent))
                 .lineLimit(1).minimumScaleFactor(0.7)
 
             if let event {
-                // Date + time-range belong together → keep them tight.
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
                         .font(.system(size: 11, weight: .medium))
@@ -86,16 +86,18 @@ struct WatchRootView: View {
                             .foregroundStyle(Color(hex: stage.accent))
                     }
                 }
+                // ── Act name: fills the remaining space and shrinks to fit it,
+                //    so it never pushes the block above. ──
                 Text(event.title.text(settings.locale))
                     .font(.system(size: 21, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
-                    .lineLimit(5).minimumScaleFactor(0.55)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(6).minimumScaleFactor(0.35)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else {
                 Text(L.t("watch.noEvents", settings.locale))
                     .font(.footnote).foregroundStyle(Theme.creamDim)
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
             stageDots
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
