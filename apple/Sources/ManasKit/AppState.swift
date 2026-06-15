@@ -83,6 +83,7 @@ public final class ScheduleStore: ObservableObject {
     public init() {}
 
     public func load() async {
+        guard !isLoading else { return }   // a foreground refresh shouldn't stack a second fetch
         if data == nil, let cached = api.cachedSchedule() {
             data = cached
             offline = true

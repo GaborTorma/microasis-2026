@@ -35,32 +35,43 @@ function useFetchCached<T>(url: string, key: string): State<T> {
       /* ignore corrupt cache */
     }
 
-    fetch(url, { cache: "no-store" })
-      .then((r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json() as Promise<T>;
-      })
-      .then((json) => {
-        if (!alive) return;
-        try {
-          localStorage.setItem(key, JSON.stringify(json));
-        } catch {
-          /* storage full / private mode */
-        }
-        setState({ data: json, loading: false, offline: false, error: false });
-      })
-      .catch(() => {
-        if (!alive) return;
-        setState((s) => ({
-          data: s.data,
-          loading: false,
-          offline: Boolean(s.data),
-          error: !s.data,
-        }));
-      });
+    const refetch = () => {
+      fetch(url, { cache: "no-store" })
+        .then((r) => {
+          if (!r.ok) throw new Error(String(r.status));
+          return r.json() as Promise<T>;
+        })
+        .then((json) => {
+          if (!alive) return;
+          try {
+            localStorage.setItem(key, JSON.stringify(json));
+          } catch {
+            /* storage full / private mode */
+          }
+          setState({ data: json, loading: false, offline: false, error: false });
+        })
+        .catch(() => {
+          if (!alive) return;
+          setState((s) => ({
+            data: s.data,
+            loading: false,
+            offline: Boolean(s.data),
+            error: !s.data,
+          }));
+        });
+    };
+
+    refetch();
+
+    // Re-fetch whenever the tab/PWA returns to the foreground.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refetch();
+    };
+    document.addEventListener("visibilitychange", onVisible);
 
     return () => {
       alive = false;
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [url, key]);
 
