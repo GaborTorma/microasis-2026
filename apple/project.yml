@@ -16,6 +16,10 @@ settings:
     # Set your Apple Developer Team here (or pick it in Xcode → Signing).
     DEVELOPMENT_TEAM: ""
     SWIFT_EMIT_LOC_STRINGS: "YES"
+    # Xcode-recommended project settings (kept here so they survive regeneration).
+    DEAD_CODE_STRIPPING: "YES"
+    ENABLE_USER_SCRIPT_SANDBOXING: "YES"
+    STRING_CATALOG_GENERATE_SYMBOLS: "YES"
 
 targets:
   # ── iOS / iPadOS app (embeds the watch app) ───────────────────────
@@ -36,6 +40,8 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
         UISupportedInterfaceOrientations~ipad:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
