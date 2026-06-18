@@ -47,15 +47,13 @@ struct TimetableView: View {
         let stages = settings.orderedVisible(data.stages)
         let n = stages.count
         let effCols = isLandscape ? max(n, 1) : settings.effectiveColumns(visibleStages: n)
+        let fontScale = settings.fontScale   // own setting now, not derived from width
 
         GeometryReader { geo in
             let colW = max((geo.size.width - gutterW) / CGFloat(max(effCols, 1)), 44)
-            // Font size tracks a 2-column width even at 1 column, so the
-            // single-column zoom isn't bigger than the two-column one.
-            let fontColW = (geo.size.width - gutterW) / CGFloat(max(effCols, 2))
-            let fontScale = min(max(fontColW / 120, 0.85), 1.7)
-            // One hour is tall enough for the from–to row plus one title line.
-            let pph: CGFloat = isLandscape ? 22 : max(34, EventBlock.idealHourHeight(fontScale))
+            // Per-hour height scales with the text size so most acts fit (≈ PWA);
+            // landscape is a touch shorter since vertical space is scarce there.
+            let pph: CGFloat = isLandscape ? EventBlock.hourHeight(fontScale) * 0.72 : EventBlock.hourHeight(fontScale)
             let g = Grid(events: data.events, pph: pph)
             let leadingIdx = stages.firstIndex { $0.slug == leadingStage } ?? 0
 
@@ -306,8 +304,9 @@ private struct EventBlock: View {
     /// Minimum block height: one title line at the current text size fits with
     /// no clipping, so even a 30-minute act shows its name in full.
     static func minHeight(_ scale: CGFloat) -> CGFloat { 12 * scale * 1.35 + 6 }
-    /// One hour should be tall enough for the from–to row plus one title line.
-    static func idealHourHeight(_ scale: CGFloat) -> CGFloat { 26 * scale + 12 }
+    /// Height one hour occupies — tall enough for the from–to row plus ~2 title
+    /// lines, so most acts fit their name (≈ the PWA's density).
+    static func hourHeight(_ scale: CGFloat) -> CGFloat { 42 * scale + 8 }
 
     var body: some View {
         let start = event.startsAt
@@ -319,7 +318,7 @@ private struct EventBlock: View {
         let isWorkshop = event.kind == EventKind.workshop
         // Tall enough for a time row plus a title line? Otherwise it's a single
         // line: just the act name, no from–to time.
-        let showTime = height >= EventBlock.idealHourHeight(scale)
+        let showTime = height >= 27 * scale + 8
         // Fit as many title lines as the block holds; reserve the bottom-right
         // only for the floating chip (one chip line), so a tall block isn't
         // needlessly clipped to a single line.

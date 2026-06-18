@@ -6,9 +6,19 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var stages: [StageDTO] = []
 
+    private var localeBinding: Binding<AppLocale> {
+        Binding(get: { settings.locale }, set: { settings.locale = $0 })
+    }
+
     var body: some View {
         NavigationStack {
             List {
+                Section(L.t("settings.language", settings.locale)) {
+                    Picker(L.t("settings.language", settings.locale), selection: localeBinding) {
+                        ForEach(AppLocale.allCases, id: \.self) { Text($0.label).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                }
                 Section {
                     ForEach(stages) { stage in
                         HStack(spacing: 10) {
@@ -23,7 +33,6 @@ struct SettingsView: View {
                                     .foregroundStyle(settings.hidden.contains(stage.slug) ? Theme.creamFaint : Theme.sun)
                             }
                             .buttonStyle(.plain)
-                            Image(systemName: "line.3.horizontal").foregroundStyle(Theme.creamFaint)
                         }
                     }
                     .onMove { from, to in

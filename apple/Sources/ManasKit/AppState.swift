@@ -1,8 +1,9 @@
 import Foundation
 import Combine
+import CoreGraphics
 
 /// Hard cap on how many stage columns the iOS timetable shows at once.
-public let maxColumns = 4
+public let maxColumns = 5
 
 /// User preferences: stage order, hidden stages, language, and how many stage
 /// columns the timetable shows at once. Persisted locally (each device keeps
@@ -11,20 +12,31 @@ public let maxColumns = 4
 public final class Settings: ObservableObject {
     private let defaults = UserDefaults.standard
     private enum Key {
-        static let order = "manas.order", hidden = "manas.hidden", locale = "manas.locale", columns = "manas.columns"
+        static let order = "manas.order", hidden = "manas.hidden", locale = "manas.locale"
+        static let columns = "manas.columns", fontSize = "manas.fontSize"
     }
 
     @Published public var order: [String] { didSet { defaults.set(order, forKey: Key.order) } }
     @Published public var hidden: Set<String> { didSet { defaults.set(Array(hidden), forKey: Key.hidden) } }
     @Published public var locale: AppLocale { didSet { defaults.set(locale.rawValue, forKey: Key.locale) } }
-    /// Visible stage columns (the timetable "zoom"): fewer = wider/larger.
+    /// How many stage columns are shown at once (1…maxColumns).
     @Published public var columns: Int { didSet { defaults.set(columns, forKey: Key.columns) } }
+    /// Text-size step 1…5 — drives both the font scale and the block heights.
+    @Published public var fontSize: Int { didSet { defaults.set(fontSize, forKey: Key.fontSize) } }
 
     public init() {
         order = defaults.stringArray(forKey: Key.order) ?? []
         hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
         locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
         columns = (defaults.object(forKey: Key.columns) as? Int) ?? 3
+        fontSize = (defaults.object(forKey: Key.fontSize) as? Int) ?? 3
+    }
+
+    /// Font scale for the chosen text size: 1…5 → 0.9…1.7 (step 0.2).
+    public var fontScale: CGFloat { 0.7 + CGFloat(min(max(fontSize, 1), 5)) * 0.2 }
+
+    public func adjustFontSize(by delta: Int) {
+        fontSize = min(max(fontSize + delta, 1), 5)
     }
 
     /// Default language follows the device: Hungarian device ⇒ HU, else EN.

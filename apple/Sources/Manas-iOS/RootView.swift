@@ -18,7 +18,7 @@ struct RootView: View {
                 VStack(spacing: 0) {
                     if !hideHeader {
                         HeaderBar(showSettings: $showSettings,
-                                  showZoom: tab == 0 && !landscape,
+                                  showControls: tab == 0 && !landscape,
                                   stageCount: stageCount)
                             .transition(.move(edge: .top).combined(with: .opacity))
                         Divider().overlay(Theme.line)
@@ -36,6 +36,11 @@ struct RootView: View {
                 .animation(.easeInOut(duration: 0.2), value: hideHeader)
             }
             .onChange(of: tab) { _, t in if t != 0 { compactHeader = false } }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+                    .environmentObject(store)
+                    .environmentObject(settings)
+            }
         }
     }
 }
@@ -43,49 +48,39 @@ struct RootView: View {
 struct HeaderBar: View {
     @EnvironmentObject var settings: Settings
     @Binding var showSettings: Bool
-    var showZoom: Bool = false
+    var showControls: Bool = false
     var stageCount: Int = 0
 
     private var maxCols: Int { max(1, min(maxColumns, stageCount)) }
     private var eff: Int { settings.effectiveColumns(visibleStages: stageCount) }
 
     var body: some View {
-        HStack(alignment: .center) {
+        HStack(alignment: .center, spacing: 8) {
             VStack(alignment: .leading, spacing: 1) {
                 Text(L.t("app.title", settings.locale))
-                    .font(.system(size: 24, weight: .heavy, design: .rounded))
+                    .font(.system(size: 22, weight: .heavy, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(colors: [Theme.cream, Theme.sun, Theme.teal],
                                        startPoint: .leading, endPoint: .trailing)
                     )
+                    .lineLimit(1).minimumScaleFactor(0.6)
                 Text(L.t("app.unofficial", settings.locale).uppercased())
                     .font(.system(size: 9, weight: .semibold))
                     .tracking(2)
                     .foregroundStyle(Theme.sun.opacity(0.8))
+                    .lineLimit(1)
             }
-            Spacer()
-            // Language toggle
-            HStack(spacing: 0) {
-                ForEach(AppLocale.allCases, id: \.self) { loc in
-                    Button { settings.locale = loc } label: {
-                        Text(loc.label)
-                            .font(.system(size: 12, weight: .bold))
-                            .padding(.horizontal, 10).padding(.vertical, 5)
-                            .background(settings.locale == loc ? Theme.sun : .clear)
-                            .foregroundStyle(settings.locale == loc ? Theme.ink : Theme.creamDim)
-                            .clipShape(Capsule())
-                    }
-                }
-            }
-            .pillBar()
+            Spacer(minLength: 4)
 
-            // Zoom = how many stage columns are shown at once (− more, + fewer).
-            if showZoom {
-                HStack(spacing: 0) {
-                    zoomButton("minus", enabled: eff < maxCols) { settings.adjustColumns(by: 1, visibleStages: stageCount) }
-                    zoomButton("plus", enabled: eff > 1) { settings.adjustColumns(by: -1, visibleStages: stageCount) }
-                }
-                .pillBar()
+            if showControls {
+                // Text size: − T +
+                stepper(icon: "textformat.size",
+                        minusEnabled: settings.fontSize > 1, minus: { settings.adjustFontSize(by: -1) },
+                        plusEnabled: settings.fontSize < 5, plus: { settings.adjustFontSize(by: 1) })
+                // Columns: − ▦ +
+                stepper(icon: "rectangle.split.3x1",
+                        minusEnabled: eff > 1, minus: { settings.adjustColumns(by: -1, visibleStages: stageCount) },
+                        plusEnabled: eff < maxCols, plus: { settings.adjustColumns(by: 1, visibleStages: stageCount) })
             }
 
             Button { showSettings = true } label: {
@@ -97,14 +92,29 @@ struct HeaderBar: View {
                     .overlay(Circle().stroke(Theme.line))
             }
         }
-        .padding(.horizontal, 16).padding(.vertical, 10)
+        .padding(.horizontal, 12).padding(.vertical, 10)
     }
 
-    private func zoomButton(_ icon: String, enabled: Bool, _ action: @escaping () -> Void) -> some View {
+    /// A `− [icon] +` pill: minus on the left, the control's glyph in the
+    /// middle, plus on the right.
+    private func stepper(icon: String,
+                         minusEnabled: Bool, minus: @escaping () -> Void,
+                         plusEnabled: Bool, plus: @escaping () -> Void) -> some View {
+        HStack(spacing: 0) {
+            stepButton("minus", enabled: minusEnabled, action: minus)
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold)).foregroundStyle(Theme.cream)
+                .frame(width: 22)
+            stepButton("plus", enabled: plusEnabled, action: plus)
+        }
+        .pillBar()
+    }
+
+    private func stepButton(_ icon: String, enabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: 13, weight: .semibold))
-                .frame(width: 26, height: 26)
+                .font(.system(size: 12, weight: .semibold))
+                .frame(width: 24, height: 26)
                 .foregroundStyle(Theme.creamDim)
                 .opacity(enabled ? 1 : 0.3)
         }
