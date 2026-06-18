@@ -264,15 +264,15 @@ export function Timetable() {
 
             {/* columns with event blocks */}
             <div className="absolute inset-0 flex">
-              {stages.map((stage) => (
-                <div
-                  key={stage.id}
-                  style={colStyle}
-                  className="relative border-l border-line/20 px-0.5"
-                >
-                  {data.events
-                    .filter((e) => e.stageSlug === stage.slug)
-                    .map((e) => (
+              {stages.map((stage) => {
+                const evs = data.events.filter((e) => e.stageSlug === stage.slug);
+                return (
+                  <div
+                    key={stage.id}
+                    style={colStyle}
+                    className="relative border-l border-line/20 px-0.5"
+                  >
+                    {evs.map((e, i) => (
                       <EventBlock
                         key={e.id}
                         event={e}
@@ -281,10 +281,12 @@ export function Timetable() {
                         nowMs={nowMs}
                         locale={locale}
                         scale={scale}
+                        nextStart={i + 1 < evs.length ? evs[i + 1].startsAt : null}
                       />
                     ))}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </div>
 
             {/* overlay: day-divider lines + now line (above blocks) */}
@@ -320,6 +322,7 @@ function EventBlock({
   nowMs,
   locale,
   scale,
+  nextStart,
 }: {
   event: EventDTO;
   stage: StageDTO;
@@ -327,16 +330,20 @@ function EventBlock({
   nowMs: number;
   locale: string;
   scale: number;
+  nextStart: string | null;
 }) {
   const t = useTranslations();
   const start = new Date(event.startsAt).getTime();
   const end = event.endsAt ? new Date(event.endsAt).getTime() : start + HOUR;
   const top = yFor(start);
-  const height = Math.max(yFor(end) - top, 15);
+  // Grow a short act to one title line so its name isn't clipped — but never
+  // past the next act's start, so a 15-min slot can't overlap the one below.
+  const avail = nextStart ? yFor(new Date(nextStart).getTime()) - top : Infinity;
+  const height = Math.max(yFor(end) - top, Math.min(18 * scale + 4, avail));
   const live = start <= nowMs && end > nowMs;
   const past = end <= nowMs;
   // When the block is too short, drop the time row but always keep the act name.
-  const tight = height < 34;
+  const tight = height < 32 * scale;
   // Only workshops carry a language chip; Ø (grey) marks language-neutral ones.
   const chip = event.kind === "workshop" ? LANG_CHIPS[event.langAvailability ?? "none"] : null;
 
@@ -377,10 +384,11 @@ function EventBlock({
       {!tight && (
         <div className="flex items-center gap-1">
           <span
-            className="font-mono font-semibold tabular-nums"
+            className="whitespace-nowrap font-mono font-semibold tabular-nums"
             style={{ color: stage.accent, fontSize: `${0.58 * scale}rem` }}
           >
             {hhmm(event.startsAt, locale)}
+            {event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
           </span>
           {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-sun" />}
           <KindIcon size={iconPx} className="ml-auto shrink-0" style={{ color: stage.accent }} />

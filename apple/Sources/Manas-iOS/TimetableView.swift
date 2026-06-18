@@ -52,7 +52,10 @@ struct TimetableView: View {
 
         GeometryReader { geo in
             let colW = max((geo.size.width - gutterW) / CGFloat(max(effCols, 1)), 44)
-            let fontScale = min(max(colW / 120, 0.85), 1.7)
+            // Font size tracks a 2-column width even at 1 column, so the
+            // single-column zoom isn't bigger than the two-column one.
+            let fontColW = (geo.size.width - gutterW) / CGFloat(max(effCols, 2))
+            let fontScale = min(max(fontColW / 120, 0.85), 1.7)
             let leadingIdx = stages.firstIndex { $0.slug == leadingStage } ?? 0
 
             ScrollViewReader { vproxy in
@@ -184,10 +187,10 @@ struct TimetableView: View {
             ForEach(g.dividers, id: \.day) { div in
                 Text(Fmt.mmdd(div.day)).font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(Theme.sun).fixedSize()
-                    .offset(x: 2, y: g.y(div.date) - 15)
+                    .offset(x: 2, y: g.y(div.date) - 12)
                 Text(Fmt.weekday(div.day, settings.locale)).font(.system(size: 8, weight: .medium))
                     .foregroundStyle(Theme.creamDim).fixedSize()
-                    .offset(x: 2, y: g.y(div.date) + 4)
+                    .offset(x: 2, y: g.y(div.date) + 1)
             }
         }
         .frame(width: gutterW)
@@ -212,6 +215,7 @@ struct TimetableView: View {
 
     private func columnView(stage: StageDTO, g: Grid, colW: CGFloat, scale: CGFloat) -> some View {
         let showNow = now >= g.start && now <= g.end
+        let evs = g.events.filter { $0.stageSlug == stage.slug }
         return ZStack(alignment: .topLeading) {
             Color.clear.frame(width: colW, height: g.total)
             ForEach(g.hours, id: \.self) { date in
@@ -224,9 +228,13 @@ struct TimetableView: View {
                         .foregroundStyle(Theme.sun.opacity(0.5)))
                     .offset(y: g.y(div.date))
             }
-            ForEach(g.events.filter { $0.stageSlug == stage.slug }) { ev in
-                EventBlock(event: ev, stage: stage, now: now, locale: settings.locale, scale: scale)
-                    .frame(width: colW - 4, height: g.blockHeight(ev))
+            ForEach(Array(evs.enumerated()), id: \.element.id) { i, ev in
+                // Grow short acts to fit one title line — but never past the next
+                // act's start, so a 15-min slot can't overlap the one below it.
+                let avail = i + 1 < evs.count ? g.y(evs[i + 1].startsAt) - g.y(ev.startsAt) : .infinity
+                let h = max(g.blockHeight(ev), min(EventBlock.minHeight(scale), avail))
+                EventBlock(event: ev, stage: stage, now: now, locale: settings.locale, scale: scale, height: h)
+                    .frame(width: colW - 4, height: h)
                     .offset(x: 2, y: g.y(ev.startsAt))
             }
             if showNow {
@@ -285,6 +293,11 @@ private struct EventBlock: View {
     let now: Date
     let locale: AppLocale
     let scale: CGFloat
+    let height: CGFloat
+
+    /// Minimum block height: one title line at the current text size fits with
+    /// no clipping, so even a 30-minute act shows its name in full.
+    static func minHeight(_ scale: CGFloat) -> CGFloat { 12 * scale * 1.35 + 6 }
 
     var body: some View {
         let start = event.startsAt
@@ -293,6 +306,13 @@ private struct EventBlock: View {
         let past = end <= now
         let color = Color(hex: stage.color)
         let accent = Color(hex: stage.accent)
+        let isWorkshop = event.kind == EventKind.workshop
+        // Tall enough for a time row plus a title line? Otherwise it's a single
+        // line: just the act name, no from–to time.
+        let showTime = height >= 26 * scale + 12
+        let titleLineH = 12 * scale * 1.3
+        let reserved = (showTime ? 9 * scale * 1.3 + 3 : 0) + (showTime && isWorkshop ? 13.0 : 0) + 6
+        let titleLines = max(1, Int((height - reserved) / titleLineH))
 
         if event.isBreak {
             RoundedRectangle(cornerRadius: 6)
@@ -300,33 +320,57 @@ private struct EventBlock: View {
                 .overlay(Text(L.t("common.break", locale)).font(.system(size: 9)).foregroundStyle(Theme.creamFaint))
         } else {
             VStack(alignment: .leading, spacing: 1) {
-                HStack(spacing: 3) {
-                    Text(Fmt.hhmm(start)).font(.system(size: 9 * scale, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(accent)
-                    if live { Circle().fill(Theme.sun).frame(width: 4, height: 4) }
-                    Spacer(minLength: 2)
-                    Image(systemName: kindSymbol(event.kind))
-                        .font(.system(size: 9 * scale))
-                        .foregroundStyle(accent)
+                if showTime {
+                    HStack(spacing: 3) {
+                        Text(Fmt.range(start, event.endsAt))
+                            .font(.system(size: 9 * scale, weight: .semibold, design: .monospaced))
+                            .foregroundStyle(accent).lineLimit(1).minimumScaleFactor(0.7)
+                        if live { Circle().fill(Theme.sun).frame(width: 4, height: 4) }
+                        Spacer(minLength: 2)
+                        Image(systemName: kindSymbol(event.kind))
+                            .font(.system(size: 9 * scale)).foregroundStyle(accent)
+                    }
                 }
-                Text(event.title.text(locale)).font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
-                    .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
-                    .lineLimit(4)
+                HStack(alignment: .firstTextBaseline, spacing: 3) {
+                    if !showTime, live { Circle().fill(Theme.sun).frame(width: 4, height: 4) }
+                    Text(event.title.text(locale))
+                        .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
+                        .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
+                        .lineLimit(showTime ? titleLines : 1).truncationMode(.tail)
+                    // On a single-line block the chip/kind icon sits inline (no
+                    // room below); on a taller block the chip floats (see overlay).
+                    if !showTime {
+                        Spacer(minLength: 2)
+                        if isWorkshop { langChip() }
+                        else {
+                            Image(systemName: kindSymbol(event.kind))
+                                .font(.system(size: 9 * scale)).foregroundStyle(accent)
+                        }
+                    }
+                }
                 Spacer(minLength: 0)
-                if event.kind == EventKind.workshop {
-                    let chip = Theme.chip(event.langAvailability)
-                    Text(chip.label).font(.system(size: 8, weight: .bold))
-                        .padding(.horizontal, 4).padding(.vertical, 1)
-                        .background(chip.bg, in: RoundedRectangle(cornerRadius: 3)).foregroundStyle(chip.fg)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
             }
-            .padding(.horizontal, 5).padding(.vertical, 2)
+            .padding(.horizontal, 5).padding(.vertical, showTime ? 2 : 1)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(color.opacity(live ? 0.85 : 0.28), in: RoundedRectangle(cornerRadius: 6))
             .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 2) }
+            .overlay(alignment: .bottomTrailing) {
+                // Floating language chip — doesn't take a full row; the title's
+                // line count above already reserves space so it can't overlap.
+                if showTime && isWorkshop {
+                    langChip().padding(.trailing, 3).padding(.bottom, 2)
+                }
+            }
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .opacity(past ? 0.45 : 1)
         }
+    }
+
+    @ViewBuilder
+    private func langChip() -> some View {
+        let chip = Theme.chip(event.langAvailability)
+        Text(chip.label).font(.system(size: 8, weight: .bold))
+            .padding(.horizontal, 4).padding(.vertical, 1)
+            .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
     }
 }
