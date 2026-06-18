@@ -18,7 +18,8 @@ struct RootView: View {
                 VStack(spacing: 0) {
                     if !hideHeader {
                         HeaderBar(showSettings: $showSettings,
-                                  showControls: tab == 0 && !landscape,
+                                  showControls: tab == 0,
+                                  landscape: landscape,
                                   stageCount: stageCount)
                             .transition(.move(edge: .top).combined(with: .opacity))
                         Divider().overlay(Theme.line)
@@ -49,6 +50,7 @@ struct HeaderBar: View {
     @EnvironmentObject var settings: Settings
     @Binding var showSettings: Bool
     var showControls: Bool = false
+    var landscape: Bool = false
     var stageCount: Int = 0
 
     private var maxCols: Int { max(1, min(maxColumns, stageCount)) }
@@ -73,14 +75,16 @@ struct HeaderBar: View {
             Spacer(minLength: 4)
 
             if showControls {
-                // Text size: − T +
+                // Text size: − T + (both orientations)
                 stepper(icon: "textformat.size",
                         minusEnabled: settings.fontSize > 1, minus: { settings.adjustFontSize(by: -1) },
                         plusEnabled: settings.fontSize < 5, plus: { settings.adjustFontSize(by: 1) })
-                // Columns: − ▦ +
-                stepper(icon: "rectangle.split.3x1",
-                        minusEnabled: eff > 1, minus: { settings.adjustColumns(by: -1, visibleStages: stageCount) },
-                        plusEnabled: eff < maxCols, plus: { settings.adjustColumns(by: 1, visibleStages: stageCount) })
+                // Columns: − ▦ + — portrait only (landscape always shows all stages)
+                if !landscape {
+                    stepper(icon: "rectangle.split.3x1",
+                            minusEnabled: eff > 1, minus: { settings.adjustColumns(by: -1, visibleStages: stageCount) },
+                            plusEnabled: eff < maxCols, plus: { settings.adjustColumns(by: 1, visibleStages: stageCount) })
+                }
             }
 
             Button { showSettings = true } label: {
