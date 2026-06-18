@@ -183,7 +183,9 @@ struct TimetableView: View {
             Color.clear.frame(width: gutterW, height: g.total)
             anchorTrack(g)
             ForEach(g.hours, id: \.self) { date in
-                if !Fmt.isMidnight(date) {
+                // Skip the hour label where a day divider's date sits (midnight,
+                // and the very first hour) so they don't overlap in the gutter.
+                if !Fmt.isMidnight(date) && date != g.start {
                     Text(Fmt.hhmm(date))
                         .font(.system(size: 10 * scale, design: .monospaced))
                         .foregroundStyle(Theme.creamFaint).fixedSize()
