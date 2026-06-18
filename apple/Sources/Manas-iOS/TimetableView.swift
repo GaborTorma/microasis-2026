@@ -321,11 +321,10 @@ private struct EventBlock: View {
         // Tall enough for a time row plus a title line? Otherwise it's a single
         // line: just the act name, no from–to time.
         let showTime = height >= 27 * scale + 8
-        // Fit as many title lines as the block holds; reserve the bottom-right
-        // only for the floating chip (one chip line), so a tall block isn't
-        // needlessly clipped to a single line.
+        // Fit as many title lines as the block holds. The language chip is a
+        // faint watermark over the text now, so it reserves no space.
         let titleLineH = 12 * scale * 1.22
-        let reserved = (showTime ? 9 * scale * 1.3 + 3 : 0) + (showTime && isWorkshop ? 12.0 : 0) + 5
+        let reserved = (showTime ? 9 * scale * 1.3 + 3 : 0) + 5
         let titleLines = max(1, Int((height - reserved) / titleLineH))
 
         if event.isBreak {
@@ -351,15 +350,12 @@ private struct EventBlock: View {
                         .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
                         .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
                         .lineLimit(showTime ? titleLines : 1).truncationMode(.tail)
-                    // On a single-line block the chip/kind icon sits inline (no
-                    // room below); on a taller block the chip floats (see overlay).
+                    // On a single-line block the kind icon sits inline (no room
+                    // for a time row); the language watermark floats over (overlay).
                     if !showTime {
                         Spacer(minLength: 2)
-                        if isWorkshop { langChip() }
-                        else {
-                            Image(systemName: kindSymbol(event.kind))
-                                .font(.system(size: 9 * scale)).foregroundStyle(accent)
-                        }
+                        Image(systemName: kindSymbol(event.kind))
+                            .font(.system(size: 9 * scale)).foregroundStyle(accent)
                     }
                 }
                 Spacer(minLength: 0)
@@ -369,10 +365,10 @@ private struct EventBlock: View {
             .background(color.opacity(live ? 0.85 : 0.28), in: RoundedRectangle(cornerRadius: 6))
             .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 2) }
             .overlay(alignment: .bottomTrailing) {
-                // Floating language chip — doesn't take a full row; the title's
-                // line count above already reserves space so it can't overlap.
-                if showTime && isWorkshop {
-                    langChip().padding(.trailing, 3).padding(.bottom, 2)
+                // Faint language watermark over the text bottom-right; it's
+                // translucent, so overlapping the title is fine (reserves no space).
+                if isWorkshop {
+                    langChip().opacity(0.5).padding(.trailing, 3).padding(.bottom, 2)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 6))
