@@ -47,8 +47,6 @@ struct TimetableView: View {
         let stages = settings.orderedVisible(data.stages)
         let n = stages.count
         let effCols = isLandscape ? max(n, 1) : settings.effectiveColumns(visibleStages: n)
-        let pph: CGFloat = isLandscape ? 22 : 34   // shorter blocks than before
-        let g = Grid(events: data.events, pph: pph)
 
         GeometryReader { geo in
             let colW = max((geo.size.width - gutterW) / CGFloat(max(effCols, 1)), 44)
@@ -56,6 +54,9 @@ struct TimetableView: View {
             // single-column zoom isn't bigger than the two-column one.
             let fontColW = (geo.size.width - gutterW) / CGFloat(max(effCols, 2))
             let fontScale = min(max(fontColW / 120, 0.85), 1.7)
+            // One hour is tall enough for the from–to row plus one title line.
+            let pph: CGFloat = isLandscape ? 22 : max(34, EventBlock.idealHourHeight(fontScale))
+            let g = Grid(events: data.events, pph: pph)
             let leadingIdx = stages.firstIndex { $0.slug == leadingStage } ?? 0
 
             ScrollViewReader { vproxy in
@@ -98,6 +99,13 @@ struct TimetableView: View {
                         let target = data.days.contains(Fmt.festivalDay(now)) ? Fmt.festivalDay(now) : (data.days.first ?? "")
                         DispatchQueue.main.async { withAnimation { vproxy.scrollTo("day-\(target)", anchor: .top) } }
                     }
+                }
+                // Re-snap the paged columns when the zoom (column count) changes,
+                // so zooming while scrolled never leaves a half-column showing.
+                .onChange(of: effCols) { _, _ in
+                    guard let target = leadingStage else { return }
+                    leadingStage = nil
+                    DispatchQueue.main.async { leadingStage = target }
                 }
             }
         }
@@ -229,10 +237,10 @@ struct TimetableView: View {
                     .offset(y: g.y(div.date))
             }
             ForEach(Array(evs.enumerated()), id: \.element.id) { i, ev in
-                // Grow short acts to fit one title line — but never past the next
-                // act's start, so a 15-min slot can't overlap the one below it.
+                // Grow short acts to fit one title line, but cap at the next act's
+                // start so a 15-min slot can never overlap the one below it.
                 let avail = i + 1 < evs.count ? g.y(evs[i + 1].startsAt) - g.y(ev.startsAt) : .infinity
-                let h = max(g.blockHeight(ev), min(EventBlock.minHeight(scale), avail))
+                let h = min(max(g.blockHeight(ev), EventBlock.minHeight(scale)), avail)
                 EventBlock(event: ev, stage: stage, now: now, locale: settings.locale, scale: scale, height: h)
                     .frame(width: colW - 4, height: h)
                     .offset(x: 2, y: g.y(ev.startsAt))
@@ -298,6 +306,8 @@ private struct EventBlock: View {
     /// Minimum block height: one title line at the current text size fits with
     /// no clipping, so even a 30-minute act shows its name in full.
     static func minHeight(_ scale: CGFloat) -> CGFloat { 12 * scale * 1.35 + 6 }
+    /// One hour should be tall enough for the from–to row plus one title line.
+    static func idealHourHeight(_ scale: CGFloat) -> CGFloat { 26 * scale + 12 }
 
     var body: some View {
         let start = event.startsAt
@@ -309,9 +319,12 @@ private struct EventBlock: View {
         let isWorkshop = event.kind == EventKind.workshop
         // Tall enough for a time row plus a title line? Otherwise it's a single
         // line: just the act name, no from–to time.
-        let showTime = height >= 26 * scale + 12
-        let titleLineH = 12 * scale * 1.3
-        let reserved = (showTime ? 9 * scale * 1.3 + 3 : 0) + (showTime && isWorkshop ? 13.0 : 0) + 6
+        let showTime = height >= EventBlock.idealHourHeight(scale)
+        // Fit as many title lines as the block holds; reserve the bottom-right
+        // only for the floating chip (one chip line), so a tall block isn't
+        // needlessly clipped to a single line.
+        let titleLineH = 12 * scale * 1.22
+        let reserved = (showTime ? 9 * scale * 1.3 + 3 : 0) + (showTime && isWorkshop ? 12.0 : 0) + 5
         let titleLines = max(1, Int((height - reserved) / titleLineH))
 
         if event.isBreak {
