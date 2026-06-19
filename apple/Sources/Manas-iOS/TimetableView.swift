@@ -4,9 +4,11 @@ private let gutterW: CGFloat = 60
 private let headerH: CGFloat = 34
 private let hour: TimeInterval = 3600
 
-private struct DayOffsetKey: PreferenceKey {
-    static let defaultValue: [String: CGFloat] = [:]
-    static func reduce(value: inout [String: CGFloat], nextValue: () -> [String: CGFloat]) {
+/// Reports each hour row's top offset in the scroll view, keyed by hour index,
+/// so we know which hour sits at the top of the viewport.
+private struct HourOffsetKey: PreferenceKey {
+    static let defaultValue: [Int: CGFloat] = [:]
+    static func reduce(value: inout [Int: CGFloat], nextValue: () -> [Int: CGFloat]) {
         value.merge(nextValue(), uniquingKeysWith: { a, _ in a })
     }
 }
@@ -21,6 +23,7 @@ struct TimetableView: View {
     @State private var activeDay: String = ""
     @State private var leadingStage: String?
     @State private var didScroll = false
+    @State private var topHourIndex = 0   // hour at the viewport top, for zoom restore
 
     private let tick = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
@@ -84,12 +87,20 @@ struct TimetableView: View {
                         }
                     }
                     .coordinateSpace(name: "grid")
-                    .onPreferenceChange(DayOffsetKey.self) { offsets in
-                        let passed = offsets.filter { $0.value <= 1 }
-                        activeDay = passed.max(by: { $0.value < $1.value })?.key ?? data.days.first ?? ""
-                        if let first = g.dividers.first?.day, let y = offsets[first] {
-                            compactHeader = isLandscape && y < -24
+                    .onPreferenceChange(HourOffsetKey.self) { offsets in
+                        // Restore target: the hour boundary nearest the viewport
+                        // top (exact for a round hour, ≤30 min off otherwise).
+                        if let nearest = offsets.min(by: { abs($0.value) < abs($1.value) })?.key {
+                            topHourIndex = nearest
                         }
+                        // Active day = the last hour whose top has passed the top.
+                        if let topIdx = offsets.filter({ $0.value <= 1 }).max(by: { $0.value < $1.value })?.key,
+                           g.hours.indices.contains(topIdx) {
+                            activeDay = Fmt.festivalDay(g.hours[topIdx])
+                        } else {
+                            activeDay = data.days.first ?? ""
+                        }
+                        if let y = offsets[0] { compactHeader = isLandscape && y < -24 }
                     }
                     .onAppear {
                         guard !didScroll else { return }
@@ -104,6 +115,12 @@ struct TimetableView: View {
                     guard let target = leadingStage else { return }
                     leadingStage = nil
                     DispatchQueue.main.async { leadingStage = target }
+                }
+                // Text-size change resizes every row; keep the same hour at the
+                // top so the view doesn't jump off the time you were looking at.
+                .onChange(of: settings.fontSize) { _, _ in
+                    let target = topHourIndex
+                    DispatchQueue.main.async { vproxy.scrollTo("t-\(target)", anchor: .top) }
                 }
             }
         }
@@ -182,6 +199,7 @@ struct TimetableView: View {
         ZStack(alignment: .topLeading) {
             Color.clear.frame(width: gutterW, height: g.total)
             anchorTrack(g)
+            hourTrack(g)
             ForEach(g.hours, id: \.self) { date in
                 // Skip the hour label where a day divider's date sits (midnight,
                 // and the very first hour) so they don't overlap in the gutter.
@@ -204,6 +222,8 @@ struct TimetableView: View {
         .frame(width: gutterW)
     }
 
+    /// Real-layout segments per day, ids only — targets for the day selector's
+    /// `scrollTo("day-…")` jumps.
     private func anchorTrack(_ g: Grid) -> some View {
         VStack(spacing: 0) {
             ForEach(Array(g.dividers.enumerated()), id: \.element.day) { idx, div in
@@ -211,9 +231,22 @@ struct TimetableView: View {
                 Color.clear
                     .frame(width: gutterW, height: max(nextY - g.y(div.date), 1))
                     .id("day-\(div.day)")
+            }
+        }
+    }
+
+    /// Real-layout segment per hour: reports its top offset (so we know the top
+    /// hour) and carries an id we scroll back to after a text-size change.
+    private func hourTrack(_ g: Grid) -> some View {
+        VStack(spacing: 0) {
+            ForEach(Array(g.hours.enumerated()), id: \.offset) { i, date in
+                let nextY = i + 1 < g.hours.count ? g.y(g.hours[i + 1]) : g.total
+                Color.clear
+                    .frame(width: gutterW, height: max(nextY - g.y(date), 1))
+                    .id("t-\(i)")
                     .background(GeometryReader { geo in
-                        Color.clear.preference(key: DayOffsetKey.self,
-                                               value: [div.day: geo.frame(in: .named("grid")).minY])
+                        Color.clear.preference(key: HourOffsetKey.self,
+                                               value: [i: geo.frame(in: .named("grid")).minY])
                     })
             }
         }
