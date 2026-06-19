@@ -59,7 +59,7 @@ struct HeaderBar: View {
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             VStack(alignment: .leading, spacing: 1) {
-                Text(L.t("app.title", settings.locale))
+                Text(L.t("app.title", settings.locale).uppercased())
                     .font(.system(size: 22, weight: .heavy, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(colors: [Theme.cream, Theme.sun, Theme.teal],
