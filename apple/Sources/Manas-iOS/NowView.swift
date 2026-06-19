@@ -3,7 +3,7 @@ import SwiftUI
 struct NowView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
-    @State private var now = Date()
+    @State private var now = Fmt.now
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -36,7 +36,7 @@ struct NowView: View {
                     Spacer() }
             }
         }
-        .onReceive(tick) { now = $0 }
+        .onReceive(tick) { _ in now = Fmt.now }
     }
 }
 

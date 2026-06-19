@@ -18,6 +18,23 @@ public enum Fmt {
         return f
     }
 
+    /// Current instant. In DEBUG it can be overridden for simulator testing:
+    ///   xcrun simctl spawn <udid> defaults write <bundle> manas.debugNow "2026-07-09 00:15"
+    /// (also accepts a full ISO-8601 string). Compiled out of release builds.
+    public static var now: Date {
+        #if DEBUG
+        if let s = UserDefaults.standard.string(forKey: "manas.debugNow"), !s.isEmpty {
+            if let d = ISO8601DateFormatter().date(from: s) { return d }
+            let f = DateFormatter()
+            f.timeZone = budapest
+            f.locale = Locale(identifier: "en_US_POSIX")
+            f.dateFormat = "yyyy-MM-dd HH:mm"
+            if let d = f.date(from: s) { return d }
+        }
+        #endif
+        return Date()
+    }
+
     /// "HH:mm" in festival-local time.
     public static func hhmm(_ date: Date) -> String { time.string(from: date) }
 

@@ -19,7 +19,7 @@ struct TimetableView: View {
     var isLandscape: Bool = false
     @Binding var compactHeader: Bool
 
-    @State private var now = Date()
+    @State private var now = Fmt.now
     @State private var activeDay: String = ""
     @State private var leadingStage: String?
     @State private var didScroll = false
@@ -37,7 +37,7 @@ struct TimetableView: View {
                 centered(L.t("common.error", settings.locale))
             }
         }
-        .onReceive(tick) { now = $0 }
+        .onReceive(tick) { _ in now = Fmt.now }
     }
 
     private func centered(_ s: String) -> some View {

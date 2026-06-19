@@ -11,7 +11,7 @@ struct WatchRootView: View {
     @State private var eventIndex = 0
     @State private var didInit = false
     @State private var showSettings = false
-    @State private var now = Date()
+    @State private var now = Fmt.now
     /// Fixed time the left/right navigation pivots around. Only a vertical
     /// swipe (or init) moves it; horizontal switches keep it, so going back and
     /// forth between stages never drifts off the time you were looking at.
@@ -20,9 +20,10 @@ struct WatchRootView: View {
     @State private var noProgramAtAnchor = false
 
     private let tick = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
-    /// How close an act must be to the anchor to count as "on at this time"
-    /// (otherwise we show "nothing on" instead of jumping hours away).
-    private let nearWindow: TimeInterval = 2 * 3600
+    /// How close an act must be to the anchor to count as "around this time"
+    /// (covers short breaks); beyond it we show "nothing on" instead of an act
+    /// that ended hours ago or jumping far ahead.
+    private let nearWindow: TimeInterval = 3600
 
     private var stages: [StageDTO] { settings.orderedVisible(store.data?.stages ?? []) }
     /// `stageIndex` clamped into the current visible range — used everywhere so
@@ -65,7 +66,7 @@ struct WatchRootView: View {
         .background(bg.gradient)
         .gesture(swipe)
         .sheet(isPresented: $showSettings) { WatchSettingsView() }
-        .onReceive(tick) { now = $0 }
+        .onReceive(tick) { _ in now = Fmt.now }
         .onChange(of: store.data?.events.count ?? 0) { _, _ in initIfNeeded() }
         .onAppear { initIfNeeded() }
     }
@@ -202,8 +203,14 @@ struct WatchRootView: View {
         noProgramAtAnchor = distance(t, evs[n]) > nearWindow
     }
 
-    /// Index of the act closest to `t` (by gap to its [start, end) interval).
+    /// Index of the act closest to `t`. An act that's *on* at `t` wins first —
+    /// so at a back-to-back boundary like 00:00 we pick the act starting then,
+    /// not the one that just ended — otherwise the smallest gap to `t`.
     private func nearestIndex(to t: Date, in evs: [EventDTO]) -> Int {
+        if let i = evs.firstIndex(where: { e in
+            let end = e.endsAt ?? e.startsAt
+            return e.startsAt <= t && t < end
+        }) { return i }
         var best = 0, bestDist = TimeInterval.greatestFiniteMagnitude
         for (i, e) in evs.enumerated() {
             let d = distance(t, e)
