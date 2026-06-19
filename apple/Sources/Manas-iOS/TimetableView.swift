@@ -16,6 +16,7 @@ private struct HourOffsetKey: PreferenceKey {
 struct TimetableView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
+    @EnvironmentObject var location: LocationStore
     var isLandscape: Bool = false
     @Binding var compactHeader: Bool
     @Environment(\.scenePhase) private var scenePhase
@@ -106,15 +107,21 @@ struct TimetableView: View {
                         if let y = offsets[0] { compactHeader = isLandscape && y < -24 }
                     }
                     .onAppear {
+                        location.refresh(stages: stages)
+                        selectNearestColumn(stages)
                         guard !didScroll else { return }
                         didScroll = true
                         jumpToNow(vproxy, g, data)
                     }
                 }
-                // Returning to the foreground re-jumps to the current time.
+                // Returning to the foreground re-jumps to the current time and
+                // re-selects the nearest stage as the left column.
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active { jumpToNow(vproxy, g, data) }
+                    if phase == .active { jumpToNow(vproxy, g, data); location.refresh(stages: stages) }
                 }
+                // Nearest stage (within 150 m) becomes the left column.
+                .onChange(of: location.nearestSlug) { _, _ in selectNearestColumn(stages) }
+                .onChange(of: settings.debugCoord) { _, _ in location.refresh(stages: stages) }
                 // Re-snap the paged columns when the zoom (column count) changes,
                 // so zooming while scrolled never leaves a half-column showing.
                 .onChange(of: effCols) { _, _ in
@@ -130,6 +137,12 @@ struct TimetableView: View {
                 }
             }
         }
+    }
+
+    /// Make the stage nearest the device (within 150 m) the left-most column.
+    private func selectNearestColumn(_ stages: [StageDTO]) {
+        guard let slug = location.nearestSlug, stages.contains(where: { $0.slug == slug }) else { return }
+        leadingStage = slug
     }
 
     /// Scroll so the act on now (earliest-starting if several are live, else the
@@ -214,9 +227,15 @@ struct TimetableView: View {
     }
 
     private func stageHeader(_ stage: StageDTO, cw: CGFloat) -> some View {
-        Text(stage.name)
-            .font(.system(size: 13, weight: .bold, design: .rounded)).foregroundStyle(Theme.cream)
-            .lineLimit(1).minimumScaleFactor(0.6)
+        HStack(spacing: 3) {
+            if location.nearestSlug == stage.slug {
+                Image(systemName: "location.fill").font(.system(size: 9, weight: .bold))
+            }
+            Text(stage.name)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .lineLimit(1).minimumScaleFactor(0.6)
+        }
+            .foregroundStyle(Theme.cream)
             .frame(width: cw - 4, height: headerH - 6)
             .background(
                 LinearGradient(colors: [Color(hex: stage.color), Color(hex: stage.color).opacity(0.73)],

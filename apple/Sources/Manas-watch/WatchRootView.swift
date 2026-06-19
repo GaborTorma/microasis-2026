@@ -6,6 +6,7 @@ import WatchKit
 struct WatchRootView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
+    @EnvironmentObject var location: LocationStore
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var stageIndex = 0
@@ -69,11 +70,16 @@ struct WatchRootView: View {
         .sheet(isPresented: $showSettings) { WatchSettingsView() }
         .onReceive(tick) { _ in now = Fmt.now }
         .onChange(of: store.data?.events.count ?? 0) { _, _ in initIfNeeded() }
-        .onAppear { initIfNeeded() }
+        .onAppear { initIfNeeded(); location.refresh(stages: stages) }
         // Changing the debug time, or returning to the foreground, re-centres on
         // "now" so the live act and its dot are correct immediately.
         .onChange(of: settings.debugNow) { _, _ in now = Fmt.now; resetToNow() }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { now = Fmt.now; resetToNow() } }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { now = Fmt.now; resetToNow(); location.refresh(stages: stages) }
+        }
+        // Nearest stage (within 150 m) becomes the selected stage.
+        .onChange(of: location.nearestSlug) { _, _ in resetToNow() }
+        .onChange(of: settings.debugCoord) { _, _ in location.refresh(stages: stages) }
     }
 
     private var bg: Color {
@@ -87,10 +93,17 @@ struct WatchRootView: View {
     private func card(_ stage: StageDTO) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             // ── Fixed top block: stage / date / time / icon never move ──
-            Text(stage.name.uppercased())
-                .font(.system(size: 17, weight: .heavy, design: .rounded))
-                .foregroundStyle(Color(hex: stage.accent))
-                .lineLimit(1).minimumScaleFactor(0.7)
+            HStack(spacing: 4) {
+                if location.nearestSlug == stage.slug {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Color(hex: stage.accent))
+                }
+                Text(stage.name.uppercased())
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(Color(hex: stage.accent))
+                    .lineLimit(1).minimumScaleFactor(0.7)
+            }
 
             if noProgramAtAnchor, let t = anchorTime {
                 let day = Fmt.festivalDay(t)
@@ -249,7 +262,12 @@ struct WatchRootView: View {
     /// switching shows only what's on now.
     private func resetToNow() {
         guard !stages.isEmpty else { return }
-        if let def = stages.firstIndex(where: { $0.isDefault }) { stageIndex = def }
+        // Nearest stage (within 150 m) wins; otherwise the default stage.
+        if let slug = location.nearestSlug, let i = stages.firstIndex(where: { $0.slug == slug }) {
+            stageIndex = i
+        } else if let def = stages.firstIndex(where: { $0.isDefault }) {
+            stageIndex = def
+        }
         eventIndex = defaultIndex(in: stageEvents)
         // Live → anchor on "now" (so switching shows only what's on now, never a
         // finished act); otherwise anchor on the shown (upcoming) act's start.

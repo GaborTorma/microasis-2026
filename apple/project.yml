@@ -38,6 +38,7 @@ targets:
       properties:
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
+        NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
@@ -68,6 +69,7 @@ targets:
         WKApplication: true
         WKCompanionAppBundleIdentifier: ai.torma.manas.2026
         CFBundleDisplayName: Manas
+        NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.watchkitapp

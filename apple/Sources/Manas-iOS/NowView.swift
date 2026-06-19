@@ -3,6 +3,7 @@ import SwiftUI
 struct NowView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
+    @EnvironmentObject var location: LocationStore
     @State private var now = Fmt.now
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -23,7 +24,8 @@ struct NowView: View {
                             ForEach(settings.orderedVisible(data.stages)) { stage in
                                 StageNowCard(stage: stage,
                                              events: store.events(forStage: stage.slug),
-                                             now: now, locale: settings.locale)
+                                             now: now, locale: settings.locale,
+                                             near: location.nearestSlug == stage.slug)
                             }
                         }
                         .padding(12)
@@ -46,6 +48,7 @@ private struct StageNowCard: View {
     let events: [EventDTO]
     let now: Date
     let locale: AppLocale
+    var near: Bool = false
 
     var body: some View {
         let live = events.first { $0.isLive(at: now) }
@@ -57,7 +60,11 @@ private struct StageNowCard: View {
 
         VStack(spacing: 0) {
             // Stage header — no "now" badge; the whole screen is the now view.
-            HStack {
+            HStack(spacing: 5) {
+                if near {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.cream)
+                }
                 Text(stage.name).font(.title3.bold()).foregroundStyle(Theme.cream)
                 Spacer()
                 if let live {

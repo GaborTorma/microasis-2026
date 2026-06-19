@@ -14,6 +14,7 @@ public final class Settings: ObservableObject {
     private enum Key {
         static let order = "manas.order", hidden = "manas.hidden", locale = "manas.locale"
         static let columns = "manas.columns", fontSize = "manas.fontSize", debugNow = "manas.debugNow"
+        static let debugCoord = "manas.debugCoord"
     }
 
     @Published public var order: [String] { didSet { defaults.set(order, forKey: Key.order) } }
@@ -31,6 +32,14 @@ public final class Settings: ObservableObject {
             else { defaults.removeObject(forKey: Key.debugNow) }
         }
     }
+    /// QA-only override for the device coordinate ("lat,lng"); nil = real
+    /// CoreLocation. Shares the `manas.debugCoord` key with `Geo.debugCoordinate`.
+    @Published public var debugCoord: String? {
+        didSet {
+            if let c = debugCoord { defaults.set(c, forKey: Key.debugCoord) }
+            else { defaults.removeObject(forKey: Key.debugCoord) }
+        }
+    }
 
     public init() {
         order = defaults.stringArray(forKey: Key.order) ?? []
@@ -40,6 +49,7 @@ public final class Settings: ObservableObject {
         columns = (defaults.object(forKey: Key.columns) as? Int) ?? 3
         fontSize = (defaults.object(forKey: Key.fontSize) as? Int) ?? 3
         debugNow = defaults.string(forKey: Key.debugNow).flatMap(Fmt.parseDateTime)
+        debugCoord = defaults.string(forKey: Key.debugCoord)
     }
 
     /// Font scale for the chosen text size: 1…5 → 0.9…1.7 (step 0.2).

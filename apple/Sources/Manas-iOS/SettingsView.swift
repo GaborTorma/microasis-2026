@@ -19,6 +19,26 @@ struct SettingsView: View {
         Binding(get: { settings.debugNow ?? defaultDebugDate },
                 set: { settings.debugNow = $0 })
     }
+    private var defaultDebugCoord: String {
+        store.data?.stages.first(where: { $0.isDefault }).flatMap(Geo.coordString) ?? Geo.farTestCoord
+    }
+    private var debugCoordOn: Binding<Bool> {
+        Binding(get: { settings.debugCoord != nil },
+                set: { settings.debugCoord = $0 ? (settings.debugCoord ?? defaultDebugCoord) : nil })
+    }
+    private var coordText: Binding<String> {
+        Binding(get: { settings.debugCoord ?? "" },
+                set: { settings.debugCoord = $0.isEmpty ? nil : $0 })
+    }
+
+    private func coordChip(_ label: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label).font(.system(size: 12, weight: .semibold))
+                .padding(.horizontal, 10).padding(.vertical, 5)
+                .background(Theme.ink2, in: Capsule())
+        }
+        .buttonStyle(.plain)
+    }
 
     var body: some View {
         NavigationStack {
@@ -60,6 +80,23 @@ struct SettingsView: View {
                             // a HU device); the simctl string method is TZ-pinned.
                             DatePicker("", selection: debugDate, displayedComponents: [.date, .hourAndMinute])
                                 .labelsHidden()
+                        }
+                        Toggle(L.t("settings.testLocation", settings.locale), isOn: debugCoordOn)
+                        if settings.debugCoord != nil {
+                            TextField("lat,lng", text: coordText)
+                                .keyboardType(.numbersAndPunctuation)
+                                .autocorrectionDisabled().textInputAutocapitalization(.never)
+                            // Quick-jump to a stage's coordinate (or far away).
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 6) {
+                                    ForEach(stages) { stage in
+                                        coordChip(stage.name) { settings.debugCoord = Geo.coordString(for: stage) }
+                                    }
+                                    coordChip(L.t("settings.testLocationFar", settings.locale)) {
+                                        settings.debugCoord = Geo.farTestCoord
+                                    }
+                                }
+                            }
                         }
                     }
                 }

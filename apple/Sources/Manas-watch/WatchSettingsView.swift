@@ -69,6 +69,18 @@ struct WatchSettingsView: View {
                                        displayedComponents: [.hourAndMinute])
                                 .labelsHidden()
                         }
+                        Toggle(L.t("settings.testLocation", settings.locale), isOn: debugCoordOn)
+                        if settings.debugCoord != nil {
+                            // Typing coordinates on a watch is impractical — pick a
+                            // stage (or "far") and we use its known coordinate.
+                            Picker(L.t("settings.testLocation", settings.locale), selection: coordBinding) {
+                                ForEach(store.data?.stages ?? []) { s in
+                                    Text(s.name).tag(Geo.coordString(for: s) ?? "")
+                                }
+                                Text(L.t("settings.testLocationFar", settings.locale)).tag(Geo.farTestCoord)
+                            }
+                            .labelsHidden()
+                        }
                     }
                 }
             }
@@ -94,6 +106,17 @@ struct WatchSettingsView: View {
     private var timeBinding: Binding<Date> {
         Binding(get: { settings.debugNow ?? defaultDebugDate },
                 set: { recombine(day: Fmt.festivalDay(settings.debugNow ?? defaultDebugDate), time: $0) })
+    }
+    private var defaultDebugCoord: String {
+        store.data?.stages.first(where: { $0.isDefault }).flatMap(Geo.coordString) ?? Geo.farTestCoord
+    }
+    private var debugCoordOn: Binding<Bool> {
+        Binding(get: { settings.debugCoord != nil },
+                set: { settings.debugCoord = $0 ? (settings.debugCoord ?? defaultDebugCoord) : nil })
+    }
+    private var coordBinding: Binding<String> {
+        Binding(get: { settings.debugCoord ?? defaultDebugCoord },
+                set: { settings.debugCoord = $0 })
     }
     /// Combine the chosen festival day with the picked wall-clock H:M, read as
     /// Budapest time so it matches the schedule regardless of device zone.
