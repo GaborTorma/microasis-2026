@@ -37,6 +37,7 @@ struct NowView: View {
             }
         }
         .onReceive(tick) { _ in now = Fmt.now }
+        .onChange(of: settings.debugNow) { _, _ in now = Fmt.now }
     }
 }
 
@@ -51,17 +52,14 @@ private struct StageNowCard: View {
         let next = events.first { $0.startsAt > now }
         let color = Color(hex: stage.color)
         let accent = Color(hex: stage.accent)
+        // The whole view is "now", so only show what's next when it's soon.
+        let showNext = (next?.startsAt.timeIntervalSince(now) ?? .infinity) <= 6 * 3600
 
         VStack(spacing: 0) {
+            // Stage header — no "now" badge; the whole screen is the now view.
             HStack {
                 Text(stage.name).font(.title3.bold()).foregroundStyle(Theme.cream)
                 Spacer()
-                if live != nil {
-                    Text(L.t("now.live", locale).uppercased())
-                        .font(.system(size: 10, weight: .bold)).tracking(1)
-                        .padding(.horizontal, 8).padding(.vertical, 3)
-                        .background(Theme.sun, in: Capsule()).foregroundStyle(Theme.ink)
-                }
             }
             .padding(.horizontal, 14).padding(.vertical, 9)
             .background(LinearGradient(colors: [color, color.opacity(0.73)],
@@ -69,27 +67,33 @@ private struct StageNowCard: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 if let live {
-                    Text(L.t("now.playingNow", locale).uppercased())
-                        .font(.system(size: 10, weight: .semibold)).tracking(2)
-                        .foregroundStyle(Theme.creamFaint)
-                    Text(live.title.text(locale)).font(.title2.bold()).foregroundStyle(Theme.cream)
-                    if let end = live.endsAt {
-                        Text("\(L.t("now.until", locale)) \(Fmt.hhmm(end))")
-                            .font(.caption).foregroundStyle(Theme.creamDim)
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(live.title.text(locale)).font(.title2.bold()).foregroundStyle(Theme.cream)
+                        Spacer(minLength: 8)
+                        if let end = live.endsAt {
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(remaining(to: end))   // counts down to the end
+                                    .font(.system(.title3, design: .monospaced).weight(.bold))
+                                    .foregroundStyle(Theme.sun)
+                                Text("\(L.t("now.until", locale)) \(Fmt.hhmm(end))")
+                                    .font(.caption).foregroundStyle(Theme.creamDim)
+                            }
+                            .fixedSize()
+                        }
                     }
                 } else {
                     Text(L.t("now.nothing", locale)).font(.subheadline).foregroundStyle(Theme.creamFaint)
                 }
-                if let next {
-                    Divider().overlay(Theme.line).padding(.vertical, 2)
-                    HStack {
-                        VStack(alignment: .leading, spacing: 1) {
+                if let next, showNext {
+                    Divider().overlay(Theme.line).padding(.top, 8).padding(.bottom, 10)
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text(L.t("now.upNext", locale).uppercased())
                                 .font(.system(size: 9, weight: .semibold)).tracking(2)
                                 .foregroundStyle(Theme.creamFaint)
                             Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim)
                         }
-                        Spacer()
+                        Spacer(minLength: 8)
                         Text(Fmt.hhmm(next.startsAt))
                             .font(.system(.subheadline, design: .monospaced).weight(.semibold))
                             .foregroundStyle(accent)
@@ -102,6 +106,13 @@ private struct StageNowCard: View {
         .background(Theme.ink2.opacity(0.85))
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Theme.line, lineWidth: 1))
+    }
+
+    /// Time left until the act ends, "H:MM:SS" (or "M:SS" under an hour).
+    private func remaining(to end: Date) -> String {
+        let s = max(0, Int(end.timeIntervalSince(now)))
+        let h = s / 3600, m = (s % 3600) / 60, sec = s % 60
+        return h > 0 ? String(format: "%d:%02d:%02d", h, m, sec) : String(format: "%d:%02d", m, sec)
     }
 }
 

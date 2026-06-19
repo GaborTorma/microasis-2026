@@ -38,6 +38,7 @@ struct TimetableView: View {
             }
         }
         .onReceive(tick) { _ in now = Fmt.now }
+        .onChange(of: settings.debugNow) { _, _ in now = Fmt.now }
     }
 
     private func centered(_ s: String) -> some View {
