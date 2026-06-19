@@ -108,13 +108,11 @@ struct WatchRootView: View {
                         Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(Theme.creamDim)
-                        // "MOST" badge when this act is the one on right now.
+                        // Glowing "live" dot — same red as the iOS now line —
+                        // when this act is the one on right now.
                         if event.isLive(at: now) {
-                            Text(L.t("now.live", settings.locale).uppercased())
-                                .font(.system(size: 9, weight: .bold))
-                                .padding(.horizontal, 5).padding(.vertical, 1)
-                                .background(Theme.sun, in: Capsule())
-                                .foregroundStyle(Theme.ink)
+                            Circle().fill(Theme.now).frame(width: 8, height: 8)
+                                .shadow(color: Theme.now, radius: 4)
                         }
                     }
                     HStack(spacing: 4) {
@@ -195,9 +193,12 @@ struct WatchRootView: View {
         anchorTime = currentEvent?.startsAt
     }
 
-    /// Horizontal swipe: keep the anchor time fixed and show the act nearest to
-    /// it on the new stage — so switching back and forth never drifts. If the
-    /// stage has nothing within `nearWindow` of the anchor, flag "nothing on".
+    /// Horizontal swipe: keep the anchor fixed and show that stage's act for the
+    /// anchor — so switching back and forth never drifts. We only ever look
+    /// forward from the anchor (the act on at it, or the next one within
+    /// `nearWindow`); an act that already ended before the anchor is never shown
+    /// — it's "nothing on". (When browsing the past, the anchor itself is a past
+    /// time, so the act that was on then still counts as "on at" it.)
     private func switchStage(_ delta: Int) {
         guard !stages.isEmpty else { return }
         stageIndex = (currentIndex + delta + stages.count) % stages.count
@@ -207,34 +208,24 @@ struct WatchRootView: View {
             noProgramAtAnchor = false
             return
         }
-        guard !evs.isEmpty else { noProgramAtAnchor = false; return }
-        let n = nearestIndex(to: t, in: evs)
-        eventIndex = n
-        noProgramAtAnchor = distance(t, evs[n]) > nearWindow
+        let r = programIndex(at: t, in: evs)
+        eventIndex = r.index
+        noProgramAtAnchor = !r.onProgram
     }
 
-    /// Index of the act closest to `t`. An act that's *on* at `t` wins first —
-    /// so at a back-to-back boundary like 00:00 we pick the act starting then,
-    /// not the one that just ended — otherwise the smallest gap to `t`.
-    private func nearestIndex(to t: Date, in evs: [EventDTO]) -> Int {
-        if let i = evs.firstIndex(where: { e in
-            let end = e.endsAt ?? e.startsAt
-            return e.startsAt <= t && t < end
-        }) { return i }
-        var best = 0, bestDist = TimeInterval.greatestFiniteMagnitude
-        for (i, e) in evs.enumerated() {
-            let d = distance(t, e)
-            if d < bestDist { bestDist = d; best = i }
+    /// The act to show for time `t`: the one on at `t`, else the next one
+    /// starting within `nearWindow`. Never an act that already ended before `t`.
+    /// Returns a fallback index (for vertical entry) with onProgram == false
+    /// when nothing qualifies.
+    private func programIndex(at t: Date, in evs: [EventDTO]) -> (index: Int, onProgram: Bool) {
+        guard !evs.isEmpty else { return (0, false) }
+        if let i = evs.firstIndex(where: { $0.startsAt <= t && t < ($0.endsAt ?? $0.startsAt) }) {
+            return (i, true)
         }
-        return best
-    }
-
-    /// 0 if `t` falls inside the act, otherwise the gap to its nearest edge.
-    private func distance(_ t: Date, _ e: EventDTO) -> TimeInterval {
-        let end = e.endsAt ?? e.startsAt
-        if t < e.startsAt { return e.startsAt.timeIntervalSince(t) }
-        if t >= end { return t.timeIntervalSince(end) }
-        return 0
+        if let i = evs.firstIndex(where: { $0.startsAt >= t }) {
+            return (i, evs[i].startsAt.timeIntervalSince(t) <= nearWindow)
+        }
+        return (evs.count - 1, false)   // everything is in the past → nothing on
     }
 
     private func defaultIndex(in evs: [EventDTO]) -> Int {
@@ -248,7 +239,9 @@ struct WatchRootView: View {
         didInit = true
         if let def = stages.firstIndex(where: { $0.isDefault }) { stageIndex = def }
         eventIndex = defaultIndex(in: stageEvents)
-        anchorTime = currentEvent?.startsAt ?? now
+        // Live → anchor on "now" (so switching shows only what's on now, never a
+        // finished act); otherwise anchor on the shown (upcoming) act's start.
+        anchorTime = currentEvent.map { $0.isLive(at: now) ? now : $0.startsAt } ?? now
         noProgramAtAnchor = false
     }
 }

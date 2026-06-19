@@ -105,8 +105,13 @@ struct TimetableView: View {
                     .onAppear {
                         guard !didScroll else { return }
                         didScroll = true
-                        let target = data.days.contains(Fmt.festivalDay(now)) ? Fmt.festivalDay(now) : (data.days.first ?? "")
-                        DispatchQueue.main.async { withAnimation { vproxy.scrollTo("day-\(target)", anchor: .top) } }
+                        // Open at the act on now (earliest-starting if several are
+                        // live); else the next act; else the start.
+                        let target = data.events.filter { $0.isLive(at: now) }.map(\.startsAt).min()
+                            ?? data.events.filter { $0.startsAt > now }.map(\.startsAt).min()
+                            ?? now
+                        let idx = g.hours.lastIndex(where: { $0 <= target }) ?? 0
+                        DispatchQueue.main.async { withAnimation { vproxy.scrollTo("t-\(idx)", anchor: .top) } }
                     }
                 }
                 // Re-snap the paged columns when the zoom (column count) changes,
@@ -217,6 +222,12 @@ struct TimetableView: View {
                 Text(Fmt.weekday(div.day, settings.locale)).font(.system(size: 8, weight: .medium))
                     .foregroundStyle(Theme.creamDim).fixedSize()
                     .offset(x: 2, y: g.y(div.date) + 1)
+            }
+            // Glowing dot marking where the now line begins (gutter edge).
+            if now >= g.start && now <= g.end {
+                Circle().fill(Theme.now).frame(width: 7, height: 7)
+                    .shadow(color: Theme.now, radius: 4)
+                    .offset(x: gutterW - 5, y: g.y(now) - 3.5)
             }
         }
         .frame(width: gutterW)

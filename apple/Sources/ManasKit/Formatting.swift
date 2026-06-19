@@ -42,10 +42,13 @@ public enum Fmt {
         return Date()
     }
 
-    /// Parse a full ISO-8601 instant or a friendly Budapest-local
-    /// "yyyy-MM-dd HH:mm". Used by the debug clock + its settings UI.
+    /// Parse the debug clock value: a full ISO-8601 instant (what the in-app
+    /// picker stores, and the recommended simctl form, e.g.
+    /// "2026-07-09T00:15:00+02:00"), or a friendly Budapest-local
+    /// "yyyy-MM-dd HH:mm". The `T` check keeps ISO from mis-reading the space
+    /// form as a date-only value.
     public static func parseDateTime(_ s: String) -> Date? {
-        if let d = ISO8601DateFormatter().date(from: s) { return d }
+        if s.contains("T") { return ISO8601DateFormatter().date(from: s) }
         let f = DateFormatter()
         f.timeZone = budapest
         f.locale = Locale(identifier: "en_US_POSIX")

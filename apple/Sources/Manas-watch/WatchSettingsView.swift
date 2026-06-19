@@ -57,8 +57,16 @@ struct WatchSettingsView: View {
                     Section(L.t("settings.testing", settings.locale)) {
                         Toggle(L.t("settings.testTime", settings.locale), isOn: debugOn)
                         if settings.debugNow != nil {
-                            DatePicker(L.t("settings.testTime", settings.locale), selection: debugDate,
-                                       displayedComponents: [.date, .hourAndMinute])
+                            // Day wheel over the festival days + a time wheel —
+                            // watchOS' combined date picker is unusable here.
+                            Picker(L.t("settings.testTime", settings.locale), selection: dayBinding) {
+                                ForEach(store.data?.days ?? [], id: \.self) { d in
+                                    Text("\(Fmt.mmdd(d)) \(Fmt.weekday(d, settings.locale))").tag(d)
+                                }
+                            }
+                            .labelsHidden()
+                            DatePicker(L.t("settings.testTime", settings.locale), selection: timeBinding,
+                                       displayedComponents: [.hourAndMinute])
                                 .labelsHidden()
                         }
                     }
@@ -79,9 +87,25 @@ struct WatchSettingsView: View {
         Binding(get: { settings.debugNow != nil },
                 set: { settings.debugNow = $0 ? (settings.debugNow ?? defaultDebugDate) : nil })
     }
-    private var debugDate: Binding<Date> {
+    private var dayBinding: Binding<String> {
+        Binding(get: { Fmt.festivalDay(settings.debugNow ?? defaultDebugDate) },
+                set: { recombine(day: $0, time: settings.debugNow ?? defaultDebugDate) })
+    }
+    private var timeBinding: Binding<Date> {
         Binding(get: { settings.debugNow ?? defaultDebugDate },
-                set: { settings.debugNow = $0 })
+                set: { recombine(day: Fmt.festivalDay(settings.debugNow ?? defaultDebugDate), time: $0) })
+    }
+    /// Combine the chosen festival day with the picked wall-clock H:M, read as
+    /// Budapest time so it matches the schedule regardless of device zone.
+    private func recombine(day: String, time: Date) {
+        let parts = day.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3 else { return }
+        var cal = Calendar(identifier: .gregorian); cal.timeZone = Fmt.budapest
+        let t = Calendar.current.dateComponents([.hour, .minute], from: time)
+        var c = DateComponents()
+        c.year = parts[0]; c.month = parts[1]; c.day = parts[2]
+        c.hour = t.hour; c.minute = t.minute
+        settings.debugNow = cal.date(from: c)
     }
 
     private func move(_ index: Int, by delta: Int) {
