@@ -228,12 +228,12 @@ struct TimetableView: View {
 
     private func stageHeader(_ stage: StageDTO, cw: CGFloat) -> some View {
         HStack(spacing: 3) {
-            if location.nearestSlug == stage.slug {
-                Image(systemName: "location.fill").font(.system(size: 9, weight: .bold))
-            }
             Text(stage.name)
                 .font(.system(size: 13, weight: .bold, design: .rounded))
                 .lineLimit(1).minimumScaleFactor(0.6)
+            if location.nearestSlug == stage.slug {
+                Image(systemName: "location.fill").font(.system(size: 9, weight: .bold))
+            }
         }
             .foregroundStyle(Theme.cream)
             .frame(width: cw - 4, height: headerH - 6)
@@ -307,6 +307,7 @@ struct TimetableView: View {
 
     private func columnView(stage: StageDTO, g: Grid, colW: CGFloat, scale: CGFloat) -> some View {
         let evs = g.events.filter { $0.stageSlug == stage.slug }
+        let near = location.nearestSlug == stage.slug
         return ZStack(alignment: .topLeading) {
             Color.clear.frame(width: colW, height: g.total)
             ForEach(g.hours, id: \.self) { date in
@@ -324,7 +325,7 @@ struct TimetableView: View {
                 // start so a 15-min slot can never overlap the one below it.
                 let avail = i + 1 < evs.count ? g.y(evs[i + 1].startsAt) - g.y(ev.startsAt) : .infinity
                 let h = min(max(g.blockHeight(ev), EventBlock.minHeight(scale)), avail)
-                EventBlock(event: ev, stage: stage, now: now, locale: settings.locale, scale: scale, height: h)
+                EventBlock(event: ev, stage: stage, now: now, near: near, locale: settings.locale, scale: scale, height: h)
                     .frame(width: colW - 4, height: h)
                     .offset(x: 2, y: g.y(ev.startsAt))
             }
@@ -377,6 +378,8 @@ private struct EventBlock: View {
     let event: EventDTO
     let stage: StageDTO
     let now: Date
+    /// The device is standing at this event's stage (within `Geo.nearThreshold`).
+    let near: Bool
     let locale: AppLocale
     let scale: CGFloat
     let height: CGFloat
@@ -392,6 +395,8 @@ private struct EventBlock: View {
         let start = event.startsAt
         let end = event.endsAt ?? start.addingTimeInterval(hour)
         let live = start <= now && end > now
+        // On now AND standing at this stage → the kind icon glows red and pulses.
+        let hot = live && near
         let past = end <= now
         let color = Color(hex: stage.color)
         let accent = Color(hex: stage.accent)
@@ -416,14 +421,11 @@ private struct EventBlock: View {
                         Text(Fmt.range(start, event.endsAt))
                             .font(.system(size: 9 * scale, weight: .semibold, design: .monospaced))
                             .foregroundStyle(accent).lineLimit(1).minimumScaleFactor(0.7)
-                        if live { Circle().fill(Theme.sun).frame(width: 4, height: 4) }
                         Spacer(minLength: 2)
-                        Image(systemName: kindSymbol(event.kind))
-                            .font(.system(size: 9 * scale)).foregroundStyle(accent)
+                        kindIcon(accent, hot: hot)
                     }
                 }
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
-                    if !showTime, live { Circle().fill(Theme.sun).frame(width: 4, height: 4) }
                     Text(event.title.text(locale))
                         .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
                         .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
@@ -432,8 +434,7 @@ private struct EventBlock: View {
                     // for a time row); the language watermark floats over (overlay).
                     if !showTime {
                         Spacer(minLength: 2)
-                        Image(systemName: kindSymbol(event.kind))
-                            .font(.system(size: 9 * scale)).foregroundStyle(accent)
+                        kindIcon(accent, hot: hot)
                     }
                 }
                 Spacer(minLength: 0)
@@ -452,6 +453,16 @@ private struct EventBlock: View {
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .opacity(past ? 0.45 : 1)
         }
+    }
+
+    /// The act's kind glyph. When `hot` (on now AND at this stage) it glows the
+    /// same red as the now line and pulses; otherwise the stage accent, static.
+    private func kindIcon(_ accent: Color, hot: Bool) -> some View {
+        Image(systemName: kindSymbol(event.kind))
+            .font(.system(size: 9 * scale))
+            .foregroundStyle(hot ? Theme.now : accent)
+            .shadow(color: hot ? Theme.now : .clear, radius: hot ? 4 : 0)
+            .symbolEffect(.pulse, options: .repeating, isActive: hot)
     }
 
     @ViewBuilder

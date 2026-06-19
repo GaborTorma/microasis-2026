@@ -94,15 +94,20 @@ struct WatchRootView: View {
         VStack(alignment: .leading, spacing: 6) {
             // ── Fixed top block: stage / date / time / icon never move ──
             HStack(spacing: 4) {
-                if location.nearestSlug == stage.slug {
-                    Image(systemName: "location.fill")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(Color(hex: stage.accent))
-                }
                 Text(stage.name.uppercased())
                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color(hex: stage.accent))
                     .lineLimit(1).minimumScaleFactor(0.7)
+                if location.nearestSlug == stage.slug {
+                    // Pulses (and glows) when you're at this stage AND its act is
+                    // on right now — "right place, right time".
+                    let liveHere = displayedEvent?.isLive(at: now) ?? false
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Color(hex: stage.accent))
+                        .symbolEffect(.pulse, options: .repeating, isActive: liveHere)
+                        .shadow(color: liveHere ? Color(hex: stage.accent) : .clear, radius: 4)
+                }
             }
 
             if noProgramAtAnchor, let t = anchorTime {

@@ -61,11 +61,11 @@ private struct StageNowCard: View {
         VStack(spacing: 0) {
             // Stage header — no "now" badge; the whole screen is the now view.
             HStack(spacing: 5) {
+                Text(stage.name).font(.title3.bold()).foregroundStyle(Theme.cream)
                 if near {
                     Image(systemName: "location.fill")
                         .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.cream)
                 }
-                Text(stage.name).font(.title3.bold()).foregroundStyle(Theme.cream)
                 Spacer()
                 if let live {
                     Image(systemName: kindSymbol(live.kind))
