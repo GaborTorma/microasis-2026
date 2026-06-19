@@ -39,6 +39,7 @@ public enum L {
         "settings.done": ("Kész", "Done"),
         "days.short": ("nap", "day"),
         "watch.noEvents": ("Nincs program ezen a színpadon", "No programme on this stage"),
+        "watch.noProgram": ("Ekkor nincs program", "Nothing on at this time"),
     ]
 
     public static func t(_ key: String, _ locale: AppLocale) -> String {

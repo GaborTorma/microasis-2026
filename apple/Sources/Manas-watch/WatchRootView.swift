@@ -12,8 +12,17 @@ struct WatchRootView: View {
     @State private var didInit = false
     @State private var showSettings = false
     @State private var now = Date()
+    /// Fixed time the left/right navigation pivots around. Only a vertical
+    /// swipe (or init) moves it; horizontal switches keep it, so going back and
+    /// forth between stages never drifts off the time you were looking at.
+    @State private var anchorTime: Date?
+    /// The current stage has no act within `nearWindow` of the anchor.
+    @State private var noProgramAtAnchor = false
 
     private let tick = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+    /// How close an act must be to the anchor to count as "on at this time"
+    /// (otherwise we show "nothing on" instead of jumping hours away).
+    private let nearWindow: TimeInterval = 2 * 3600
 
     private var stages: [StageDTO] { settings.orderedVisible(store.data?.stages ?? []) }
     /// `stageIndex` clamped into the current visible range — used everywhere so
@@ -21,11 +30,14 @@ struct WatchRootView: View {
     private var currentIndex: Int { stages.isEmpty ? 0 : min(max(stageIndex, 0), stages.count - 1) }
     private var stage: StageDTO? { stages.indices.contains(currentIndex) ? stages[currentIndex] : nil }
     private var stageEvents: [EventDTO] { stage.map { store.events(forStage: $0.slug) } ?? [] }
-    private var event: EventDTO? {
+    /// Focused act on the current stage (ignores the no-programme flag).
+    private var currentEvent: EventDTO? {
         let e = stageEvents
         guard !e.isEmpty else { return nil }
         return e[min(max(eventIndex, 0), e.count - 1)]
     }
+    /// What the card shows — nil when this stage has nothing near the anchor.
+    private var displayedEvent: EventDTO? { noProgramAtAnchor ? nil : currentEvent }
 
     var body: some View {
         ZStack {
@@ -74,7 +86,22 @@ struct WatchRootView: View {
                 .foregroundStyle(Color(hex: stage.accent))
                 .lineLimit(1).minimumScaleFactor(0.7)
 
-            if let event {
+            if noProgramAtAnchor, let t = anchorTime {
+                let day = Fmt.festivalDay(t)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(Fmt.mmdd(day)) · \(Fmt.weekday(day, settings.locale))")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Theme.creamDim)
+                    Text(Fmt.hhmm(t))
+                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(Theme.cream)
+                        .frame(height: 20)
+                }
+                Text(L.t("watch.noProgram", settings.locale))
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Theme.creamDim)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            } else if let event = displayedEvent {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
                         .font(.system(size: 11, weight: .medium))
@@ -108,7 +135,7 @@ struct WatchRootView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(.horizontal, 4)
         .overlay(alignment: .bottomTrailing) {
-            if let event, event.kind == EventKind.workshop {
+            if let event = displayedEvent, event.kind == EventKind.workshop {
                 let chip = Theme.chip(event.langAvailability)
                 Text(chip.label).font(.system(size: 11, weight: .bold))
                     .padding(.horizontal, 7).padding(.vertical, 3)
@@ -144,28 +171,53 @@ struct WatchRootView: View {
             }
     }
 
+    /// Vertical swipe: move along this stage's timeline (or reveal the nearest
+    /// act if we were showing "nothing on"), then make the shown act the new
+    /// anchor for subsequent left/right switches.
     private func step(_ delta: Int) {
-        let count = stageEvents.count
-        guard count > 0 else { return }
-        eventIndex = min(max(eventIndex + delta, 0), count - 1)
+        guard !stageEvents.isEmpty else { return }
+        if noProgramAtAnchor {
+            noProgramAtAnchor = false        // first swipe reveals the nearest act
+        } else {
+            eventIndex = min(max(eventIndex + delta, 0), stageEvents.count - 1)
+        }
+        anchorTime = currentEvent?.startsAt
     }
 
+    /// Horizontal swipe: keep the anchor time fixed and show the act nearest to
+    /// it on the new stage — so switching back and forth never drifts. If the
+    /// stage has nothing within `nearWindow` of the anchor, flag "nothing on".
     private func switchStage(_ delta: Int) {
         guard !stages.isEmpty else { return }
-        let anchor = event?.startsAt
         stageIndex = (currentIndex + delta + stages.count) % stages.count
         let evs = stageEvents
-        if let anchor { eventIndex = indexForTime(anchor, in: evs) }
-        else { eventIndex = defaultIndex(in: evs) }
+        guard let t = anchorTime else {
+            eventIndex = defaultIndex(in: evs)
+            noProgramAtAnchor = false
+            return
+        }
+        guard !evs.isEmpty else { noProgramAtAnchor = false; return }
+        let n = nearestIndex(to: t, in: evs)
+        eventIndex = n
+        noProgramAtAnchor = distance(t, evs[n]) > nearWindow
     }
 
-    private func indexForTime(_ t: Date, in evs: [EventDTO]) -> Int {
-        // The act starting at t, or the next one after it — NEVER an act that
-        // started earlier (even if it's still running), so switching stages
-        // never jumps back to an earlier programme.
-        if let i = evs.firstIndex(where: { $0.startsAt >= t }) { return i }
-        // Nothing on or after t on this stage → its last act (no forward option).
-        return max(evs.count - 1, 0)
+    /// Index of the act closest to `t` (by gap to its [start, end) interval).
+    private func nearestIndex(to t: Date, in evs: [EventDTO]) -> Int {
+        var best = 0, bestDist = TimeInterval.greatestFiniteMagnitude
+        for (i, e) in evs.enumerated() {
+            let d = distance(t, e)
+            if d < bestDist { bestDist = d; best = i }
+        }
+        return best
+    }
+
+    /// 0 if `t` falls inside the act, otherwise the gap to its nearest edge.
+    private func distance(_ t: Date, _ e: EventDTO) -> TimeInterval {
+        let end = e.endsAt ?? e.startsAt
+        if t < e.startsAt { return e.startsAt.timeIntervalSince(t) }
+        if t >= end { return t.timeIntervalSince(end) }
+        return 0
     }
 
     private func defaultIndex(in evs: [EventDTO]) -> Int {
@@ -179,5 +231,7 @@ struct WatchRootView: View {
         didInit = true
         if let def = stages.firstIndex(where: { $0.isDefault }) { stageIndex = def }
         eventIndex = defaultIndex(in: stageEvents)
+        anchorTime = currentEvent?.startsAt ?? now
+        noProgramAtAnchor = false
     }
 }
