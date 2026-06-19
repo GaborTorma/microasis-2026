@@ -9,7 +9,8 @@ import {
 } from "react";
 
 type Settings = { order: string[]; hidden: string[]; scale: number };
-const DEFAULT: Settings = { order: [], hidden: [], scale: 1 };
+// Bowl is hidden by default (its poster isn't published); users can re-enable it.
+const DEFAULT: Settings = { order: [], hidden: ["bowl"], scale: 1 };
 const KEY = "manas-settings-v1";
 
 /** Timetable text/width zoom levels (−25% … +50%, 25% steps). */
