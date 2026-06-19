@@ -104,9 +104,19 @@ struct WatchRootView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else if let event = displayedEvent {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(Theme.creamDim)
+                    HStack(spacing: 5) {
+                        Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Theme.creamDim)
+                        // "MOST" badge when this act is the one on right now.
+                        if event.isLive(at: now) {
+                            Text(L.t("now.live", settings.locale).uppercased())
+                                .font(.system(size: 9, weight: .bold))
+                                .padding(.horizontal, 5).padding(.vertical, 1)
+                                .background(Theme.sun, in: Capsule())
+                                .foregroundStyle(Theme.ink)
+                        }
+                    }
                     HStack(spacing: 4) {
                         Text(Fmt.range(event.startsAt, event.endsAt))
                             .font(.system(size: 13, weight: .semibold, design: .monospaced))

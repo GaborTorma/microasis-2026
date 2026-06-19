@@ -37,6 +37,8 @@ public enum L {
         "settings.language": ("Nyelv", "Language"),
         "settings.reorderHint": ("Húzd a sorrend módosításához", "Drag to reorder"),
         "settings.done": ("Kész", "Done"),
+        "settings.testing": ("Teszt", "Testing"),
+        "settings.testTime": ("Teszt idő", "Test time"),
         "days.short": ("nap", "day"),
         "watch.noEvents": ("Nincs program ezen a színpadon", "No programme on this stage"),
         "watch.noProgram": ("Ekkor nincs program", "Nothing on at this time"),

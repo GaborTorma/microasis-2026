@@ -53,6 +53,16 @@ struct WatchSettingsView: View {
                         .font(.system(size: 13))
                     }
                 }
+                if AppEnv.debugToolsEnabled {
+                    Section(L.t("settings.testing", settings.locale)) {
+                        Toggle(L.t("settings.testTime", settings.locale), isOn: debugOn)
+                        if settings.debugNow != nil {
+                            DatePicker(L.t("settings.testTime", settings.locale), selection: debugDate,
+                                       displayedComponents: [.date, .hourAndMinute])
+                                .labelsHidden()
+                        }
+                    }
+                }
             }
             .navigationTitle(L.t("settings.title", settings.locale))
             .toolbar {
@@ -62,6 +72,16 @@ struct WatchSettingsView: View {
             }
         }
         .onAppear { stages = settings.orderedAll(store.data?.stages ?? []) }
+    }
+
+    private var defaultDebugDate: Date { store.data?.festival.startsAt ?? Fmt.now }
+    private var debugOn: Binding<Bool> {
+        Binding(get: { settings.debugNow != nil },
+                set: { settings.debugNow = $0 ? (settings.debugNow ?? defaultDebugDate) : nil })
+    }
+    private var debugDate: Binding<Date> {
+        Binding(get: { settings.debugNow ?? defaultDebugDate },
+                set: { settings.debugNow = $0 })
     }
 
     private func move(_ index: Int, by delta: Int) {

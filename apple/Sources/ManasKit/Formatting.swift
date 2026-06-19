@@ -1,5 +1,17 @@
 import Foundation
 
+public enum AppEnv {
+    /// QA tools (the debug time override) are available in DEBUG builds and in
+    /// TestFlight, but compiled-out behaviour-wise for App Store releases.
+    public static let debugToolsEnabled: Bool = {
+        #if DEBUG
+        return true
+        #else
+        return Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+        #endif
+    }()
+}
+
 public enum Fmt {
     public static let budapest = TimeZone(identifier: "Europe/Budapest")!
 
@@ -22,17 +34,23 @@ public enum Fmt {
     ///   xcrun simctl spawn <udid> defaults write <bundle> manas.debugNow "2026-07-09 00:15"
     /// (also accepts a full ISO-8601 string). Compiled out of release builds.
     public static var now: Date {
-        #if DEBUG
-        if let s = UserDefaults.standard.string(forKey: "manas.debugNow"), !s.isEmpty {
-            if let d = ISO8601DateFormatter().date(from: s) { return d }
-            let f = DateFormatter()
-            f.timeZone = budapest
-            f.locale = Locale(identifier: "en_US_POSIX")
-            f.dateFormat = "yyyy-MM-dd HH:mm"
-            if let d = f.date(from: s) { return d }
+        if AppEnv.debugToolsEnabled,
+           let s = UserDefaults.standard.string(forKey: "manas.debugNow"),
+           let d = parseDateTime(s) {
+            return d
         }
-        #endif
         return Date()
+    }
+
+    /// Parse a full ISO-8601 instant or a friendly Budapest-local
+    /// "yyyy-MM-dd HH:mm". Used by the debug clock + its settings UI.
+    public static func parseDateTime(_ s: String) -> Date? {
+        if let d = ISO8601DateFormatter().date(from: s) { return d }
+        let f = DateFormatter()
+        f.timeZone = budapest
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)
     }
 
     /// "HH:mm" in festival-local time.

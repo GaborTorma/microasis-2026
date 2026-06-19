@@ -13,7 +13,7 @@ public final class Settings: ObservableObject {
     private let defaults = UserDefaults.standard
     private enum Key {
         static let order = "manas.order", hidden = "manas.hidden", locale = "manas.locale"
-        static let columns = "manas.columns", fontSize = "manas.fontSize"
+        static let columns = "manas.columns", fontSize = "manas.fontSize", debugNow = "manas.debugNow"
     }
 
     @Published public var order: [String] { didSet { defaults.set(order, forKey: Key.order) } }
@@ -23,6 +23,14 @@ public final class Settings: ObservableObject {
     @Published public var columns: Int { didSet { defaults.set(columns, forKey: Key.columns) } }
     /// Text-size step 1…5 — drives both the font scale and the block heights.
     @Published public var fontSize: Int { didSet { defaults.set(fontSize, forKey: Key.fontSize) } }
+    /// QA-only override for "now" (TestFlight/DEBUG); nil = real time. Shares
+    /// the `manas.debugNow` defaults key with `Fmt.now`.
+    @Published public var debugNow: Date? {
+        didSet {
+            if let d = debugNow { defaults.set(ISO8601DateFormatter().string(from: d), forKey: Key.debugNow) }
+            else { defaults.removeObject(forKey: Key.debugNow) }
+        }
+    }
 
     public init() {
         order = defaults.stringArray(forKey: Key.order) ?? []
@@ -31,6 +39,7 @@ public final class Settings: ObservableObject {
         locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
         columns = (defaults.object(forKey: Key.columns) as? Int) ?? 3
         fontSize = (defaults.object(forKey: Key.fontSize) as? Int) ?? 3
+        debugNow = defaults.string(forKey: Key.debugNow).flatMap(Fmt.parseDateTime)
     }
 
     /// Font scale for the chosen text size: 1…5 → 0.9…1.7 (step 0.2).
