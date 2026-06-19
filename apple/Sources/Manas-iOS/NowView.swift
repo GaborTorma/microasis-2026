@@ -60,6 +60,11 @@ private struct StageNowCard: View {
             HStack {
                 Text(stage.name).font(.title3.bold()).foregroundStyle(Theme.cream)
                 Spacer()
+                if let live {
+                    Image(systemName: kindSymbol(live.kind))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Theme.cream.opacity(0.9))
+                }
             }
             .padding(.horizontal, 14).padding(.vertical, 9)
             .background(LinearGradient(colors: [color, color.opacity(0.73)],
@@ -69,11 +74,12 @@ private struct StageNowCard: View {
                 if let live {
                     HStack(alignment: .top, spacing: 8) {
                         Text(live.title.text(locale)).font(.title2.bold()).foregroundStyle(Theme.cream)
+                            .lineLimit(3).minimumScaleFactor(0.55)
                         Spacer(minLength: 8)
                         if let end = live.endsAt {
                             VStack(alignment: .trailing, spacing: 2) {
                                 Text(remaining(to: end))   // counts down to the end
-                                    .font(.system(.title3, design: .monospaced).weight(.bold))
+                                    .font(.system(.subheadline, design: .monospaced).weight(.semibold))
                                     .foregroundStyle(Theme.sun)
                                 Text("\(L.t("now.until", locale)) \(Fmt.hhmm(end))")
                                     .font(.caption).foregroundStyle(Theme.creamDim)
@@ -92,11 +98,16 @@ private struct StageNowCard: View {
                                 .font(.system(size: 9, weight: .semibold)).tracking(2)
                                 .foregroundStyle(Theme.creamFaint)
                             Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim)
+                                .lineLimit(2).minimumScaleFactor(0.7)
                         }
                         Spacer(minLength: 8)
-                        Text(Fmt.hhmm(next.startsAt))
-                            .font(.system(.subheadline, design: .monospaced).weight(.semibold))
-                            .foregroundStyle(accent)
+                        VStack(alignment: .trailing, spacing: 3) {
+                            Text(Fmt.hhmm(next.startsAt))
+                                .font(.system(.subheadline, design: .monospaced).weight(.semibold))
+                                .foregroundStyle(accent)
+                            Image(systemName: kindSymbol(next.kind))
+                                .font(.system(size: 12)).foregroundStyle(accent)
+                        }
                     }
                 }
             }

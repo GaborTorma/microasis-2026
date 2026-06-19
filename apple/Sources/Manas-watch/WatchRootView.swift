@@ -6,6 +6,7 @@ import WatchKit
 struct WatchRootView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var stageIndex = 0
     @State private var eventIndex = 0
@@ -69,6 +70,10 @@ struct WatchRootView: View {
         .onReceive(tick) { _ in now = Fmt.now }
         .onChange(of: store.data?.events.count ?? 0) { _, _ in initIfNeeded() }
         .onAppear { initIfNeeded() }
+        // Changing the debug time, or returning to the foreground, re-centres on
+        // "now" so the live act and its dot are correct immediately.
+        .onChange(of: settings.debugNow) { _, _ in now = Fmt.now; resetToNow() }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { now = Fmt.now; resetToNow() } }
     }
 
     private var bg: Color {
@@ -237,6 +242,13 @@ struct WatchRootView: View {
     private func initIfNeeded() {
         guard !didInit, !stages.isEmpty else { return }
         didInit = true
+        resetToNow()
+    }
+
+    /// Centre on "now": default stage, its live act (or next), anchored so
+    /// switching shows only what's on now.
+    private func resetToNow() {
+        guard !stages.isEmpty else { return }
         if let def = stages.firstIndex(where: { $0.isDefault }) { stageIndex = def }
         eventIndex = defaultIndex(in: stageEvents)
         // Live → anchor on "now" (so switching shows only what's on now, never a

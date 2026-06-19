@@ -18,6 +18,7 @@ struct TimetableView: View {
     @EnvironmentObject var settings: Settings
     var isLandscape: Bool = false
     @Binding var compactHeader: Bool
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var now = Fmt.now
     @State private var activeDay: String = ""
@@ -86,6 +87,7 @@ struct TimetableView: View {
                             .scrollPosition(id: $leadingStage, anchor: .leading)
                             .frame(width: max(geo.size.width - gutterW, 0))
                         }
+                        .overlay(alignment: .topLeading) { nowLine(g, width: geo.size.width) }
                     }
                     .coordinateSpace(name: "grid")
                     .onPreferenceChange(HourOffsetKey.self) { offsets in
@@ -106,14 +108,12 @@ struct TimetableView: View {
                     .onAppear {
                         guard !didScroll else { return }
                         didScroll = true
-                        // Open at the act on now (earliest-starting if several are
-                        // live); else the next act; else the start.
-                        let target = data.events.filter { $0.isLive(at: now) }.map(\.startsAt).min()
-                            ?? data.events.filter { $0.startsAt > now }.map(\.startsAt).min()
-                            ?? now
-                        let idx = g.hours.lastIndex(where: { $0 <= target }) ?? 0
-                        DispatchQueue.main.async { withAnimation { vproxy.scrollTo("t-\(idx)", anchor: .top) } }
+                        jumpToNow(vproxy, g, data)
                     }
+                }
+                // Returning to the foreground re-jumps to the current time.
+                .onChange(of: scenePhase) { _, phase in
+                    if phase == .active { jumpToNow(vproxy, g, data) }
                 }
                 // Re-snap the paged columns when the zoom (column count) changes,
                 // so zooming while scrolled never leaves a half-column showing.
@@ -132,11 +132,38 @@ struct TimetableView: View {
         }
     }
 
+    /// Scroll so the act on now (earliest-starting if several are live, else the
+    /// next act) sits at the top.
+    private func jumpToNow(_ proxy: ScrollViewProxy, _ g: Grid, _ data: ScheduleData) {
+        now = Fmt.now
+        let target = data.events.filter { $0.isLive(at: now) }.map(\.startsAt).min()
+            ?? data.events.filter { $0.startsAt > now }.map(\.startsAt).min()
+            ?? now
+        let idx = g.hours.lastIndex(where: { $0 <= target }) ?? 0
+        DispatchQueue.main.async { withAnimation { proxy.scrollTo("t-\(idx)", anchor: .top) } }
+    }
+
+    /// The now line: one continuous line at the current time — faint across the
+    /// gutter (under the date/time), bright and glowing over the stage columns,
+    /// out to the right edge.
+    @ViewBuilder
+    private func nowLine(_ g: Grid, width: CGFloat) -> some View {
+        if now >= g.start && now <= g.end {
+            ZStack(alignment: .leading) {
+                Rectangle().fill(Theme.now.opacity(0.3)).frame(height: 1)
+                Rectangle().fill(Theme.now).frame(width: max(width - gutterW, 0), height: 2)
+                    .shadow(color: Theme.now, radius: 3)
+                    .offset(x: gutterW)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .offset(y: g.y(now) - 1)
+        }
+    }
+
     // MARK: Day selector
 
     private func daySelector(_ data: ScheduleData, proxy: ScrollViewProxy) -> some View {
-        let today = Fmt.festivalDay(now)
-        return HStack(spacing: 4) {
+        HStack(spacing: 4) {
             ForEach(data.days, id: \.self) { d in
                 let active = d == activeDay
                 Button {
@@ -146,7 +173,6 @@ struct TimetableView: View {
                         Text(Fmt.mmdd(d)).font(.system(size: 15, weight: .bold, design: .rounded))
                         Text(Fmt.weekday(d, settings.locale))
                             .font(.system(size: 9, weight: .medium)).lineLimit(1).minimumScaleFactor(0.7)
-                        if d == today { Circle().fill(active ? Theme.ink : Theme.sun).frame(width: 4, height: 4) }
                     }
                     .frame(maxWidth: .infinity).padding(.vertical, 6)
                     .background(active ? Theme.sun : Theme.ink2.opacity(0.6), in: RoundedRectangle(cornerRadius: 8))
@@ -224,12 +250,6 @@ struct TimetableView: View {
                     .foregroundStyle(Theme.creamDim).fixedSize()
                     .offset(x: 2, y: g.y(div.date) + 1)
             }
-            // Glowing dot marking where the now line begins (gutter edge).
-            if now >= g.start && now <= g.end {
-                Circle().fill(Theme.now).frame(width: 7, height: 7)
-                    .shadow(color: Theme.now, radius: 4)
-                    .offset(x: gutterW - 5, y: g.y(now) - 3.5)
-            }
         }
         .frame(width: gutterW)
     }
@@ -267,7 +287,6 @@ struct TimetableView: View {
     // MARK: One self-contained stage column (a horizontal paging unit)
 
     private func columnView(stage: StageDTO, g: Grid, colW: CGFloat, scale: CGFloat) -> some View {
-        let showNow = now >= g.start && now <= g.end
         let evs = g.events.filter { $0.stageSlug == stage.slug }
         return ZStack(alignment: .topLeading) {
             Color.clear.frame(width: colW, height: g.total)
@@ -289,11 +308,6 @@ struct TimetableView: View {
                 EventBlock(event: ev, stage: stage, now: now, locale: settings.locale, scale: scale, height: h)
                     .frame(width: colW - 4, height: h)
                     .offset(x: 2, y: g.y(ev.startsAt))
-            }
-            if showNow {
-                Rectangle().fill(Theme.now).frame(width: colW, height: 2)
-                    .shadow(color: Theme.now, radius: 4)
-                    .offset(y: g.y(now))
             }
         }
         .frame(width: colW)
