@@ -68,9 +68,12 @@ private struct StageNowCard: View {
                 }
                 Spacer()
                 if let live {
+                    // On now AND standing at this stage → the icon pulses (own colour).
                     Image(systemName: kindSymbol(live.kind))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Theme.cream.opacity(0.9))
+                        .shadow(color: near ? Theme.cream : .clear, radius: near ? 4 : 0)
+                        .symbolEffect(.pulse, options: .repeating, isActive: near)
                 }
             }
             .padding(.horizontal, 14).padding(.vertical, 9)
