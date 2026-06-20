@@ -5,7 +5,7 @@ export const FESTIVAL = {
   unofficialNote: { en: "Unofficial guide", hu: "Nem hivatalos app" },
   location: { en: "Lengyeltóti, Hungary", hu: "Lengyeltóti, Magyarország" },
   timezone: "Europe/Budapest",
-  startsAt: "2026-07-08T18:30:00+02:00",
+  startsAt: "2026-07-08T12:00:00+02:00",
   endsAt: "2026-07-13T00:00:00+02:00",
   website: "https://manasfestival.eu",
 } as const;
