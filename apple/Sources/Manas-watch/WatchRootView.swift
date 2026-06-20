@@ -122,29 +122,27 @@ struct WatchRootView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else if let event = displayedEvent {
                 VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 5) {
-                        Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(Theme.creamDim)
-                        // Glowing "live" dot — same red as the iOS now line —
-                        // when this act is the one on right now.
-                        if event.isLive(at: now) {
-                            Circle().fill(Theme.now).frame(width: 8, height: 8)
-                                .shadow(color: Theme.now, radius: 4)
-                        }
-                    }
+                    Text("\(Fmt.mmdd(event.day)) · \(Fmt.weekday(event.day, settings.locale))")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Theme.creamDim)
                     HStack(spacing: 4) {
                         Text(Fmt.range(event.startsAt, event.endsAt))
                             .font(.system(size: 13, weight: .semibold, design: .monospaced))
                             .foregroundStyle(Theme.cream)
-                        Spacer(minLength: 2)
-                        // Live act → the kind icon pulses red (like the iOS now line).
+                        // Glowing red "live" dot next to the time when this act is on.
                         let live = event.isLive(at: now)
+                        if live {
+                            Circle().fill(Theme.now).frame(width: 8, height: 8)
+                                .shadow(color: Theme.now, radius: 4)
+                        }
+                        Spacer(minLength: 2)
+                        // Kind icon keeps its own colour; pulses only when you're at
+                        // this stage AND its act is on now (right place + right time).
+                        let pulsing = live && location.nearestSlug == stage.slug
                         Image(systemName: kindSymbol(event.kind))
                             .font(.system(size: 17))
-                            .foregroundStyle(live ? Theme.now : Color(hex: stage.accent))
-                            .symbolEffect(.pulse, options: .repeating, isActive: live)
-                            .shadow(color: live ? Theme.now : .clear, radius: 4)
+                            .foregroundStyle(Color(hex: stage.accent))
+                            .symbolEffect(.pulse, options: .repeating, isActive: pulsing)
                             .frame(width: 24, height: 20)   // fixed box → icon size never shifts the row
                     }
                     .frame(height: 20)

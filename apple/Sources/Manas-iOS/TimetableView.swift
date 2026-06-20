@@ -88,7 +88,9 @@ struct TimetableView: View {
                             .scrollPosition(id: $leadingStage, anchor: .leading)
                             .frame(width: max(geo.size.width - gutterW, 0))
                         }
-                        .overlay(alignment: .topLeading) { nowLine(g, width: geo.size.width) }
+                        // Behind the columns, so the line sits *under* the act
+                        // titles instead of striking through them.
+                        .background(alignment: .topLeading) { nowLine(g, width: geo.size.width) }
                     }
                     .coordinateSpace(name: "grid")
                     .onPreferenceChange(HourOffsetKey.self) { offsets in
@@ -164,7 +166,8 @@ struct TimetableView: View {
         if now >= g.start && now <= g.end {
             ZStack(alignment: .leading) {
                 Rectangle().fill(Theme.now.opacity(0.3)).frame(height: 1)
-                Rectangle().fill(Theme.now).frame(width: max(width - gutterW, 0), height: 2)
+                // Trim a few px so the glowing end doesn't bleed past the columns.
+                Rectangle().fill(Theme.now).frame(width: max(width - gutterW - 6, 0), height: 2)
                     .shadow(color: Theme.now, radius: 3)
                     .offset(x: gutterW)
             }
@@ -421,6 +424,11 @@ private struct EventBlock: View {
                         Text(Fmt.range(start, event.endsAt))
                             .font(.system(size: 9 * scale, weight: .semibold, design: .monospaced))
                             .foregroundStyle(accent).lineLimit(1).minimumScaleFactor(0.7)
+                        // Glowing red "live" dot next to the time (matches the watch).
+                        if live {
+                            Circle().fill(Theme.now).frame(width: 5 * scale, height: 5 * scale)
+                                .shadow(color: Theme.now, radius: 2)
+                        }
                         Spacer(minLength: 2)
                         kindIcon(accent, hot: hot)
                     }
@@ -455,13 +463,14 @@ private struct EventBlock: View {
         }
     }
 
-    /// The act's kind glyph. When `hot` (on now AND at this stage) it glows the
-    /// same red as the now line and pulses; otherwise the stage accent, static.
+    /// The act's kind glyph. Keeps its own (stage accent) colour; when `hot`
+    /// (on now AND standing at this stage) it pulses and softly glows in that
+    /// same colour — never turning red.
     private func kindIcon(_ accent: Color, hot: Bool) -> some View {
         Image(systemName: kindSymbol(event.kind))
             .font(.system(size: 9 * scale))
-            .foregroundStyle(hot ? Theme.now : accent)
-            .shadow(color: hot ? Theme.now : .clear, radius: hot ? 4 : 0)
+            .foregroundStyle(accent)
+            .shadow(color: hot ? accent : .clear, radius: hot ? 3 : 0)
             .symbolEffect(.pulse, options: .repeating, isActive: hot)
     }
 
