@@ -134,6 +134,7 @@ struct WatchRootView: View {
                         if live {
                             Circle().fill(Theme.now).frame(width: 8, height: 8)
                                 .shadow(color: Theme.now, radius: 4)
+                                .padding(.leading, 4)   // ~2× the gap from the time
                         }
                         Spacer(minLength: 2)
                         // Kind icon keeps its own colour; pulses only when you're at

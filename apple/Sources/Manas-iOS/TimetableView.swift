@@ -421,13 +421,23 @@ private struct EventBlock: View {
             VStack(alignment: .leading, spacing: 1) {
                 if showTime {
                     HStack(spacing: 3) {
-                        Text(Fmt.range(start, event.endsAt))
-                            .font(.system(size: 9 * scale, weight: .semibold, design: .monospaced))
-                            .foregroundStyle(accent).lineLimit(1).minimumScaleFactor(0.7)
+                        let timeFont = Font.system(size: 9 * scale, weight: .semibold, design: .monospaced)
+                        // Show the end ("– HH:mm") only when it fully fits; otherwise
+                        // just the start time (no shrinking).
+                        ViewThatFits(in: .horizontal) {
+                            // Full range, measured unscaled → drops to start-only when
+                            // the "– HH:mm" wouldn't fully fit.
+                            Text(Fmt.range(start, event.endsAt)).font(timeFont)
+                                .foregroundStyle(accent).lineLimit(1)
+                            // Start-only fallback may shrink a touch in very narrow columns.
+                            Text(Fmt.hhmm(start)).font(timeFont)
+                                .foregroundStyle(accent).lineLimit(1).minimumScaleFactor(0.7)
+                        }
                         // Glowing red "live" dot next to the time (matches the watch).
                         if live {
                             Circle().fill(Theme.now).frame(width: 5 * scale, height: 5 * scale)
                                 .shadow(color: Theme.now, radius: 2)
+                                .padding(.leading, 3 * scale)   // ~2× the gap from the time
                         }
                         Spacer(minLength: 2)
                         kindIcon(accent, hot: hot)
