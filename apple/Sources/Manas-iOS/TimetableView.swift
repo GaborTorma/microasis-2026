@@ -158,21 +158,16 @@ struct TimetableView: View {
         DispatchQueue.main.async { withAnimation { proxy.scrollTo("t-\(idx)", anchor: .top) } }
     }
 
-    /// The now line: one continuous line at the current time — faint across the
-    /// gutter (under the date/time), bright and glowing over the stage columns,
-    /// out to the right edge.
+    /// The now line: one continuous, evenly bright glowing line at the current
+    /// time, from the gutter out to the right edge (trimmed a few px so its glow
+    /// doesn't bleed past the columns).
     @ViewBuilder
     private func nowLine(_ g: Grid, width: CGFloat) -> some View {
         if now >= g.start && now <= g.end {
-            ZStack(alignment: .leading) {
-                Rectangle().fill(Theme.now.opacity(0.3)).frame(height: 1)
-                // Trim a few px so the glowing end doesn't bleed past the columns.
-                Rectangle().fill(Theme.now).frame(width: max(width - gutterW - 6, 0), height: 2)
-                    .shadow(color: Theme.now, radius: 3)
-                    .offset(x: gutterW)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .offset(y: g.y(now) - 1)
+            Rectangle().fill(Theme.now).frame(width: max(width - 6, 0), height: 2)
+                .shadow(color: Theme.now, radius: 3)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .offset(y: g.y(now) - 1)
         }
     }
 
