@@ -21,3 +21,16 @@ export function orderedVisibleStages(
 ): StageDTO[] {
   return orderedAllStages(stages, order).filter((s) => !hidden.includes(s.slug));
 }
+
+/**
+ * Clamp the saved column-count preference to what's actually showable: at least
+ * 1, never more than `max` or the number of visible stages. Mirrors the iOS
+ * `effectiveColumns`.
+ */
+export function effectiveColumns(
+  columns: number,
+  visibleCount: number,
+  max: number,
+): number {
+  return Math.min(Math.max(columns, 1), Math.max(1, Math.min(max, visibleCount)));
+}

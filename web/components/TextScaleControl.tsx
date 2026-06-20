@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
+import { ALargeSmall, Minus, Plus } from "lucide-react";
 import { SCALE_LEVELS, useSettings } from "./settings/SettingsContext";
 
 /**
@@ -30,6 +30,7 @@ export function TextScaleControl() {
       >
         <Minus size={14} />
       </button>
+      <ALargeSmall size={15} className="mx-0.5 text-cream-faint" aria-hidden />
       <button
         type="button"
         disabled={atMax}

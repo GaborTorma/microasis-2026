@@ -11,7 +11,7 @@ export function LanguageToggle() {
 
   return (
     <div
-      className="flex items-center rounded-full border border-line bg-ink-2/70 p-0.5 text-xs font-semibold"
+      className="flex w-full items-center gap-1 rounded-xl border border-line bg-ink-2/70 p-1 text-sm font-semibold"
       role="group"
       aria-label="Language"
     >
@@ -22,7 +22,7 @@ export function LanguageToggle() {
           disabled={pending}
           onClick={() => startTransition(() => setLocale(l))}
           aria-pressed={locale === l}
-          className={`rounded-full px-2.5 py-1 uppercase tracking-wide transition-colors ${
+          className={`flex-1 rounded-lg px-3 py-1.5 uppercase tracking-wide transition-colors ${
             locale === l
               ? "bg-sun text-ink"
               : "text-cream-dim hover:text-cream"

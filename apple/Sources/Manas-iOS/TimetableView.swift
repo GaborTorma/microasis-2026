@@ -253,12 +253,10 @@ struct TimetableView: View {
                 // Skip the hour label where a day divider's date sits (midnight,
                 // and the very first hour) so they don't overlap in the gutter.
                 if !Fmt.isMidnight(date) && date != g.start {
-                    // "Current" hour: now within −15 min … +45 min of this label.
-                    let isCurrent = now >= date.addingTimeInterval(-15 * 60)
-                        && now < date.addingTimeInterval(45 * 60)
+                    // Plain hour labels — the now chip below marks the current time.
                     Text(Fmt.hhmm(date))
-                        .font(.system(size: 10 * scale, weight: isCurrent ? .bold : .regular, design: .monospaced))
-                        .foregroundStyle(isCurrent ? Theme.cream : Theme.creamFaint).fixedSize()
+                        .font(.system(size: 10 * scale, weight: .regular, design: .monospaced))
+                        .foregroundStyle(Theme.creamFaint).fixedSize()
                         .offset(x: 4, y: g.y(date) - 6)
                 }
             }
@@ -269,6 +267,17 @@ struct TimetableView: View {
                 Text(Fmt.weekday(div.day, settings.locale)).font(.system(size: 8, weight: .medium))
                     .foregroundStyle(Theme.creamDim).fixedSize()
                     .offset(x: 2, y: g.y(div.date) + 1)
+            }
+            // Now: a glowing red chip with the current time in white, sitting on
+            // the now line — it covers the hour label it lands on.
+            if now >= g.start && now <= g.end {
+                Text(Fmt.hhmm(now))
+                    .font(.system(size: 10 * scale, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white).fixedSize()
+                    .padding(.horizontal, 5).padding(.vertical, 1)
+                    .background(Theme.now, in: Capsule())
+                    .shadow(color: Theme.now, radius: 3)
+                    .offset(x: 0, y: g.y(now) - 9)
             }
         }
         .frame(width: gutterW)

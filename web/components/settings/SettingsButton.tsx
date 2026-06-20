@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import {
   ChevronDown,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { useSchedule } from "@/lib/useSchedule";
 import { orderedAllStages } from "@/lib/stageSettings";
+import { LanguageToggle } from "../LanguageToggle";
 import { useSettings } from "./SettingsContext";
 
 export function SettingsButton() {
@@ -41,13 +43,15 @@ export function SettingsButton() {
         <Gear size={16} />
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-3 backdrop-blur-sm sm:items-center"
-          onClick={() => setOpen(false)}
-        >
+      {open &&
+        typeof document !== "undefined" &&
+        createPortal(
           <div
-            className="card w-full max-w-sm rounded-2xl p-4"
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-3 backdrop-blur-sm sm:items-center"
+            onClick={() => setOpen(false)}
+          >
+          <div
+            className="card max-h-[85vh] w-full max-w-sm overflow-y-auto rounded-2xl p-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-1 flex items-center justify-between">
@@ -62,6 +66,13 @@ export function SettingsButton() {
               >
                 <X size={18} />
               </button>
+            </div>
+
+            <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-sun/80">
+              {t("lang.switch")}
+            </p>
+            <div className="mb-4">
+              <LanguageToggle />
             </div>
 
             <p className="mb-1 text-[0.7rem] font-semibold uppercase tracking-wide text-sun/80">
@@ -119,8 +130,9 @@ export function SettingsButton() {
               })}
             </ul>
           </div>
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </>
   );
 }

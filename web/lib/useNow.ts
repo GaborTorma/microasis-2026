@@ -11,6 +11,15 @@ function mockNow(): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+/**
+ * Fresh "current" instant, honouring the `?mockNow=` override. Use for one-off
+ * reads (e.g. re-centring the timetable on foreground) where the throttled
+ * `useNow` state may be stale.
+ */
+export function currentNow(): Date {
+  return mockNow() ?? new Date();
+}
+
 /** Current time, re-rendered every `intervalMs` (default 20s). Frozen if mocked. */
 export function useNow(intervalMs = 20_000): Date {
   const [now, setNow] = useState<Date>(() => mockNow() ?? new Date());

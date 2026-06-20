@@ -6,28 +6,19 @@ import Combine
 /// debug-clock pattern (`Fmt.now`) — a QA coordinate override, gated to
 /// DEBUG/TestFlight, lets the simulator pretend it's at any spot.
 public enum Geo {
-    /// Beyond this distance we treat it as "no stage nearby": no location icon
-    /// and no auto-jump to a stage.
+    /// Fallback "no stage nearby" radius, used when a stage row carries no
+    /// `radiusM`. Beyond it: no location icon and no auto-jump to a stage.
     public static let nearThreshold: CLLocationDistance = 150
-
-    /// Known fixed stage coordinates, keyed by slug. Fallback source of truth
-    /// when the API row carries no lat/lng.
-    public static let stageCoords: [String: CLLocationCoordinate2D] = [
-        "mandala": .init(latitude: 46.67379233364376, longitude: 17.65907946930414),
-        "portal":  .init(latitude: 46.673682383648455, longitude: 17.66211333408678),
-        "terrace": .init(latitude: 46.674407488023085, longitude: 17.661415611588946),
-        "bowl":    .init(latitude: 46.676109554244164, longitude: 17.661461486061544),
-        "field":   .init(latitude: 46.676117401484305, longitude: 17.658342620761708),
-    ]
 
     /// A point well outside `nearThreshold` of every stage — for testing the
     /// "nothing nearby" case from the debug picker.
     public static let farTestCoord = "46.6900,17.6800"
 
-    /// Coordinate for a stage: the API value if present, else the known fixed one.
+    /// Coordinate for a stage — from the DB (lat/lng on the API row). The DB is
+    /// the single source of truth for stage geofences; nil = no coordinate set.
     public static func coordinate(for stage: StageDTO) -> CLLocationCoordinate2D? {
-        if let lat = stage.lat, let lng = stage.lng { return .init(latitude: lat, longitude: lng) }
-        return stageCoords[stage.slug]
+        guard let lat = stage.lat, let lng = stage.lng else { return nil }
+        return .init(latitude: lat, longitude: lng)
     }
 
     /// "lat,lng" string for a stage — used by the debug coordinate picker.
@@ -92,8 +83,11 @@ public final class LocationStore: NSObject, ObservableObject {
     }
 
     private func recompute() {
+        // Per-stage geofence radius from the DB (`radiusM`), falling back to the
+        // shared 150 m threshold when a stage row hasn't set one.
         guard let c = coordinate, !stages.isEmpty,
-              let n = Geo.nearest(to: c, in: stages), n.distance <= Geo.nearThreshold else {
+              let n = Geo.nearest(to: c, in: stages),
+              n.distance <= Double(n.stage.radiusM ?? Int(Geo.nearThreshold)) else {
             nearestSlug = nil; return
         }
         nearestSlug = n.stage.slug

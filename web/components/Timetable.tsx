@@ -1,20 +1,31 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Coffee, Sparkles, Volume2 } from "lucide-react";
+import { Coffee, MapPin, Sparkles, Volume2 } from "lucide-react";
 import { useSchedule } from "@/lib/useSchedule";
-import { useNow } from "@/lib/useNow";
+import { useNow, currentNow } from "@/lib/useNow";
+import { useMediaQuery } from "@/lib/useMediaQuery";
+import { useNearestStage } from "@/lib/useNearestStage";
 import { hhmm, mmdd, tx, weekdayLong } from "@/lib/format";
-import { orderedVisibleStages } from "@/lib/stageSettings";
+import {
+  effectiveColumns,
+  orderedVisibleStages,
+} from "@/lib/stageSettings";
 import type { EventDTO, StageDTO } from "@/lib/types";
 import { StatusBar } from "./StatusBar";
-import { useSettings } from "./settings/SettingsContext";
+import { MAX_COLUMNS, useSettings } from "./settings/SettingsContext";
 
-const PX_PER_HOUR = 64;
+const BASE_PX_PER_HOUR = 64; // at scale 1; grows with the text scale
 const HOUR = 3_600_000;
 const GUTTER = 64; // px, fixed time axis (hour labels + 2-line day marker)
-const MIN_COL = 100; // px, min stage-column width → ~3 columns fit a phone
+const MIN_COL = 100; // px, min stage-column width (non-paged layout)
 const SNAP = 12; // px, day-detection tolerance (compensates scroll padding)
 const dayFmt = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Budapest" });
 const festivalDay = (d: Date) => dayFmt.format(d);
@@ -31,30 +42,73 @@ const LANG_CHIPS: Record<string, { labels: string[]; bg: string; fg: string }> =
   none: { labels: ["Ø"], bg: "#5e6b63", fg: "#e9efe9" },
 };
 
+const startMs = (e: EventDTO) => new Date(e.startsAt).getTime();
+const isLiveAt = (e: EventDTO, ms: number) => {
+  const s = startMs(e);
+  const end = e.endsAt ? new Date(e.endsAt).getTime() : s + HOUR;
+  return s <= ms && end > ms;
+};
+
 export function Timetable() {
   const { data, loading, offline, error } = useSchedule();
   const now = useNow(30_000);
   const locale = useLocale();
   const t = useTranslations();
-  const { order, hidden, scale } = useSettings();
+  const { order, hidden, scale, columns } = useSettings();
+  // Phone-sized portrait → column-zoom + paging (touch not required). Landscape
+  // and wide screens show every stage, like the iOS app in landscape.
+  const portraitMobile = useMediaQuery(
+    "(orientation: portrait) and (max-width: 768px)",
+  );
 
   const toolbarRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const headScrollRef = useRef<HTMLDivElement>(null);
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const didInit = useRef(false);
+  const didSelectNearest = useRef(false);
+  const topMsRef = useRef(0); // festival ms at the viewport top (for scale re-anchor)
+  const prevScaleRef = useRef(scale);
   const [activeDay, setActiveDay] = useState<string | null>(null);
+  const [viewW, setViewW] = useState(0); // body scroller width (for paged colW)
+  const [leadingIndex, setLeadingIndex] = useState(0); // left-most paged column
+
+  const stages = useMemo(
+    () => (data ? orderedVisibleStages(data.stages, order, hidden) : []),
+    [data, order, hidden],
+  );
+  const nearestSlug = useNearestStage(stages);
+
+  // Portrait-mobile column-count zoom: fit exactly effCols columns to the width
+  // and page the rest. Elsewhere (landscape / desktop) show every stage.
+  const effCols = portraitMobile
+    ? effectiveColumns(columns, stages.length, MAX_COLUMNS)
+    : Math.max(stages.length, 1);
+  // On phone-portrait the chosen column count always drives the layout (colW =
+  // width / effCols); only the leftover stages page. Picking N == visible stages
+  // simply fills the width with N columns (no paging) instead of falling back.
+  const paged = portraitMobile;
+  const canPage = paged && effCols < stages.length;
+  const colW = paged && viewW > 0 ? viewW / effCols : MIN_COL * scale;
+  const trackW = stages.length * colW;
+  const colStyle: React.CSSProperties = paged
+    ? { width: colW, flexGrow: 0, flexShrink: 0, scrollSnapAlign: "start" }
+    : { flexBasis: 0, flexGrow: 1, flexShrink: 0, minWidth: colW };
+  const trackStyle: React.CSSProperties = paged
+    ? { minWidth: trackW, width: trackW }
+    : { minWidth: trackW, width: "100%" };
 
   const grid = useMemo(() => {
     if (!data || data.events.length === 0) return null;
+    const pxPerHour = BASE_PX_PER_HOUR * scale;
     const starts = data.events.map((e) => new Date(e.startsAt).getTime());
     const ends = data.events.map((e) =>
       e.endsAt ? new Date(e.endsAt).getTime() : 0,
     );
     const gridStart = floorHour(Math.min(...starts));
     const gridEnd = ceilHour(Math.max(...starts.map((s, i) => Math.max(s + HOUR, ends[i]))));
-    const height = ((gridEnd - gridStart) / HOUR) * PX_PER_HOUR;
-    const yFor = (ms: number) => ((ms - gridStart) / HOUR) * PX_PER_HOUR;
+    const height = ((gridEnd - gridStart) / HOUR) * pxPerHour;
+    const yFor = (ms: number) => ((ms - gridStart) / HOUR) * pxPerHour;
 
     const hours: { y: number; label: string; midnight: boolean }[] = [];
     for (let m = gridStart; m <= gridEnd; m += HOUR) {
@@ -68,17 +122,27 @@ export function Timetable() {
       if (hhmm(new Date(m).toISOString(), locale) === "00:00")
         dividers.push({ y: yFor(m), day: festivalDay(new Date(m)) });
     }
-    return { gridStart, gridEnd, height, yFor, hours, dividers };
-  }, [data, locale]);
+    return { gridStart, gridEnd, height, yFor, hours, dividers, pxPerHour };
+  }, [data, locale, scale]);
 
-  const scrollToY = (y: number) => {
+  // Total pinned height at the viewport top: sticky app header + sticky toolbar.
+  const stickyOffset = () => {
+    const headerH =
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+      ) || 0;
+    return headerH + (toolbarRef.current?.offsetHeight ?? 0);
+  };
+
+  const scrollToY = useCallback((y: number) => {
     if (!gridRef.current) return;
     const top = gridRef.current.getBoundingClientRect().top + window.scrollY;
-    const tb = toolbarRef.current?.offsetHeight ?? 0;
+    const tb = stickyOffset();
     window.scrollTo({ top: Math.max(0, y + top - tb - 8), behavior: "smooth" });
     // Smooth scroll is ignored in some embedded browsers; ensure the jump lands.
     window.scrollTo(0, Math.max(0, y + top - tb - 8));
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const yForDay = (day: string) => {
     if (!grid) return 0;
@@ -92,7 +156,46 @@ export function Timetable() {
       to.scrollLeft = from.scrollLeft;
   };
 
-  // Track which day is at the top of the viewport.
+  // Body scroll: mirror to the header and (when paged) track the leading column.
+  const onBodyScroll = () => {
+    syncScroll(bodyScrollRef.current, headScrollRef.current);
+    if (paged && colW > 0) {
+      const li = Math.round((bodyScrollRef.current?.scrollLeft ?? 0) / colW);
+      const clamped = Math.min(Math.max(0, li), Math.max(0, stages.length - effCols));
+      setLeadingIndex((prev) => (prev === clamped ? prev : clamped));
+    }
+  };
+
+  // Jump so the act on now (earliest live, else the next act) sits at the top.
+  const jumpToNow = useCallback(() => {
+    if (!grid || !data) return;
+    const nowMs = currentNow().getTime();
+    const liveStarts = data.events.filter((e) => isLiveAt(e, nowMs)).map(startMs);
+    const futureStarts = data.events.filter((e) => startMs(e) > nowMs).map(startMs);
+    const target = liveStarts.length
+      ? Math.min(...liveStarts)
+      : futureStarts.length
+        ? Math.min(...futureStarts)
+        : nowMs;
+    if (target < grid.gridStart || target > grid.gridEnd) return;
+    // Two frames: the first lets the grid's full height land in layout (on a
+    // cold load the column heights apply a frame late), the second scrolls.
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => scrollToY(grid.yFor(target))),
+    );
+  }, [grid, data, scrollToY]);
+
+  // Measure the body scroller so paged column width = width / effCols.
+  useEffect(() => {
+    const el = bodyScrollRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => setViewW(el.clientWidth));
+    ro.observe(el);
+    setViewW(el.clientWidth);
+    return () => ro.disconnect();
+  }, [grid]);
+
+  // Track which day is at the top of the viewport, and remember the top hour.
   useEffect(() => {
     if (!grid || !gridRef.current) return;
     let raf = 0;
@@ -103,11 +206,12 @@ export function Timetable() {
         const el = gridRef.current;
         if (!el) return; // component may have unmounted before the frame ran
         const top = el.getBoundingClientRect().top + window.scrollY;
-        const tb = toolbarRef.current?.offsetHeight ?? 0;
+        const tb = stickyOffset();
         // +SNAP compensates the scrollToY(-8) padding so a day's top edge
         // detects that day (not 7-8 min of the previous day above it).
         const yTop = window.scrollY + tb - top + SNAP;
-        const ms = grid.gridStart + (yTop / PX_PER_HOUR) * HOUR;
+        const ms = grid.gridStart + (yTop / grid.pxPerHour) * HOUR;
+        topMsRef.current = Math.max(grid.gridStart, ms);
         setActiveDay(festivalDay(new Date(Math.max(grid.gridStart, ms))));
       });
     };
@@ -123,13 +227,57 @@ export function Timetable() {
   useEffect(() => {
     if (!grid || didInit.current) return;
     didInit.current = true;
-    const nowMs = now.getTime();
-    requestAnimationFrame(() => {
-      if (nowMs >= grid.gridStart && nowMs <= grid.gridEnd) {
-        scrollToY(grid.yFor(nowMs) - 120);
-      }
-    });
-  }, [grid, now]);
+    jumpToNow();
+  }, [grid, jumpToNow]);
+
+  // Re-centre on the current time whenever the tab/PWA returns to foreground.
+  useEffect(() => {
+    const onShow = () => {
+      if (document.visibilityState === "visible") jumpToNow();
+    };
+    document.addEventListener("visibilitychange", onShow);
+    window.addEventListener("pageshow", onShow);
+    return () => {
+      document.removeEventListener("visibilitychange", onShow);
+      window.removeEventListener("pageshow", onShow);
+    };
+  }, [jumpToNow]);
+
+  // Text-size change resizes every hour row; keep the same hour at the top so
+  // the view doesn't jump off the time you were looking at.
+  useEffect(() => {
+    if (prevScaleRef.current === scale) return;
+    prevScaleRef.current = scale;
+    if (!grid || !didInit.current) return;
+    requestAnimationFrame(() => scrollToY(grid.yFor(topMsRef.current)));
+  }, [scale, grid, scrollToY]);
+
+  // Re-snap the pager to a whole column when the column count or width changes,
+  // so zooming/rotating while scrolled never leaves a half-column showing.
+  useEffect(() => {
+    if (!paged || !bodyScrollRef.current || colW <= 0) return;
+    const li = Math.min(leadingIndex, Math.max(0, stages.length - effCols));
+    const left = li * colW;
+    bodyScrollRef.current.scrollLeft = left;
+    if (headScrollRef.current) headScrollRef.current.scrollLeft = left;
+    // Intentionally excludes leadingIndex: re-snap only on count/width change,
+    // not on every manual page (which would fight the user's scroll).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effCols, viewW, paged]);
+
+  // Once GPS resolves, page the stage you're standing at into view as the left
+  // column — but only on the first fix, so it never fights manual paging after.
+  useEffect(() => {
+    if (!paged || !nearestSlug || didSelectNearest.current || colW <= 0) return;
+    const idx = stages.findIndex((s) => s.slug === nearestSlug);
+    if (idx < 0) return;
+    didSelectNearest.current = true;
+    const li = Math.min(idx, Math.max(0, stages.length - effCols));
+    if (bodyScrollRef.current) bodyScrollRef.current.scrollLeft = li * colW;
+    if (headScrollRef.current) headScrollRef.current.scrollLeft = li * colW;
+    setLeadingIndex(li);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paged, nearestSlug, colW, effCols]);
 
   if (loading && !data)
     return <p className="p-6 text-center text-cream-faint">{t("common.loading")}</p>;
@@ -138,25 +286,17 @@ export function Timetable() {
 
   const nowMs = now.getTime();
   const showNow = nowMs >= grid.gridStart && nowMs <= grid.gridEnd;
-  const todayStr = festivalDay(now);
-  const stages = orderedVisibleStages(data.stages, order, hidden);
-  // The "zoom" only widens columns + enlarges act/time text — the vertical
-  // time grid and the headers stay fixed.
-  const colW = MIN_COL * scale;
-  const colsMinWidth = stages.length * colW;
-  const colStyle: React.CSSProperties = {
-    flexBasis: 0,
-    flexGrow: 1,
-    flexShrink: 0,
-    minWidth: colW,
-  };
 
   return (
     <div className="flex flex-col">
       {offline && <StatusBar kind="offline" />}
 
       {/* Sticky toolbar: full-width day jumper + (scrollable) stage headers */}
-      <div ref={toolbarRef} className="sticky top-0 z-20 bg-ink/85 backdrop-blur-md">
+      <div
+        ref={toolbarRef}
+        style={{ top: "var(--header-h, 0px)" }}
+        className="sticky z-20 bg-ink/95 backdrop-blur-md"
+      >
         <div className="flex gap-1 px-2 pt-2">
           {data.days.map((d) => {
             const active = d === activeDay;
@@ -177,13 +317,32 @@ export function Timetable() {
                 >
                   {weekdayLong(d, locale)}
                 </span>
-                {d === todayStr && (
-                  <span className={`mt-0.5 h-1 w-1 rounded-full ${active ? "bg-ink" : "bg-sun"}`} />
-                )}
               </button>
             );
           })}
         </div>
+
+        {/* Position dots — which stages of the set are in view (when paging) */}
+        {canPage && (
+          <div className="flex px-2 pt-1.5">
+            <div style={{ width: GUTTER }} className="shrink-0" />
+            <div className="flex flex-1 items-center justify-center gap-1.5">
+              {stages.map((s, i) => {
+                const on = i >= leadingIndex && i < leadingIndex + effCols;
+                return (
+                  <span
+                    key={s.id}
+                    className="h-1 rounded-full transition-all"
+                    style={{
+                      width: on ? 14 : 5,
+                      background: on ? "var(--color-sun)" : "rgba(109,140,121,0.4)",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Stage header row: fixed gutter spacer + horizontally-scrolling headers */}
         <div className="flex px-2 pb-1.5 pt-2">
@@ -191,16 +350,20 @@ export function Timetable() {
           <div
             ref={headScrollRef}
             onScroll={() => syncScroll(headScrollRef.current, bodyScrollRef.current)}
+            style={{ scrollSnapType: paged ? "x mandatory" : undefined }}
             className="no-scrollbar flex-1 overflow-x-auto"
           >
-            <div className="flex" style={{ minWidth: colsMinWidth, width: "100%" }}>
+            <div className="flex" style={trackStyle}>
               {stages.map((s) => (
                 <div key={s.id} style={colStyle} className="px-0.5">
                   <div
-                    className="truncate rounded-lg px-2 py-1 text-center font-display text-sm font-bold text-cream"
+                    className="flex items-center justify-center gap-1 truncate rounded-lg px-2 py-1 text-center font-display text-sm font-bold text-cream"
                     style={{ background: `linear-gradient(135deg, ${s.color}, ${s.color}bb)` }}
                   >
-                    {s.name}
+                    {nearestSlug === s.slug && (
+                      <MapPin size={12} className="shrink-0" aria-label={t("common.youAreHere")} />
+                    )}
+                    <span className="truncate">{s.name}</span>
                   </div>
                 </div>
               ))}
@@ -240,18 +403,34 @@ export function Timetable() {
               </span>
             </div>
           ))}
+          {/* now time — a glowing red chip that covers the hour label beneath it */}
+          {showNow && (
+            <div
+              className="pointer-events-none absolute inset-x-0 z-10"
+              style={{ top: grid.yFor(nowMs) }}
+            >
+              <div className="h-0.5 w-full" style={{ background: "#ff5d6c", boxShadow: "0 0 8px #ff5d6c" }} />
+              <span
+                className="absolute left-0 top-1/2 -translate-y-1/2 rounded px-1.5 py-px font-mono font-bold tabular-nums text-white"
+                style={{ background: "#ff5d6c", boxShadow: "0 0 6px #ff5d6c", fontSize: `${0.62 * scale}rem` }}
+              >
+                {hhmm(now.toISOString(), locale)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Scrollable columns */}
         <div
           ref={bodyScrollRef}
-          onScroll={() => syncScroll(bodyScrollRef.current, headScrollRef.current)}
-          className="flex-1 overflow-x-auto"
+          onScroll={onBodyScroll}
+          style={{ scrollSnapType: paged ? "x mandatory" : undefined }}
+          className="no-scrollbar flex-1 overflow-x-auto"
         >
           <div
             ref={gridRef}
             className="relative"
-            style={{ height: grid.height, minWidth: colsMinWidth, width: "100%" }}
+            style={{ height: grid.height, ...trackStyle }}
           >
             {/* hour lines (full content width) */}
             {grid.hours.map((h, i) => (
@@ -261,6 +440,14 @@ export function Timetable() {
                 style={{ top: h.y, background: h.midnight ? "transparent" : "rgba(43,71,54,0.3)" }}
               />
             ))}
+
+            {/* now line — BEHIND the blocks so it never strikes through titles */}
+            {showNow && (
+              <div
+                className="pointer-events-none absolute inset-x-0 h-0.5"
+                style={{ top: grid.yFor(nowMs), background: "#ff5d6c", boxShadow: "0 0 8px #ff5d6c" }}
+              />
+            )}
 
             {/* columns with event blocks */}
             <div className="absolute inset-0 flex">
@@ -281,6 +468,7 @@ export function Timetable() {
                         nowMs={nowMs}
                         locale={locale}
                         scale={scale}
+                        compact={colW < 140}
                         nextStart={i + 1 < evs.length ? evs[i + 1].startsAt : null}
                       />
                     ))}
@@ -289,7 +477,7 @@ export function Timetable() {
               })}
             </div>
 
-            {/* overlay: day-divider lines + now line (above blocks) */}
+            {/* overlay above blocks: day-divider lines + now dot/label */}
             <div className="pointer-events-none absolute inset-0">
               {grid.dividers.map((d, i) => (
                 <div
@@ -298,15 +486,6 @@ export function Timetable() {
                   style={{ top: d.y, borderTop: "1px dashed rgba(94,201,138,0.55)" }}
                 />
               ))}
-              {showNow && (
-                <div className="absolute inset-x-0" style={{ top: grid.yFor(nowMs) }}>
-                  <div className="h-0.5 w-full" style={{ background: "#ff5d6c", boxShadow: "0 0 8px #ff5d6c" }} />
-                  <span className="absolute -top-2 left-0 h-2 w-2 rounded-full" style={{ background: "#ff5d6c", boxShadow: "0 0 8px #ff5d6c" }} />
-                  <span className="absolute left-3 -top-2 rounded bg-[#ff5d6c] px-1 py-0.5 text-[0.55rem] font-bold uppercase text-white">
-                    {t("now.title")}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -322,6 +501,7 @@ function EventBlock({
   nowMs,
   locale,
   scale,
+  compact,
   nextStart,
 }: {
   event: EventDTO;
@@ -330,6 +510,7 @@ function EventBlock({
   nowMs: number;
   locale: string;
   scale: number;
+  compact: boolean;
   nextStart: string | null;
 }) {
   const t = useTranslations();
@@ -388,14 +569,14 @@ function EventBlock({
             style={{ color: stage.accent, fontSize: `${0.58 * scale}rem` }}
           >
             {hhmm(event.startsAt, locale)}
-            {event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
+            {!compact && event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
           </span>
-          {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-sun" />}
+          {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-now" />}
           <KindIcon size={iconPx} className="ml-auto shrink-0" style={{ color: stage.accent }} />
         </div>
       )}
       <div className="flex items-start gap-1 leading-[1.05]">
-        {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-sun" />}
+        {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-now" />}
         <span
           className={`font-display font-semibold ${
             tight || event.kind === "music" ? "text-cream" : "text-cream-dim"
@@ -405,8 +586,9 @@ function EventBlock({
           {tx(event.title, locale)}
         </span>
       </div>
+      {/* Language chip as a faint watermark — overlaid, reserves no height. */}
       {chip && (
-        <div className="mt-auto flex justify-end gap-1 pt-0.5">
+        <div className="pointer-events-none absolute bottom-0.5 right-0.5 flex gap-0.5 opacity-50">
           {chip.labels.map((l) => (
             <span
               key={l}

@@ -16,7 +16,8 @@
     "retry": "Retry",
     "break": "Break",
     "allStages": "All stages",
-    "today": "Today"
+    "today": "Today",
+    "youAreHere": "You are here"
   },
   "timetable": {
     "title": "Timetable",

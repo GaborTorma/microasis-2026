@@ -430,6 +430,9 @@ async function main() {
         accent: "#e8a04c",
         sortOrder: 0,
         isDefault: true,
+        lat: 46.673682383648455,
+        lng: 17.66211333408678,
+        radiusM: 150,
       },
       {
         slug: "field",
@@ -438,6 +441,9 @@ async function main() {
         color: "#1f4a47",
         accent: "#4fb3a6",
         sortOrder: 1,
+        lat: 46.676117401484305,
+        lng: 17.658342620761708,
+        radiusM: 150,
       },
       {
         slug: "bowl",
@@ -446,6 +452,9 @@ async function main() {
         color: "#5a3a1f",
         accent: "#d98c3a",
         sortOrder: 2,
+        lat: 46.676109554244164,
+        lng: 17.661461486061544,
+        radiusM: 150,
       },
       {
         slug: "terrace",
@@ -454,6 +463,9 @@ async function main() {
         color: "#46603a",
         accent: "#93c06a",
         sortOrder: 3,
+        lat: 46.674407488023085,
+        lng: 17.661415611588946,
+        radiusM: 150,
       },
       {
         slug: "mandala",
@@ -462,6 +474,9 @@ async function main() {
         color: "#4a3a6b",
         accent: "#b79be0",
         sortOrder: 4,
+        lat: 46.67379233364376,
+        lng: 17.65907946930414,
+        radiusM: 150,
       },
     ])
     .returning();

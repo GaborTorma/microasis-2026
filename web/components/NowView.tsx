@@ -1,13 +1,25 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { MapPin, Sparkles, Volume2 } from "lucide-react";
 import { useSchedule } from "@/lib/useSchedule";
 import { useNow } from "@/lib/useNow";
+import { useNearestStage } from "@/lib/useNearestStage";
 import { hhmm, tx } from "@/lib/format";
 import { orderedVisibleStages } from "@/lib/stageSettings";
 import type { EventDTO, StageDTO } from "@/lib/types";
 import { StatusBar } from "./StatusBar";
 import { useSettings } from "./settings/SettingsContext";
+
+/** Time left until `endIso`, "H:MM:SS" (or "M:SS" under an hour). */
+function remaining(endIso: string, nowMs: number): string {
+  const s = Math.max(0, Math.floor((new Date(endIso).getTime() - nowMs) / 1000));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
+}
 
 export function NowView() {
   const { data, loading, offline, error } = useSchedule();
@@ -15,6 +27,8 @@ export function NowView() {
   const locale = useLocale();
   const t = useTranslations();
   const { order, hidden } = useSettings();
+  const stages = data ? orderedVisibleStages(data.stages, order, hidden) : [];
+  const nearestSlug = useNearestStage(stages);
 
   if (loading && !data)
     return <p className="p-6 text-center text-cream-faint">{t("common.loading")}</p>;
@@ -44,8 +58,6 @@ export function NowView() {
     );
   }
 
-  const stages = orderedVisibleStages(data.stages, order, hidden);
-
   return (
     <div className="flex flex-col gap-3 px-3 pt-3">
       {offline && <StatusBar kind="offline" />}
@@ -56,6 +68,7 @@ export function NowView() {
           events={data.events.filter((e) => e.stageSlug === stage.slug)}
           nowMs={nowMs}
           locale={locale}
+          near={nearestSlug === stage.slug}
         />
       ))}
     </div>
@@ -67,11 +80,13 @@ function StageNowCard({
   events,
   nowMs,
   locale,
+  near,
 }: {
   stage: StageDTO;
   events: EventDTO[];
   nowMs: number;
   locale: string;
+  near: boolean;
 }) {
   const t = useTranslations();
   const playable = events.filter((e) => e.kind !== "break");
@@ -81,6 +96,18 @@ function StageNowCard({
       (e.endsAt ? new Date(e.endsAt).getTime() > nowMs : false),
   );
   const next = playable.find((e) => new Date(e.startsAt).getTime() > nowMs);
+  // Only surface "up next" when it actually starts soon (within 6 hours).
+  const soonNext =
+    next && new Date(next.startsAt).getTime() - nowMs <= 6 * 3_600_000
+      ? next
+      : null;
+  // Workshops show sparkles; music / ceremony a loud speaker (mirrors the grid).
+  const LiveKind = live ? (live.kind === "workshop" ? Sparkles : Volume2) : null;
+  const NextKind = soonNext
+    ? soonNext.kind === "workshop"
+      ? Sparkles
+      : Volume2
+    : null;
 
   return (
     <article
@@ -91,50 +118,61 @@ function StageNowCard({
         className="flex items-center justify-between px-4 py-2"
         style={{ background: `linear-gradient(135deg, ${stage.color}, ${stage.color}bb)` }}
       >
-        <h2 className="font-display text-lg font-bold text-cream">{stage.name}</h2>
-        {live && (
-          <span className="flex items-center gap-1.5 rounded-full bg-sun px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-ink">
-            <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-ink" />
-            {t("now.live")}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          <h2 className="font-display text-lg font-bold text-cream">{stage.name}</h2>
+          {near && (
+            <MapPin
+              size={15}
+              className="shrink-0 text-cream"
+              aria-label={t("common.youAreHere")}
+            />
+          )}
+        </div>
+        {LiveKind && <LiveKind size={18} className="shrink-0 text-cream/90" />}
       </div>
 
       <div className="px-4 py-3">
         {live ? (
           <>
-            <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-cream-faint">
-              {t("now.playingNow")}
-            </p>
-            <p className="mt-0.5 font-display text-2xl font-bold leading-tight text-cream">
-              {tx(live.title, locale)}
-            </p>
-            {live.endsAt && (
-              <p className="mt-0.5 text-xs text-cream-dim">
-                {t("now.until", { time: hhmm(live.endsAt, locale) })}
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-display text-2xl font-bold leading-tight text-cream">
+                {tx(live.title, locale)}
               </p>
-            )}
+              {live.endsAt && (
+                <div className="shrink-0 text-right">
+                  <p className="font-mono text-base font-semibold tabular-nums text-sun">
+                    {remaining(live.endsAt, nowMs)}
+                  </p>
+                  <p className="text-xs text-cream-dim">
+                    {t("now.until", { time: hhmm(live.endsAt, locale) })}
+                  </p>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <p className="text-sm text-cream-faint">{t("now.nothing")}</p>
         )}
 
-        {next && (
+        {soonNext && (
           <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-2">
             <div>
               <p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-cream-faint">
                 {t("now.upNext")}
               </p>
               <p className="font-display text-base font-semibold text-cream-dim">
-                {tx(next.title, locale)}
+                {tx(soonNext.title, locale)}
               </p>
             </div>
-            <span
-              className="font-mono text-sm font-semibold tabular-nums"
-              style={{ color: stage.accent }}
-            >
-              {hhmm(next.startsAt, locale)}
-            </span>
+            <div className="flex flex-col items-end gap-0.5">
+              <span
+                className="font-mono text-sm font-semibold tabular-nums"
+                style={{ color: stage.accent }}
+              >
+                {hhmm(soonNext.startsAt, locale)}
+              </span>
+              {NextKind && <NextKind size={13} style={{ color: stage.accent }} />}
+            </div>
           </div>
         )}
       </div>
