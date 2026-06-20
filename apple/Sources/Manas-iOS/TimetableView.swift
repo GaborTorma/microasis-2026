@@ -422,22 +422,13 @@ private struct EventBlock: View {
                 if showTime {
                     HStack(spacing: 3) {
                         let timeFont = Font.system(size: 9 * scale, weight: .semibold, design: .monospaced)
-                        // Show the end ("– HH:mm") only when it fully fits; otherwise
-                        // just the start time (no shrinking).
+                        // Richest time label that fits: full range + live dot →
+                        // start + dot → start alone. The dot is dropped before the
+                        // time shrinks, so a narrow column keeps the time legible.
                         ViewThatFits(in: .horizontal) {
-                            // Full range, measured unscaled → drops to start-only when
-                            // the "– HH:mm" wouldn't fully fit.
-                            Text(Fmt.range(start, event.endsAt)).font(timeFont)
-                                .foregroundStyle(accent).lineLimit(1)
-                            // Start-only fallback may shrink a touch in very narrow columns.
-                            Text(Fmt.hhmm(start)).font(timeFont)
-                                .foregroundStyle(accent).lineLimit(1).minimumScaleFactor(0.7)
-                        }
-                        // Glowing red "live" dot next to the time (matches the watch).
-                        if live {
-                            Circle().fill(Theme.now).frame(width: 5 * scale, height: 5 * scale)
-                                .shadow(color: Theme.now, radius: 2)
-                                .padding(.leading, 3 * scale)   // ~2× the gap from the time
+                            timeLabel(Fmt.range(start, event.endsAt), font: timeFont, accent: accent, dot: live, shrink: false)
+                            timeLabel(Fmt.hhmm(start), font: timeFont, accent: accent, dot: live, shrink: false)
+                            timeLabel(Fmt.hhmm(start), font: timeFont, accent: accent, dot: false, shrink: true)
                         }
                         Spacer(minLength: 2)
                         kindIcon(accent, hot: hot)
@@ -470,6 +461,21 @@ private struct EventBlock: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .opacity(past ? 0.45 : 1)
+        }
+    }
+
+    /// A time label with an optional glowing red "live" dot. Used as the
+    /// `ViewThatFits` candidates so the dot is shed (then the end time) as the
+    /// column narrows, rather than truncating the time.
+    private func timeLabel(_ text: String, font: Font, accent: Color, dot: Bool, shrink: Bool) -> some View {
+        HStack(spacing: 3) {
+            Text(text).font(font).foregroundStyle(accent)
+                .lineLimit(1).minimumScaleFactor(shrink ? 0.7 : 1)
+            if dot {
+                Circle().fill(Theme.now).frame(width: 5 * scale, height: 5 * scale)
+                    .shadow(color: Theme.now, radius: 2)
+                    .padding(.leading, 3 * scale)   // ~2× the gap from the time
+            }
         }
     }
 
