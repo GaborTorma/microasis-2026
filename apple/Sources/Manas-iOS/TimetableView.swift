@@ -253,8 +253,9 @@ struct TimetableView: View {
                 // Skip the hour label where a day divider's date sits (midnight,
                 // and the very first hour) so they don't overlap in the gutter.
                 if !Fmt.isMidnight(date) && date != g.start {
-                    // The hour the now line is in: brighter + bold.
-                    let isCurrent = date <= now && now < date.addingTimeInterval(hour)
+                    // "Current" hour: now within −15 min … +45 min of this label.
+                    let isCurrent = now >= date.addingTimeInterval(-15 * 60)
+                        && now < date.addingTimeInterval(45 * 60)
                     Text(Fmt.hhmm(date))
                         .font(.system(size: 10 * scale, weight: isCurrent ? .bold : .regular, design: .monospaced))
                         .foregroundStyle(isCurrent ? Theme.cream : Theme.creamFaint).fixedSize()
