@@ -33,18 +33,16 @@ struct LaunchWidgetView: View {
     var body: some View {
         switch family {
         case .accessoryInline:
-            // Inline is a single text line — a detailed logo can't render here.
+            // Inline is a single text line — a logo can't render here.
             Text("Manas")
         case .accessoryCorner:
-            Image("ManasIcon")
-                .resizable()
-                .scaledToFit()
+            ManasMark()
                 .widgetLabel("Manas")
         default: // accessoryCircular — the app logo fills the dial.
-            Image("ManasIcon")
-                .resizable()
-                .scaledToFill()
-                .clipShape(Circle())
+            ZStack {
+                AccessoryWidgetBackground()
+                ManasMark()
+            }
         }
     }
 }
