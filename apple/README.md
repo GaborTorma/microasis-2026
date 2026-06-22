@@ -22,6 +22,11 @@ apple/
       NowView.swift, SettingsView.swift
     Manas-watch/              # watchOS app (SwiftUI)
       ManasWatchApp.swift, WatchRootView.swift, WatchSettingsView.swift
+    Manas-watch-widget/       # watchOS WidgetKit extension (embedded in the watch app)
+      ManasWidgetBundle.swift #   @main bundle (now-playing + launcher)
+      NowWidget.swift         #   configurable 3×1 now-playing (.accessoryRectangular)
+      StageSelection.swift    #   stage AppEntity/query + WidgetConfigurationIntent
+      LaunchWidget.swift      #   tiny launcher (circular / inline / corner)
 ```
 
 `ManasKit` sources are compiled into **both** app targets (no separate module),
@@ -67,6 +72,17 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - **Swipe left/right** → switch stage, keeping the same point in time.
 - Settings (⚙) to reorder / hide stages. Defaults to the festival's default
   stage and the act on now.
+
+**watchOS widgets** (Smart Stack + watch-face complications):
+- **Now playing** (`.accessoryRectangular`, 3×1): stage name top-left, time
+  range top-right, act name full-width below. **Configurable** — pin each
+  instance to a stage, then add one per stage to the Smart Stack and turn the
+  crown to page between them (the swipe-style navigation lives in the app; the
+  Smart Stack scroll is the watch-widget equivalent).
+- **Launcher** (`.accessoryCircular` / `.inline` / `.corner`): a tap opens the app.
+- The extension fetches/caches the schedule itself (no App Group, no pairing)
+  and follows the device language. Each timeline entry sits on an act boundary,
+  so the widget rolls onto the next act on time without extra fetches.
 
 Each device keeps its own settings (the apps are independent — no pairing
 required). Schedule is cached on disk for offline use.

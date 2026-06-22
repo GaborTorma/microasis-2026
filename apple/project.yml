@@ -36,6 +36,12 @@ targets:
     info:
       path: Sources/Manas-iOS/Info.plist
       properties:
+        # Feed the single-source-of-truth build settings into the bundle.
+        # Without these (and with no GENERATE_INFOPLIST_FILE) an explicit
+        # Info.plist would hardcode the version and the settings.base bump
+        # would never reach the binary.
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."
@@ -55,7 +61,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
-  # ── watchOS app (embedded companion) ──────────────────────────────
+  # ── watchOS app (embedded companion, embeds the widget extension) ──
   ManasWatch:
     type: application
     platform: watchOS
@@ -63,9 +69,14 @@ targets:
     sources:
       - path: Sources/ManasKit
       - path: Sources/Manas-watch
+    dependencies:
+      - target: ManasWatchWidget
+        embed: true
     info:
       path: Sources/Manas-watch/Info.plist
       properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         WKApplication: true
         WKCompanionAppBundleIdentifier: ai.torma.manas.2026
         CFBundleDisplayName: Manas
@@ -75,3 +86,27 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.watchkitapp
         PRODUCT_NAME: ManasWatch
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  # ── watchOS widgets (Smart Stack + watch-face complications) ───────
+  # WidgetKit extension embedded in the watch app. One configurable
+  # "now playing" rectangular widget (pin each instance to a stage and
+  # scroll the Smart Stack between them) + a small launcher complication.
+  ManasWatchWidget:
+    type: app-extension
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - path: Sources/ManasKit
+      - path: Sources/Manas-watch-widget
+    info:
+      path: Sources/Manas-watch-widget/Info.plist
+      properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleDisplayName: Manas
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.watchkitapp.widget
+        PRODUCT_NAME: ManasWatchWidget

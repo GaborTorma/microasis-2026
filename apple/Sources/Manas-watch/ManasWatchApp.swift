@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 @main
 struct ManasWatchApp: App {
@@ -14,11 +15,17 @@ struct ManasWatchApp: App {
                 .environmentObject(settings)
                 .environmentObject(location)
                 .tint(Theme.sun)
-                .task { await store.load() }
-                // Re-fetch whenever the app returns to the foreground.
+                .task { await store.load(); reloadWidgets() }
+                // Re-fetch whenever the app returns to the foreground, and push
+                // the fresh schedule to the widgets so the Smart Stack/complication
+                // reflects it without waiting for the widget's own refresh.
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active { Task { await store.load() } }
+                    if phase == .active { Task { await store.load(); reloadWidgets() } }
                 }
         }
+    }
+
+    @MainActor private func reloadWidgets() {
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

@@ -2,6 +2,7 @@
 Manas.xcodeproj/
 Sources/Manas-iOS/Info.plist
 Sources/Manas-watch/Info.plist
+Sources/Manas-watch-widget/Info.plist
 
 # Xcode build output
 DerivedData/
