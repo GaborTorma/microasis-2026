@@ -129,6 +129,33 @@ export function SettingsButton() {
                 );
               })}
             </ul>
+
+            <div className="mt-4 border-t border-line pt-3">
+              <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-sun/80">
+                {t("settings.about")}
+              </p>
+              <p className="text-xs leading-relaxed text-cream-faint">
+                {t("settings.disclaimer")}
+              </p>
+              <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
+                <a
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-semibold text-sun underline-offset-2 hover:underline"
+                >
+                  {t("settings.privacy")}
+                </a>
+                <a
+                  href="/support"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-semibold text-sun underline-offset-2 hover:underline"
+                >
+                  {t("settings.support")}
+                </a>
+              </div>
+            </div>
           </div>
         </div>,
           document.body,

@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "MANAS 2026",
-    "unofficial": "Nem hivatalos app",
+    "guidefor": "Guide for",
+    "unofficial": "Nem hivatalos",
     "tagline": "Psychedelic Tribal Gathering"
   },
   "nav": {
@@ -73,6 +74,10 @@
     "moveDown": "Le",
     "show": "Mutat",
     "hide": "Elrejt",
-    "done": "Kész"
+    "done": "Kész",
+    "about": "Névjegy",
+    "disclaimer": "Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MANAS fesztivállal vagy annak szervezőivel, és azok nem támogatják.",
+    "privacy": "Adatvédelem",
+    "support": "Támogatás"
   }
 }

@@ -34,7 +34,12 @@ export function Header() {
     >
       <div className="flex items-center justify-between gap-2 px-4 pb-2.5 pt-3">
         <div className="min-w-0 leading-none">
-          <h1 className="truncate bg-gradient-to-r from-cream via-sun to-teal bg-clip-text font-display text-2xl font-extrabold tracking-wide text-transparent">
+          {/* Referential "Guide for" kicker so the wordmark reads as a unit —
+              "Guide for MANAS 2026". English in both locales (matches iOS). */}
+          <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-cream/75">
+            {t("guidefor")}
+          </p>
+          <h1 className="mt-0.5 truncate bg-gradient-to-r from-cream via-sun to-teal bg-clip-text font-display text-2xl font-extrabold tracking-wide text-transparent">
             {t("title")}
           </h1>
           <p className="mt-0.5 text-[0.6rem] font-medium uppercase tracking-[0.22em] text-sun/80">
