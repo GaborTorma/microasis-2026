@@ -105,6 +105,10 @@ struct SettingsView: View {
                     Text(L.t("about.disclaimer", settings.locale))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                    Link(L.t("settings.privacy", settings.locale),
+                         destination: URL(string: "https://manas2026.vercel.app/privacy")!)
+                    Link(L.t("settings.support", settings.locale),
+                         destination: URL(string: "https://manas2026.vercel.app/support")!)
                 }
             }
             .navigationTitle(L.t("settings.title", settings.locale))

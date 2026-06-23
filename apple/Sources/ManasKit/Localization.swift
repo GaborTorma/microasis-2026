@@ -41,6 +41,8 @@ public enum L {
         "settings.reorderHint": ("Húzd a sorrend módosításához", "Drag to reorder"),
         "settings.done": ("Kész", "Done"),
         "settings.about": ("Névjegy", "About"),
+        "settings.privacy": ("Adatvédelem", "Privacy Policy"),
+        "settings.support": ("Támogatás", "Support"),
         "about.disclaimer": (
             "Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MANAS fesztivállal vagy annak szervezőivel, és azok nem támogatják.",
             "This is an unofficial, fan-made guide. It is not affiliated with or endorsed by the MANAS festival or its organizers."),
