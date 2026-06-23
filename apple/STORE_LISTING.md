@@ -14,6 +14,9 @@ limits. The privacy/support URLs point at the deployed pwa.
 ## App information (app-level)
 - **Primary category:** Entertainment
 - **Secondary category:** Lifestyle
+- **Copyright** (required): `2026 Gábor Torma` — year + rights holder (the app's
+  developer, NOT the festival); no © symbol, no "Copyright" word. Match your Apple
+  account's legal name if it differs.
 - **Content rights:** does not contain third-party content (the schedule is public
   info; "MANAS 2026" used referentially). Answer accordingly.
 - **Age rating:** 4+ (complete the questionnaire; no objectionable content).
@@ -158,10 +161,12 @@ Location use is optional and on-device only: if the user grants permission, the 
 
 The submission includes an embedded watchOS app and watch widgets/complications that show the schedule. All functionality is available immediately without any credentials.
 
-## App Privacy questionnaire (data collection)
-- Answer: **"No, we do not collect data from this app."** Location is processed
-  on-device only and never transmitted; the schedule fetch pulls public data in,
-  it does not collect user data. (See `/privacy`.)
+## App Privacy questionnaire (data collection) — app-level, REQUIRED before review
+- Sidebar (app level) → **App Privacy → Get Started**. Needs an **Admin/Account
+  Holder** role. Answer **"No, we do not collect data from this app." → Save →
+  Publish.** Location is processed on-device only and never transmitted; the
+  schedule fetch pulls public data in, it does not collect user data. (See `/privacy`.)
+  This is separate from the version page — "Add for Review" blocks until it's published.
 
 ## Submission gates (one-time)
 - **Export compliance:** already handled — `ITSAppUsesNonExemptEncryption=false` in
