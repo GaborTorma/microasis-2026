@@ -68,17 +68,17 @@ export function SettingsButton() {
               </button>
             </div>
 
-            <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-sun/80">
+            <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-white/45">
               {t("lang.switch")}
             </p>
             <div className="mb-4">
               <LanguageToggle />
             </div>
 
-            <p className="mb-1 text-[0.7rem] font-semibold uppercase tracking-wide text-sun/80">
+            <p className="mb-1 text-[0.7rem] font-semibold uppercase tracking-wide text-white/45">
               {t("settings.stages")}
             </p>
-            <p className="mb-3 text-xs text-cream-faint">{t("settings.hint")}</p>
+            <p className="mb-3 text-xs text-white/45">{t("settings.hint")}</p>
 
             <ul className="flex flex-col gap-1.5">
               {stages.map((s, i) => {
@@ -131,10 +131,10 @@ export function SettingsButton() {
             </ul>
 
             <div className="mt-4 border-t border-line pt-3">
-              <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-sun/80">
+              <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-white/45">
                 {t("settings.about")}
               </p>
-              <p className="text-xs leading-relaxed text-cream-faint">
+              <p className="text-xs leading-relaxed text-white/55">
                 {t("settings.disclaimer")}
               </p>
               <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
@@ -142,7 +142,7 @@ export function SettingsButton() {
                   href="/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-semibold text-sun underline-offset-2 hover:underline"
+                  className="text-xs font-semibold text-cream underline underline-offset-2 hover:text-white"
                 >
                   {t("settings.privacy")}
                 </a>
@@ -150,7 +150,7 @@ export function SettingsButton() {
                   href="/support"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-semibold text-sun underline-offset-2 hover:underline"
+                  className="text-xs font-semibold text-cream underline underline-offset-2 hover:text-white"
                 >
                   {t("settings.support")}
                 </a>
