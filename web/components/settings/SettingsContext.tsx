@@ -15,8 +15,8 @@ type Settings = {
   /** Portrait-mobile column-count zoom: how many stage columns fill the width. */
   columns: number;
 };
-// Bowl is hidden by default (its poster isn't published); users can re-enable it.
-const DEFAULT: Settings = { order: [], hidden: ["bowl"], scale: 1, columns: 3 };
+// No stages hidden by default; users can hide any stage in settings.
+const DEFAULT: Settings = { order: [], hidden: [], scale: 1, columns: 3 };
 const KEY = "manas-settings-v1";
 
 /** Timetable text/width zoom levels (−25% … +50%, 25% steps). */

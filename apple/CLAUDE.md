@@ -87,8 +87,8 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - **Offline cache lives in Application Support** (not Caches) so the OS won't purge it
   under storage pressure — important for watch offline-after-first-load. Every fetch
   rewrites the whole `manas-schedule.json`.
-- **Bowl hidden by default** (`AppState.swift` `?? ["bowl"]`) — kept in sync with web,
-  see `../CLAUDE.md`.
+- **No stages hidden by default** (`AppState.swift` `?? []`) — kept in sync with web,
+  see `../CLAUDE.md`. Bowl was default-hidden until its poster shipped.
 - **Debug tooling is gated to DEBUG/TestFlight** (`appStoreReceiptURL` check) and
   compiled out of App Store builds. Drive it from the simulator:
   ```bash

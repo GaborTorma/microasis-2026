@@ -57,10 +57,11 @@ Rules a future edit must respect:
   web (`web/i18n/request.ts`, `i18n/config.ts` `DEFAULT_LOCALE='hu'`) and apple
   (`ManasKit/AppState.swift` device default). **Exception:** the watch widget always
   follows device language and ignores the app's locale toggle (no App Group).
-- **Bowl stage is hidden by default on every client** ("poster not published yet"):
-  `web/components/settings/SettingsContext.tsx` `hidden: ["bowl"]` and
-  `ManasKit/AppState.swift` `?? ["bowl"]`. When the Bowl poster ships, flip both
-  defaults together.
+- **All stages are shown by default on every client.** Bowl was hidden by default
+  until its poster shipped; both defaults were then flipped together —
+  `web/components/settings/SettingsContext.tsx` `hidden: []` and
+  `ManasKit/AppState.swift` `?? []`. Note: this only changes *new* installs/visitors;
+  users who already persisted `hidden: ["bowl"]` keep it until they toggle it back.
 - **Stage `slug`** (`portal`, `field`, `bowl`, `terrace`, `mandala`) is the stable
   cross-platform key. Never repurpose a slug.
 - **All times display in `Europe/Budapest`**, hardcoded on both sides

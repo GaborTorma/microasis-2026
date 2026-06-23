@@ -43,8 +43,8 @@ public final class Settings: ObservableObject {
 
     public init() {
         order = defaults.stringArray(forKey: Key.order) ?? []
-        // Bowl is hidden by default (its poster isn't published); users can re-enable it.
-        hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? ["bowl"])
+        // No stages hidden by default; users can hide any stage in settings.
+        hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
         locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
         columns = (defaults.object(forKey: Key.columns) as? Int) ?? 3
         fontSize = (defaults.object(forKey: Key.fontSize) as? Int) ?? 3
