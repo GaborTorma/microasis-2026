@@ -100,6 +100,12 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                Section(L.t("settings.about", settings.locale)) {
+                    Text(L.t("about.disclaimer", settings.locale))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
             .navigationTitle(L.t("settings.title", settings.locale))
             .navigationBarTitleDisplayMode(.inline)

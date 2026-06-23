@@ -92,16 +92,25 @@ struct WatchRootView: View {
     @ViewBuilder
     private func card(_ stage: StageDTO) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            // ── Fixed top block: stage / date / time / icon never move ──
-            HStack(spacing: 4) {
-                Text(stage.name.uppercased())
-                    .font(.system(size: 17, weight: .heavy, design: .rounded))
-                    .foregroundStyle(Color(hex: stage.accent))
-                    .lineLimit(1).minimumScaleFactor(0.7)
-                if location.nearestSlug == stage.slug {
-                    Image(systemName: "location.fill")
-                        .font(.system(size: 12, weight: .bold))
+            // ── Fixed top block: brand / stage / date / time / icon never move ──
+            VStack(alignment: .leading, spacing: 1) {
+                // Quiet wordmark so the watch screen says what it is on its own —
+                // a stage name alone doesn't reveal whose schedule this is.
+                Text(L.t("app.title", settings.locale).uppercased())
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .tracking(1)
+                    .foregroundStyle(Theme.cream.opacity(0.5))
+                    .lineLimit(1)
+                HStack(spacing: 4) {
+                    Text(stage.name.uppercased())
+                        .font(.system(size: 17, weight: .heavy, design: .rounded))
                         .foregroundStyle(Color(hex: stage.accent))
+                        .lineLimit(1).minimumScaleFactor(0.7)
+                    if location.nearestSlug == stage.slug {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(Color(hex: stage.accent))
+                    }
                 }
             }
 

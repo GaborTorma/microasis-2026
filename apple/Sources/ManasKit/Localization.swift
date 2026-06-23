@@ -14,7 +14,10 @@ public extension I18nText {
 public enum L {
     private static let table: [String: (hu: String, en: String)] = [
         "app.title": ("Manas 2026", "Manas 2026"),
-        "app.unofficial": ("Nem hivatalos app", "Unofficial guide"),
+        // Intentionally English in both locales — matches the App Store name
+        // "Guide for MANAS 2026" and frames the name as referential (nominative) use.
+        "app.guidefor": ("Guide for", "Guide for"),
+        "app.unofficial": ("Nem hivatalos", "Unofficial"),
         "nav.timetable": ("Időrend", "Timetable"),
         "nav.now": ("Most", "Now"),
         "now.live": ("Most", "Live"),
@@ -37,6 +40,10 @@ public enum L {
         "settings.language": ("Nyelv", "Language"),
         "settings.reorderHint": ("Húzd a sorrend módosításához", "Drag to reorder"),
         "settings.done": ("Kész", "Done"),
+        "settings.about": ("Névjegy", "About"),
+        "about.disclaimer": (
+            "Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MANAS fesztivállal vagy annak szervezőivel, és azok nem támogatják.",
+            "This is an unofficial, fan-made guide. It is not affiliated with or endorsed by the MANAS festival or its organizers."),
         "settings.testing": ("Teszt", "Testing"),
         "settings.testTime": ("Teszt idő", "Test time"),
         "settings.testLocation": ("Teszt hely", "Test location"),

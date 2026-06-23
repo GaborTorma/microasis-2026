@@ -59,6 +59,13 @@ struct HeaderBar: View {
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             VStack(alignment: .leading, spacing: 1) {
+                // Referential "Guide for" kicker above the festival name so the
+                // lockup reads as one unit — "Guide for MANAS 2026".
+                Text(L.t("app.guidefor", settings.locale).uppercased())
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .tracking(2)
+                    .foregroundStyle(Theme.cream.opacity(0.85))
+                    .lineLimit(1)
                 Text(L.t("app.title", settings.locale).uppercased())
                     .font(.system(size: 22, weight: .heavy, design: .rounded))
                     .foregroundStyle(
@@ -68,9 +75,9 @@ struct HeaderBar: View {
                     .lineLimit(1).minimumScaleFactor(0.6)
                 Text(L.t("app.unofficial", settings.locale).uppercased())
                     .font(.system(size: 9, weight: .semibold))
-                    .tracking(2)
+                    .tracking(1.5)
                     .foregroundStyle(Theme.sun.opacity(0.8))
-                    .lineLimit(1)
+                    .lineLimit(1).minimumScaleFactor(0.6)
             }
             Spacer(minLength: 4)
 
