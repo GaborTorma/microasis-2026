@@ -59,18 +59,21 @@ body {
   color: var(--color-ink);
 }
 
-/* Slim, warm scrollbars. */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-line) transparent;
-}
-*::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
-*::-webkit-scrollbar-thumb {
-  background: var(--color-line);
-  border-radius: 99px;
+/* Slim, warm scrollbars. Layered so the `no-scrollbar` utility (utilities
+   layer) can override these — unlayered rules would otherwise always win. */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 99px;
+  }
 }
 
 @utility font-display {

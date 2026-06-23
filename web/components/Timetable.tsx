@@ -351,7 +351,7 @@ export function Timetable() {
             ref={headScrollRef}
             onScroll={() => syncScroll(headScrollRef.current, bodyScrollRef.current)}
             style={{ scrollSnapType: paged ? "x mandatory" : undefined }}
-            className="no-scrollbar flex-1 overflow-x-auto"
+            className="no-scrollbar flex-1 overflow-x-auto overflow-y-clip"
           >
             <div className="flex" style={trackStyle}>
               {stages.map((s) => (
@@ -425,7 +425,7 @@ export function Timetable() {
           ref={bodyScrollRef}
           onScroll={onBodyScroll}
           style={{ scrollSnapType: paged ? "x mandatory" : undefined }}
-          className="no-scrollbar flex-1 overflow-x-auto"
+          className="no-scrollbar flex-1 overflow-x-auto overflow-y-clip"
         >
           <div
             ref={gridRef}
