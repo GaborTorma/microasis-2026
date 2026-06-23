@@ -1,9 +1,8 @@
 /**
  * Seed the Manas 2026 schedule + map data into Neon.
  *
- * Data transcribed from the printed PORTAL and FIELD timetable posters.
+ * Data transcribed from the printed PORTAL, FIELD and BOWL timetable posters.
  * Times are festival-local (Europe/Budapest = CEST = UTC+02:00 in July).
- * Bowl stage is a placeholder until its poster is published.
  *
  * Run: pnpm db:seed   (idempotent — wipes and re-inserts)
  *
@@ -194,6 +193,62 @@ const FIELD: Entry[] = [
   { d: "2026-07-12", s: "12:00", title: w("Gauranga Das, Meszberger Antal: Trance Breathing", "Gauranga Das, Meszberger Antal: Transzlégzés"), kind: "workshop", lang: "both" },
   { d: "2026-07-12", s: "14:00", title: w("Bajnay Beáta: Compás in space (Flamenco)", "Bajnay Beáta: Compás a térben (Flamenco)"), kind: "workshop", lang: "hu" },
   { d: "2026-07-12", s: "16:00", title: w("Grecsó Zoltán: Contemporary Dance Show", "Grecsó Zoltán: Kortárs tánc-showcase"), kind: "workshop", lang: "en" },
+];
+
+// ───────────────────────────────────────────────────────────── BOWL ──
+// Open-air techno / progressive. Continuous overnight programming; only Wed
+// and Thu have a daytime BREAK. Conntex runs 23:30 Thu → 01:30 Fri across
+// the printed column boundary (a single set, listed once).
+const BOWL: Entry[] = [
+  // Wed (Jul 8)
+  { d: "2026-07-08", s: "14:00", title: t("Garpo & Li & Laslo") },
+  { d: "2026-07-08", s: "18:00", title: BREAK, kind: "break" },
+  { d: "2026-07-08", s: "20:30", title: t("Lilos") },
+  { d: "2026-07-08", s: "22:30", title: t("Moma") },
+  // Thu (Jul 9)
+  { d: "2026-07-09", s: "00:00", title: t("Chiodan") },
+  { d: "2026-07-09", s: "02:00", title: t("Baco") },
+  { d: "2026-07-09", s: "03:30", title: t("ADX B2B D365") },
+  { d: "2026-07-09", s: "05:30", title: t("Spy C") },
+  { d: "2026-07-09", s: "07:00", title: BREAK, kind: "break" },
+  { d: "2026-07-09", s: "14:00", title: t("Marcel") },
+  { d: "2026-07-09", s: "16:00", title: t("Révész Bálint") },
+  { d: "2026-07-09", s: "17:30", title: t("Peter Bernath") },
+  { d: "2026-07-09", s: "19:30", title: t("Bernathy") },
+  { d: "2026-07-09", s: "21:30", title: t("Titusz") },
+  { d: "2026-07-09", s: "23:30", title: t("Conntex") },
+  // Fri (Jul 10)
+  { d: "2026-07-10", s: "01:30", title: t("Katamii") },
+  { d: "2026-07-10", s: "03:00", title: t("Subotage") },
+  { d: "2026-07-10", s: "04:30", title: t("Ruenge") },
+  { d: "2026-07-10", s: "06:00", title: t("Kele") },
+  { d: "2026-07-10", s: "07:30", title: t("Alllusion") },
+  { d: "2026-07-10", s: "09:30", title: t("Bodry") },
+  { d: "2026-07-10", s: "11:00", title: t("Further") },
+  { d: "2026-07-10", s: "12:00", title: t("Berko") },
+  { d: "2026-07-10", s: "14:00", title: t("Szamy") },
+  { d: "2026-07-10", s: "16:00", title: t("Acideal (live)") },
+  { d: "2026-07-10", s: "18:00", title: t("THNTS") },
+  { d: "2026-07-10", s: "20:00", title: t("Zsom") },
+  { d: "2026-07-10", s: "22:00", title: t("Sumiruna") },
+  // Sat (Jul 11)
+  { d: "2026-07-11", s: "00:00", title: t("Kliment") },
+  { d: "2026-07-11", s: "02:00", title: t("Szlym B2B Szoliver") },
+  { d: "2026-07-11", s: "04:00", title: t("Urklang") },
+  { d: "2026-07-11", s: "06:00", title: t("Axeev") },
+  { d: "2026-07-11", s: "07:30", title: t("THNTS B2B Mankind") },
+  { d: "2026-07-11", s: "12:00", title: t("P.E.P") },
+  { d: "2026-07-11", s: "13:30", title: t("Garpo") },
+  { d: "2026-07-11", s: "15:00", title: t("Mankind") },
+  { d: "2026-07-11", s: "16:30", title: t("Zagi") },
+  { d: "2026-07-11", s: "18:00", title: t("Zvezda Beta") },
+  { d: "2026-07-11", s: "20:00", title: t("Psyk") },
+  { d: "2026-07-11", s: "22:00", title: t("Mary Yuzovskaya") },
+  // Sun (Jul 12)
+  { d: "2026-07-12", s: "00:00", title: t("Kohra") },
+  { d: "2026-07-12", s: "02:00", title: t("Erro") },
+  { d: "2026-07-12", s: "04:00", title: t("Tsu B2B Switch Nollie") },
+  { d: "2026-07-12", s: "06:00", e: "09:00", title: t("Roland Handrick") },
 ];
 
 // ────────────────────────────────────────────────────────── TERRACE ──
@@ -448,7 +503,7 @@ async function main() {
       {
         slug: "bowl",
         name: "Bowl",
-        subtitle: { en: "Open-air techno (TBA)", hu: "Szabadtéri techno (hamarosan)" },
+        subtitle: { en: "Open-air techno", hu: "Szabadtéri techno" },
         color: "#5a3a1f",
         accent: "#d98c3a",
         sortOrder: 2,
@@ -485,11 +540,10 @@ async function main() {
   await db.insert(events).values([
     ...withEnds(portal.id, PORTAL),
     ...withEnds(field.id, FIELD),
+    ...withEnds(bowl.id, BOWL),
     ...withEnds(terrace.id, TERRACE),
     ...withEnds(mandala.id, MANDALA),
-    // Bowl: no events yet (poster pending).
   ]);
-  void bowl;
 
   console.log("Inserting location categories…");
   const catRows = await db
@@ -528,6 +582,7 @@ async function main() {
     stages: 5,
     portalEvents: PORTAL.length,
     fieldEvents: FIELD.length,
+    bowlEvents: BOWL.length,
     terraceEvents: TERRACE.length,
     mandalaEvents: MANDALA.length,
     categories: CATEGORIES.length,
