@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "manas-web",
+      "name": "manas-pwa",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--dir", "web", "dev"],
+      "runtimeArgs": ["--dir", "pwa", "dev"],
       "port": 3000
     }
   ]
