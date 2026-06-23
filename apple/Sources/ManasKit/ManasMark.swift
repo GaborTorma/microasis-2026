@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The Manas flower mark, drawn with plain SwiftUI shapes (mirrors the petal
-/// geometry of `web/public/icon.svg`, minus the dark square background).
+/// geometry of `pwa/public/icon.svg`, minus the dark square background).
 ///
 /// Drawn rather than shipped as a raster image because a full-colour PNG does
 /// **not** render inside watchOS accessory complications — those expect

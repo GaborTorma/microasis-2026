@@ -11,7 +11,7 @@ Three targets share `ManasKit`. See `README.md` for the full feature tour and
 project.yml              XcodeGen project definition — THE source of truth
 Sources/
   ManasKit/              shared, platform-agnostic Swift core (no separate module)
-    Models.swift         Codable DTOs (must match web/lib/types.ts) + JSONDecoder.manas
+    Models.swift         Codable DTOs (must match pwa/lib/types.ts) + JSONDecoder.manas
     APIClient.swift      fetch /api/schedule + offline disk cache (Application Support)
     AppState.swift       Settings + ScheduleStore + LocationStore (@MainActor singletons)
     Localization.swift   AppLocale (HU default) + baked-in ~47-key string table
@@ -78,7 +78,7 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 
 ## Gotchas
 
-- **DTO + date contract:** `Models.swift` mirrors `web/lib/types.ts`; `JSONDecoder.manas`
+- **DTO + date contract:** `Models.swift` mirrors `pwa/lib/types.ts`; `JSONDecoder.manas`
   hard-fails on any date shape outside the two the API emits. See `../CLAUDE.md` §2
   before any date-related edit.
 - **Schedule endpoint only.** `APIClient.baseURL` is `…/api` and the only call is
