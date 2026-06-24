@@ -58,6 +58,7 @@ struct RootView: View {
 struct DisclaimerSheet: View {
     @EnvironmentObject var settings: Settings
     let onAck: () -> Void
+    @State private var sheetHeight: CGFloat = 380
 
     var body: some View {
         VStack(spacing: 16) {
@@ -83,7 +84,6 @@ struct DisclaimerSheet: View {
                 .foregroundStyle(Theme.cream.opacity(0.9))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
-            Spacer(minLength: 8)
             Button(action: onAck) {
                 Text(L.t("disclaimer.ok", settings.locale))
                     .font(.headline)
@@ -93,13 +93,29 @@ struct DisclaimerSheet: View {
                     .background(Theme.sun, in: RoundedRectangle(cornerRadius: 14))
             }
             .buttonStyle(.plain)
+            .padding(.top, 8)
         }
         .padding(24)
-        .presentationDetents([.medium])
+        .frame(maxWidth: .infinity)
+        // Size the sheet to its content (like the PWA card) so the button sits
+        // right under the text instead of being pushed to the bottom of a detent.
+        .background(
+            GeometryReader { g in
+                Color.clear.preference(key: DisclaimerHeightKey.self, value: g.size.height)
+            }
+        )
+        .onPreferenceChange(DisclaimerHeightKey.self) { sheetHeight = $0 }
+        .presentationDetents([.height(sheetHeight)])
+        .presentationDragIndicator(.hidden)
         .presentationBackground(Theme.ink)
         .preferredColorScheme(.dark)
         .interactiveDismissDisabled(true)
     }
+}
+
+private struct DisclaimerHeightKey: PreferenceKey {
+    static let defaultValue: CGFloat = 380
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
 }
 
 struct HeaderBar: View {
