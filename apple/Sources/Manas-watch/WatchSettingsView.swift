@@ -109,6 +109,7 @@ struct WatchSettingsView: View {
         var name = AttributedString(L.t("about.makername", settings.locale))
         name.link = URL(string: "https://torma.ai")
         name.foregroundColor = .secondary
+        name.underlineStyle = .single
         return prefix + name
     }
 
