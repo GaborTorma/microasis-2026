@@ -42,6 +42,8 @@ targets:
         # would never reach the binary.
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        # On-device name (home screen, app switcher, Safari "‹ <app>" back button).
+        CFBundleDisplayName: "Guide for MANAS 2026"
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."

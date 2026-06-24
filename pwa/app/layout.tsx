@@ -23,15 +23,15 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Manas 2026 — Unofficial Guide",
+  title: "Guide for MANAS 2026",
   description:
     "Unofficial timetable, now-playing and map for the Manas 2026 gathering. Not affiliated with the festival.",
-  applicationName: "Manas 2026",
+  applicationName: "Guide for MANAS 2026",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Manas 2026",
+    title: "Guide for MANAS 2026",
   },
   formatDetection: { telephone: false },
 };

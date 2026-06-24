@@ -20,7 +20,7 @@ icons, embedded watch, version `1.0.0 (1)`, HTTPS export-compliance flag.
 
 1. App Store Connect → **Apps → ➕ → New App**
    - Platform: **iOS**
-   - Name: e.g. `Manas 2026 — Unofficial`
+   - Name: **`Guide for MANAS 2026`** (the App Store + on-device display name)
    - Primary language: **Hungarian**
    - Bundle ID: **`ai.torma.manas.2026`** (if it isn't listed, register it at
      developer.apple.com → Certificates, IDs & Profiles → Identifiers, or let
