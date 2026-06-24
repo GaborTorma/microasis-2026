@@ -76,8 +76,12 @@
     "hide": "Hide",
     "done": "Done",
     "about": "About",
-    "disclaimer": "This is an unofficial, fan-made guide. It is not affiliated with or endorsed by the MANAS festival or its organizers.",
+    "disclaimer": "This is an unofficial, fan-made guide — not the official software or product of the MANAS festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it.",
     "privacy": "Privacy Policy",
     "support": "Support"
+  },
+  "disclaimer": {
+    "title": "Unofficial app",
+    "ok": "Got it"
   }
 }

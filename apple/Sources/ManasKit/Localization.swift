@@ -44,8 +44,10 @@ public enum L {
         "settings.privacy": ("Adatvédelem", "Privacy Policy"),
         "settings.support": ("Támogatás", "Support"),
         "about.disclaimer": (
-            "Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MANAS fesztivállal vagy annak szervezőivel, és azok nem támogatják.",
-            "This is an unofficial, fan-made guide. It is not affiliated with or endorsed by the MANAS festival or its organizers."),
+            "Ez egy nem hivatalos, rajongók által készített kalauz — nem a MANAS fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
+            "This is an unofficial, fan-made guide — not the official software or product of the MANAS festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it."),
+        "disclaimer.title": ("Nem hivatalos alkalmazás", "Unofficial app"),
+        "disclaimer.ok": ("Értem", "Got it"),
         "settings.testing": ("Teszt", "Testing"),
         "settings.testTime": ("Teszt idő", "Test time"),
         "settings.testLocation": ("Teszt hely", "Test location"),

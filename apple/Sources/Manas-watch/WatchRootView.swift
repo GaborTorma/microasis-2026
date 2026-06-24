@@ -13,6 +13,8 @@ struct WatchRootView: View {
     @State private var eventIndex = 0
     @State private var didInit = false
     @State private var showSettings = false
+    @AppStorage("manas.disclaimerSeen") private var disclaimerSeen = false
+    @State private var showDisclaimer = false
     @State private var now = Fmt.now
     /// Fixed time the left/right navigation pivots around. Only a vertical
     /// swipe (or init) moves it; horizontal switches keep it, so going back and
@@ -68,9 +70,13 @@ struct WatchRootView: View {
         .background(bg.gradient)
         .gesture(swipe)
         .sheet(isPresented: $showSettings) { WatchSettingsView() }
+        .sheet(isPresented: $showDisclaimer) {
+            WatchDisclaimerSheet { disclaimerSeen = true; showDisclaimer = false }
+                .environmentObject(settings)
+        }
         .onReceive(tick) { _ in now = Fmt.now }
         .onChange(of: store.data?.events.count ?? 0) { _, _ in initIfNeeded() }
-        .onAppear { initIfNeeded(); location.refresh(stages: stages) }
+        .onAppear { initIfNeeded(); location.refresh(stages: stages); if !disclaimerSeen { showDisclaimer = true } }
         // Changing the debug time, or returning to the foreground, re-centres on
         // "now" so the live act and its dot are correct immediately.
         .onChange(of: settings.debugNow) { _, _ in now = Fmt.now; resetToNow() }
@@ -285,5 +291,32 @@ struct WatchRootView: View {
         // finished act); otherwise anchor on the shown (upcoming) act's start.
         anchorTime = currentEvent.map { $0.isLive(at: now) ? now : $0.startsAt } ?? now
         noProgramAtAnchor = false
+    }
+}
+
+/// First-launch disclaimer (organizer requirement), shown once per device.
+struct WatchDisclaimerSheet: View {
+    @EnvironmentObject var settings: Settings
+    let onAck: () -> Void
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 10) {
+                Text(L.t("disclaimer.title", settings.locale))
+                    .font(.headline)
+                    .foregroundStyle(Theme.cream)
+                    .multilineTextAlignment(.center)
+                Text(L.t("about.disclaimer", settings.locale))
+                    .font(.footnote)
+                    .foregroundStyle(Theme.cream.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                Button(L.t("disclaimer.ok", settings.locale), action: onAck)
+                    .tint(Theme.sun)
+                    .padding(.top, 4)
+            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 8)
+        }
+        .interactiveDismissDisabled(true)
     }
 }

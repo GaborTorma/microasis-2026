@@ -6,6 +6,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { SWRegister } from "@/components/SWRegister";
+import { DisclaimerGate } from "@/components/DisclaimerGate";
 import { SettingsProvider } from "@/components/settings/SettingsContext";
 
 const display = Baloo_2({
@@ -64,6 +65,7 @@ export default async function RootLayout({
             </div>
             <BottomNav />
             <SWRegister />
+            <DisclaimerGate />
           </SettingsProvider>
         </NextIntlClientProvider>
       </body>

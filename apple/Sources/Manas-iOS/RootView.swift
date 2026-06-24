@@ -6,6 +6,8 @@ struct RootView: View {
     @State private var tab = 0
     @State private var showSettings = false
     @State private var compactHeader = false   // landscape: hide app header on scroll
+    @AppStorage("manas.disclaimerSeen") private var disclaimerSeen = false
+    @State private var showDisclaimer = false
 
     var body: some View {
         GeometryReader { geo in
@@ -42,7 +44,50 @@ struct RootView: View {
                     .environmentObject(store)
                     .environmentObject(settings)
             }
+            .sheet(isPresented: $showDisclaimer) {
+                DisclaimerSheet { disclaimerSeen = true; showDisclaimer = false }
+                    .environmentObject(settings)
+            }
+            .onAppear { if !disclaimerSeen { showDisclaimer = true } }
         }
+    }
+}
+
+/// First-launch disclaimer the festival organizers required: shown once and must
+/// be acknowledged. The flag persists per device (no App Group / no iOS↔watch sync).
+struct DisclaimerSheet: View {
+    @EnvironmentObject var settings: Settings
+    let onAck: () -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            ManasMark()
+                .frame(width: 54, height: 54)
+                .padding(.top, 12)
+            Text(L.t("disclaimer.title", settings.locale))
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(Theme.cream)
+            Text(L.t("about.disclaimer", settings.locale))
+                .font(.callout)
+                .foregroundStyle(Theme.cream.opacity(0.85))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
+            Button(action: onAck) {
+                Text(L.t("disclaimer.ok", settings.locale))
+                    .font(.headline)
+                    .foregroundStyle(Theme.ink)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Theme.sun, in: RoundedRectangle(cornerRadius: 14))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(24)
+        .presentationDetents([.medium])
+        .presentationBackground(Theme.ink)
+        .preferredColorScheme(.dark)
+        .interactiveDismissDisabled(true)
     }
 }
 
