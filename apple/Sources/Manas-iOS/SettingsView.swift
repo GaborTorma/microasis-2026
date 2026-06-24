@@ -82,7 +82,7 @@ struct SettingsView: View {
                     }
                 }
 
-                if AppEnv.debugToolsEnabled {
+                if AppEnv.debugToolsEnabled && !AppEnv.hideTestUI {
                     Section(L.t("settings.testing", settings.locale)) {
                         Toggle(L.t("settings.testTime", settings.locale), isOn: debugOn)
                         if settings.debugNow != nil {

@@ -10,6 +10,15 @@ public enum AppEnv {
         return Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
         #endif
     }()
+
+    /// Screenshot-only escape hatch: when `manas.hideTestUI` is set the in-app
+    /// "Testing" settings section is hidden even in DEBUG/TestFlight, so App
+    /// Store / marketing captures don't show the QA time/location controls. The
+    /// clock and coordinate overrides themselves keep working — only the UI is
+    /// hidden. Undocumented, invisible default written by the screenshot harness.
+    public static var hideTestUI: Bool {
+        UserDefaults.standard.bool(forKey: "manas.hideTestUI")
+    }
 }
 
 public enum Fmt {

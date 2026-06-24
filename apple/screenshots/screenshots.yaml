@@ -1,0 +1,107 @@
+# Manas 2026 — App Store / landing-page screenshot definitions.
+#
+# Each shot is rendered once per language. A line maps directly to simulator
+# `defaults` keys the app reads (manas.*), so there is no UI tapping involved.
+# Run with:  python3 make_screenshots.py            (all shots, all languages)
+#            python3 make_screenshots.py --only 05  (just matching shots)
+#            python3 make_screenshots.py --no-build --lang hu
+#
+# Pre-requisite: Xcode (full, not just Command Line Tools). The harness finds it
+# automatically. The shots use the app's built-in debug overrides, which are
+# compiled into Debug simulator builds and no-op in App Store builds.
+
+api: https://manas2026.vercel.app/api/schedule   # source of truth for stage lat,lng
+out_dir: .                                        # language sub-folders created here
+settle: 7                                         # seconds to wait after launch before capture
+appearance: dark                                  # simulator UI style (status bar glyphs)
+status_bar:                                       # clean marketing status bar (iOS; watch ignores it)
+  time: "9:41"
+  battery: 100
+  cellular: 4
+  wifi: 3
+
+languages: [hu, en]                               # every shot is captured in each
+
+# Logical devices referenced by each shot's `device:` key.
+devices:
+  iphone:
+    name: "iPhone 14 Plus"                        # 6.5" App Store slot (1284×2778)
+    platform: ios
+    scheme: Manas
+    bundle: ai.torma.manas.2026
+  watch:
+    name: "Apple Watch Ultra 3 (49mm)"            # 422×514 watch slot
+    platform: watchos
+    scheme: ManasWatch
+    bundle: ai.torma.manas.2026.watchkitapp
+
+# view:     timetable | now | settings   (iPhone tab / sheet to open)
+#           widget                        (watch: render one stage's widget card)
+# stage:    stage slug, required for view: widget -> manas.startWidgetPreview
+# time:     "yyyy-MM-dd HH:mm" Budapest-local -> manas.debugNow
+# location: stage slug -> that stage's lat,lng -> manas.debugCoord (selects the
+#           nearest stage: left column on iPhone, shown stage on watch). Omit for
+#           "no stage nearby".
+# columns:  iPhone timetable zoom (1…5) -> manas.columns  (default 3)
+# font:     text-size zoom (1…5)         -> manas.fontSize (default 3)
+# empty:    true -> watch: force the "nothing on" card  (manas.startNoProgram)
+shots:
+  - name: "01-timetable-thursday"
+    device: iphone
+    view: timetable
+    time: "2026-07-09 01:06"
+    columns: 3
+    font: 2
+
+  - name: "02-timetable-friday"
+    device: iphone
+    view: timetable
+    time: "2026-07-10 17:36"
+    columns: 5
+    font: 1
+
+  - name: "03-now-friday"
+    device: iphone
+    view: now
+    time: "2026-07-10 17:14"
+    location: field
+
+  - name: "04-timetable-terrace"
+    device: iphone
+    view: timetable
+    time: "2026-07-11 12:32"
+    columns: 1
+    location: terrace
+
+  - name: "05-settings"
+    device: iphone
+    view: settings
+
+  - name: "01-now-portal"
+    device: watch
+    time: "2026-07-09 02:30"
+    location: portal
+
+  - name: "02-now-terrace"
+    device: watch
+    time: "2026-07-10 10:30"
+    location: terrace
+
+  - name: "03-now-mandala"
+    device: watch
+    time: "2026-07-12 02:00"
+    location: mandala
+    empty: true                 # force the "nothing on" card (manas.startNoProgram)
+
+  # Smart Stack "now playing" widget cards, rendered full-screen for marketing.
+  - name: "04-widget-portal"
+    device: watch
+    view: widget
+    stage: portal
+    time: "2026-07-09 02:30"
+
+  - name: "05-widget-field"
+    device: watch
+    view: widget
+    stage: field
+    time: "2026-07-10 17:14"

@@ -48,8 +48,22 @@ struct RootView: View {
                 DisclaimerSheet { disclaimerSeen = true; showDisclaimer = false }
                     .environmentObject(settings)
             }
-            .onAppear { if !disclaimerSeen { showDisclaimer = true } }
+            .onAppear {
+                if !disclaimerSeen { showDisclaimer = true }
+                applyScreenshotOverrides()
+            }
         }
+    }
+
+    /// Screenshot-harness hooks (DEBUG/TestFlight only) so a capture can target
+    /// any screen without UI taps: `manas.startTab` (0 = timetable, 1 = now)
+    /// jumps straight to a tab, `manas.startSettings` opens the Settings sheet.
+    /// Undocumented, invisible defaults — no-op in App Store builds.
+    private func applyScreenshotOverrides() {
+        guard AppEnv.debugToolsEnabled else { return }
+        let d = UserDefaults.standard
+        if d.object(forKey: "manas.startTab") != nil { tab = d.integer(forKey: "manas.startTab") }
+        if d.bool(forKey: "manas.startSettings") { showSettings = true }
     }
 }
 

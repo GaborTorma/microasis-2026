@@ -55,8 +55,11 @@ public final class Settings: ObservableObject {
         // No stages hidden by default; users can hide any stage in settings.
         hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
         locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
-        columns = (defaults.object(forKey: Key.columns) as? Int) ?? 3
-        fontSize = (defaults.object(forKey: Key.fontSize) as? Int) ?? 3
+        // `integer(forKey:)` (not `object as? Int`) so a value injected via the
+        // launch-argument domain — a string, e.g. the screenshot harness's
+        // `-manas.columns 3` — is parsed too; absence still falls back to 3.
+        columns = defaults.object(forKey: Key.columns) != nil ? defaults.integer(forKey: Key.columns) : 3
+        fontSize = defaults.object(forKey: Key.fontSize) != nil ? defaults.integer(forKey: Key.fontSize) : 3
         debugNow = defaults.string(forKey: Key.debugNow).flatMap(Fmt.parseDateTime)
         debugCoord = defaults.string(forKey: Key.debugCoord)
         syncSharedLocale()

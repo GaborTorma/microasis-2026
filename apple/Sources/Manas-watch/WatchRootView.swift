@@ -41,8 +41,18 @@ struct WatchRootView: View {
         guard !e.isEmpty else { return nil }
         return e[min(max(eventIndex, 0), e.count - 1)]
     }
+    /// Screenshot-only (DEBUG/TestFlight): force the empty "nothing on" card for
+    /// a marketing capture, anchored on the debug clock — the geofence path
+    /// (`resetToNow`) always lands on an act, so the empty state is otherwise
+    /// only reachable by hand. Set `manas.startNoProgram`. No-op in App Store
+    /// builds; doesn't affect normal browsing.
+    private var screenshotEmpty: Bool {
+        AppEnv.debugToolsEnabled && UserDefaults.standard.bool(forKey: "manas.startNoProgram")
+    }
+    /// True when the card shows the "nothing on" state (real, or forced for a shot).
+    private var showsNoProgram: Bool { noProgramAtAnchor || screenshotEmpty }
     /// What the card shows — nil when this stage has nothing near the anchor.
-    private var displayedEvent: EventDTO? { noProgramAtAnchor ? nil : currentEvent }
+    private var displayedEvent: EventDTO? { showsNoProgram ? nil : currentEvent }
 
     var body: some View {
         ZStack {
@@ -120,7 +130,7 @@ struct WatchRootView: View {
                 }
             }
 
-            if noProgramAtAnchor, let t = anchorTime {
+            if showsNoProgram, let t = (screenshotEmpty ? Fmt.now : anchorTime) {
                 let day = Fmt.festivalDay(t)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(Fmt.mmdd(day)) · \(Fmt.weekday(day, settings.locale))")

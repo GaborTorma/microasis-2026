@@ -33,7 +33,7 @@ There is **no `.xcworkspace`** (use `-project`, not `-workspace`).
 
 ```bash
 cd apple
-xcodegen generate                         # after ANY project.yml change
+xcodegen generate                         # after ANY project.yml change OR adding/removing a source file
 open Manas.xcodeproj                       # Manas (iOS) or ManasWatch scheme
 
 # headless simulator builds (no signing):
@@ -92,12 +92,25 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   rewrites the whole `manas-schedule.json`.
 - **No stages hidden by default** (`AppState.swift` `?? []`) — kept in sync with web,
   see `../CLAUDE.md`. Bowl was default-hidden until its poster shipped.
-- **Debug tooling is gated to DEBUG/TestFlight** (`appStoreReceiptURL` check) and
-  compiled out of App Store builds. Drive it from the simulator:
+- **Debug tooling is gated to DEBUG/TestFlight** (`AppEnv.debugToolsEnabled`, an
+  `appStoreReceiptURL` check) and compiled out of App Store builds. Drive it from
+  the simulator:
   ```bash
   xcrun simctl spawn <udid> defaults write ai.torma.manas.2026 manas.debugNow '2026-07-09T15:30:00+02:00'
   xcrun simctl spawn <udid> defaults write ai.torma.manas.2026 manas.debugCoord '47.5,17.5'
   ```
+- **Screenshot generator:** `screenshots/make_screenshots.py` + `screenshots.yaml`
+  render the App Store / landing-page shots (iOS + watch, HU/EN) via `simctl`. It
+  injects state as **launch arguments** (NSArgumentDomain — `defaults write` is
+  cfprefsd-cached and bleeds across rapid relaunches), so prefer that for any
+  scripted capture. Extra invisible, DEBUG-gated screenshot-only defaults beyond
+  the two above: `manas.startTab` (0 timetable / 1 now), `manas.startSettings`
+  (open Settings), `manas.hideTestUI` (hide the in-app Testing section),
+  `manas.startWidgetPreview` (watch: render a stage's widget card full-screen).
+  The widget shot reuses the real `NowWidgetView` (moved to `ManasKit/NowWidgetCard.swift`
+  so the app + the WidgetKit extension share it); the extension itself still
+  renders with `Date()`, so only this in-app preview honours `manas.debugNow`. See
+  `screenshots/README.md`.
 - **`isLive`** is `startsAt <= now < (endsAt ?? startsAt)` — open-ended events count as
   live only at their exact start instant. Breaks (`kind == "break"`) are filtered out
   of stores and widget timelines everywhere.

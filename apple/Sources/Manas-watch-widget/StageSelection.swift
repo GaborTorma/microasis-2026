@@ -14,15 +14,6 @@ enum WidgetSchedule {
         return api.cachedSchedule()
     }
 
-    /// Playable events for a stage, sorted by start time — mirrors
-    /// `ScheduleStore.events(forStage:)` (which is MainActor-bound and can't be
-    /// reached from a timeline provider).
-    static func events(_ data: ScheduleData, stageSlug slug: String) -> [EventDTO] {
-        data.events
-            .filter { $0.stageSlug == slug && $0.isPlayable }
-            .sorted { $0.startsAt < $1.startsAt }
-    }
-
     /// Widget language follows the watch app's setting, shared via the App Group.
     /// If the app hasn't written one yet, fall back to the device language (which
     /// is exactly the app's own device default). Hungarian ⇒ HU, else EN.
