@@ -155,6 +155,16 @@ export function SettingsButton() {
                   {t("settings.support")}
                 </a>
               </div>
+              <p className="mt-3 text-xs text-white/55">
+                <a
+                  href="https://torma.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-cream underline underline-offset-2 hover:text-white"
+                >
+                  {t("settings.madeby")}
+                </a>
+              </p>
             </div>
           </div>
         </div>,

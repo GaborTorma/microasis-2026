@@ -109,6 +109,8 @@ struct SettingsView: View {
                          destination: URL(string: "https://manas2026.vercel.app/privacy")!)
                     Link(L.t("settings.support", settings.locale),
                          destination: URL(string: "https://manas2026.vercel.app/support")!)
+                    Link(L.t("about.madeby", settings.locale),
+                         destination: URL(string: "https://torma.ai")!)
                 }
             }
             .navigationTitle(L.t("settings.title", settings.locale))

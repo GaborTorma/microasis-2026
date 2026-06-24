@@ -88,6 +88,9 @@ struct WatchSettingsView: View {
                     Text(L.t("about.disclaimer", settings.locale))
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                    Link(L.t("about.madeby", settings.locale),
+                         destination: URL(string: "https://torma.ai")!)
+                        .font(.footnote)
                 }
             }
             .navigationTitle(L.t("settings.title", settings.locale))

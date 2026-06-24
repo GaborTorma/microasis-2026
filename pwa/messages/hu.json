@@ -76,9 +76,10 @@
     "hide": "Elrejt",
     "done": "Kész",
     "about": "Névjegy",
-    "disclaimer": "Ez egy nem hivatalos, rajongók által készített kalauz — nem a MANAS fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
+    "disclaimer": "Ez egy nem hivatalos, csak egy lelkes fesztiválozó által készített app — nem a MANAS Fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
     "privacy": "Adatvédelem",
-    "support": "Támogatás"
+    "support": "Támogatás",
+    "madeby": "Készítette: Torma Gábor"
   },
   "disclaimer": {
     "title": "Nem hivatalos alkalmazás",
