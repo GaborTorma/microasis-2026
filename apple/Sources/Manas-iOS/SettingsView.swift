@@ -45,7 +45,7 @@ struct SettingsView: View {
         let prefix = AttributedString(L.t("about.madeprefix", settings.locale) + " ")
         var name = AttributedString(L.t("about.makername", settings.locale))
         name.link = URL(string: "https://torma.ai")
-        name.foregroundColor = Theme.cream
+        name.foregroundColor = .secondary
         return prefix + name
     }
 

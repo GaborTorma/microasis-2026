@@ -61,12 +61,10 @@ struct DisclaimerSheet: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            ManasMark()
-                .frame(width: 54, height: 54)
-                .padding(.top, 12)
             Text(L.t("disclaimer.title", settings.locale))
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(Theme.cream)
+                .padding(.top, 12)
             Text(L.t("about.disclaimer", settings.locale))
                 .font(.callout)
                 .foregroundStyle(Theme.cream.opacity(0.85))

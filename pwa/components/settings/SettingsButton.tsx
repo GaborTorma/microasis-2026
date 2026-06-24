@@ -143,7 +143,7 @@ export function SettingsButton() {
                   href="https://torma.ai"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-white underline underline-offset-2"
+                  className="text-white/55 underline underline-offset-2 hover:text-white/80"
                 >
                   {t("settings.makername")}
                 </a>
