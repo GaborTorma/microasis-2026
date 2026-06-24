@@ -46,7 +46,8 @@ public enum L {
         "about.disclaimer": (
             "Ez egy nem hivatalos, csak egy lelkes fesztiválozó által készített app — nem a MANAS Fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
             "This is an unofficial app made by an enthusiastic festival-goer — not the official software or product of the MANAS Festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it."),
-        "about.madeby": ("Készítette: Torma Gábor", "Made by Gábor Torma"),
+        "about.madeprefix": ("Készítette:", "Made by"),
+        "about.makername": ("Torma Gábor", "Gábor Torma"),
         "disclaimer.title": ("Nem hivatalos alkalmazás", "Unofficial app"),
         "disclaimer.ok": ("Értem", "Got it"),
         "settings.testing": ("Teszt", "Testing"),

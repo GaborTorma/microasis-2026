@@ -85,12 +85,12 @@ struct WatchSettingsView: View {
                 }
 
                 Section(L.t("settings.about", settings.locale)) {
-                    Text(L.t("about.disclaimer", settings.locale))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                    Link(L.t("about.madeby", settings.locale),
-                         destination: URL(string: "https://torma.ai")!)
-                        .font(.footnote)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(L.t("about.disclaimer", settings.locale))
+                        Text(madeByCredit)
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                 }
             }
             .navigationTitle(L.t("settings.title", settings.locale))
@@ -101,6 +101,15 @@ struct WatchSettingsView: View {
             }
         }
         .onAppear { stages = settings.orderedAll(store.data?.stages ?? []) }
+    }
+
+    /// "Készítette: <name>" where only the name is a white, tappable link.
+    private var madeByCredit: AttributedString {
+        let prefix = AttributedString(L.t("about.madeprefix", settings.locale) + " ")
+        var name = AttributedString(L.t("about.makername", settings.locale))
+        name.link = URL(string: "https://torma.ai")
+        name.foregroundColor = Theme.cream
+        return prefix + name
     }
 
     private var defaultDebugDate: Date { store.data?.festival.startsAt ?? Fmt.now }

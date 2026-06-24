@@ -137,6 +137,17 @@ export function SettingsButton() {
               <p className="text-xs leading-relaxed text-white/55">
                 {t("settings.disclaimer")}
               </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-white/55">
+                {t("settings.madeprefix")}{" "}
+                <a
+                  href="https://torma.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-white underline underline-offset-2"
+                >
+                  {t("settings.makername")}
+                </a>
+              </p>
               <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
                 <a
                   href="/privacy"
@@ -155,16 +166,6 @@ export function SettingsButton() {
                   {t("settings.support")}
                 </a>
               </div>
-              <p className="mt-3 text-xs text-white/55">
-                <a
-                  href="https://torma.ai"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-cream underline underline-offset-2 hover:text-white"
-                >
-                  {t("settings.madeby")}
-                </a>
-              </p>
             </div>
           </div>
         </div>,

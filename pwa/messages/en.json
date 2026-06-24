@@ -79,7 +79,8 @@
     "disclaimer": "This is an unofficial app made by an enthusiastic festival-goer — not the official software or product of the MANAS Festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it.",
     "privacy": "Privacy Policy",
     "support": "Support",
-    "madeby": "Made by Gábor Torma"
+    "madeprefix": "Made by",
+    "makername": "Gábor Torma"
   },
   "disclaimer": {
     "title": "Unofficial app",

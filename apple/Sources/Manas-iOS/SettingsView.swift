@@ -40,6 +40,15 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
+    /// "Készítette: <name>" where only the name is a white, tappable link.
+    private var madeByCredit: AttributedString {
+        let prefix = AttributedString(L.t("about.madeprefix", settings.locale) + " ")
+        var name = AttributedString(L.t("about.makername", settings.locale))
+        name.link = URL(string: "https://torma.ai")
+        name.foregroundColor = Theme.cream
+        return prefix + name
+    }
+
     var body: some View {
         NavigationStack {
             List {
@@ -102,15 +111,16 @@ struct SettingsView: View {
                 }
 
                 Section(L.t("settings.about", settings.locale)) {
-                    Text(L.t("about.disclaimer", settings.locale))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(L.t("about.disclaimer", settings.locale))
+                        Text(madeByCredit)
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                     Link(L.t("settings.privacy", settings.locale),
                          destination: URL(string: "https://manas2026.vercel.app/privacy")!)
                     Link(L.t("settings.support", settings.locale),
                          destination: URL(string: "https://manas2026.vercel.app/support")!)
-                    Link(L.t("about.madeby", settings.locale),
-                         destination: URL(string: "https://torma.ai")!)
                 }
             }
             .navigationTitle(L.t("settings.title", settings.locale))
