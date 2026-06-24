@@ -23,9 +23,14 @@ enum WidgetSchedule {
             .sorted { $0.startsAt < $1.startsAt }
     }
 
-    /// Widget language follows the device (no App Group ⇒ no access to the
-    /// app's manual override). Hungarian device ⇒ HU, else EN.
+    /// Widget language follows the watch app's setting, shared via the App Group.
+    /// If the app hasn't written one yet, fall back to the device language (which
+    /// is exactly the app's own device default). Hungarian ⇒ HU, else EN.
     static var locale: AppLocale {
+        if let raw = SharedDefaults.suite.string(forKey: SharedDefaults.localeKey),
+           let chosen = AppLocale(rawValue: raw) {
+            return chosen
+        }
         let code = Locale.current.language.languageCode?.identifier
             ?? Locale.preferredLanguages.first.map { String($0.prefix(2)) }
             ?? "en"

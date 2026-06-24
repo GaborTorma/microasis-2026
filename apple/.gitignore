@@ -3,6 +3,8 @@ Manas.xcodeproj/
 Sources/Manas-iOS/Info.plist
 Sources/Manas-watch/Info.plist
 Sources/Manas-watch-widget/Info.plist
+Sources/Manas-watch/ManasWatch.entitlements
+Sources/Manas-watch-widget/ManasWatchWidget.entitlements
 
 # Xcode build output
 DerivedData/

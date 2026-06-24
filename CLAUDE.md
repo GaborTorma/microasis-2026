@@ -55,8 +55,10 @@ Rules a future edit must respect:
   declared language starts with `hu` → HU, anything else → EN; no header/locale → HU.
   A user's explicit toggle persists and always wins. Implemented independently in
   web (`pwa/i18n/request.ts`, `i18n/config.ts` `DEFAULT_LOCALE='hu'`) and apple
-  (`ManasKit/AppState.swift` device default). **Exception:** the watch widget always
-  follows device language and ignores the app's locale toggle (no App Group).
+  (`ManasKit/AppState.swift` device default). The **watch widget** reads the watch
+  app's chosen language through an **App Group** (`group.ai.torma.manas.2026`,
+  `ManasKit/AppState.swift` `SharedDefaults`; the app mirrors `manas.locale` there and
+  reloads timelines on change), falling back to device language until the app sets one.
 - **All stages are shown by default on every client.** Bowl was hidden by default
   until its poster shipped; both defaults were then flipped together —
   `pwa/components/settings/SettingsContext.tsx` `hidden: []` and

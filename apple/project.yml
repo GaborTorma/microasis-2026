@@ -71,6 +71,12 @@ targets:
     dependencies:
       - target: ManasWatchWidget
         embed: true
+    # App Group: share the chosen language with the embedded widget extension.
+    entitlements:
+      path: Sources/Manas-watch/ManasWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.ai.torma.manas.2026
     info:
       path: Sources/Manas-watch/Info.plist
       properties:
@@ -97,6 +103,12 @@ targets:
     sources:
       - path: Sources/ManasKit
       - path: Sources/Manas-watch-widget
+    # App Group: read the watch app's chosen language (shared UserDefaults).
+    entitlements:
+      path: Sources/Manas-watch-widget/ManasWatchWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.ai.torma.manas.2026
     info:
       path: Sources/Manas-watch-widget/Info.plist
       properties:

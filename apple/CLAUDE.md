@@ -50,8 +50,10 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   **not** `import ManasKit`; `ScheduleStore`, `Theme`, `Fmt`, etc. are just available.
 - **State:** `Settings`, `ScheduleStore`, `LocationStore` are `@MainActor`
   `ObservableObject`s injected at the app root; views hold only transient `@State`.
-  Settings persist to `UserDefaults` with the `manas.` key prefix. **Each device is
-  independent — no App Group, no iCloud, no iOS↔watch pairing.**
+  Settings persist to `UserDefaults` with the `manas.` key prefix. **Devices stay
+  independent — no iCloud, no iOS↔watch pairing.** The only shared store is an App
+  Group (`SharedDefaults`, `group.ai.torma.manas.2026`) the **watch app + its widget**
+  use so the widget follows the app's language — same-device only, locale only.
 - **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.0.0`) bumped per
   release; `CURRENT_PROJECT_VERSION` (integer, currently `4`) bumped per TestFlight
   upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
@@ -73,8 +75,9 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - **watch widgets:** `NowWidget` (`.accessoryRectangular`) is **per-stage
   configurable** via an `AppEntity`/`WidgetConfigurationIntent` — add one per stage to
   the Smart Stack and turn the crown to page. `LaunchWidget` is a circular/inline/corner
-  launcher. The extension **fetches and caches the schedule itself** (no App Group),
-  follows device language, and places one timeline entry per act boundary.
+  launcher. The extension **fetches and caches the schedule itself** (its own
+  container), follows the **watch app's language** via the `SharedDefaults` App Group
+  (device language until the app sets one), and places one timeline entry per act boundary.
 
 ## Gotchas
 

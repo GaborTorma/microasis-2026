@@ -5,6 +5,15 @@ import CoreGraphics
 /// Hard cap on how many stage columns the iOS timetable shows at once.
 public let maxColumns = 5
 
+/// Shared storage so the watch widget (a separate process) can read the watch
+/// app's chosen language. Backed by an App Group on the watch app + widget;
+/// falls back to `.standard` on targets without the entitlement (e.g. iOS).
+public enum SharedDefaults {
+    public static let appGroupID = "group.ai.torma.manas.2026"
+    public static let suite = UserDefaults(suiteName: appGroupID) ?? .standard
+    public static let localeKey = "manas.locale"
+}
+
 /// User preferences: stage order, hidden stages, language, and how many stage
 /// columns the timetable shows at once. Persisted locally (each device keeps
 /// its own — phone and watch are independent apps).
@@ -12,14 +21,14 @@ public let maxColumns = 5
 public final class Settings: ObservableObject {
     private let defaults = UserDefaults.standard
     private enum Key {
-        static let order = "manas.order", hidden = "manas.hidden", locale = "manas.locale"
+        static let order = "manas.order", hidden = "manas.hidden", locale = SharedDefaults.localeKey
         static let columns = "manas.columns", fontSize = "manas.fontSize", debugNow = "manas.debugNow"
         static let debugCoord = "manas.debugCoord"
     }
 
     @Published public var order: [String] { didSet { defaults.set(order, forKey: Key.order) } }
     @Published public var hidden: Set<String> { didSet { defaults.set(Array(hidden), forKey: Key.hidden) } }
-    @Published public var locale: AppLocale { didSet { defaults.set(locale.rawValue, forKey: Key.locale) } }
+    @Published public var locale: AppLocale { didSet { defaults.set(locale.rawValue, forKey: Key.locale); syncSharedLocale() } }
     /// How many stage columns are shown at once (1…maxColumns).
     @Published public var columns: Int { didSet { defaults.set(columns, forKey: Key.columns) } }
     /// Text-size step 1…5 — drives both the font scale and the block heights.
@@ -50,6 +59,13 @@ public final class Settings: ObservableObject {
         fontSize = (defaults.object(forKey: Key.fontSize) as? Int) ?? 3
         debugNow = defaults.string(forKey: Key.debugNow).flatMap(Fmt.parseDateTime)
         debugCoord = defaults.string(forKey: Key.debugCoord)
+        syncSharedLocale()
+    }
+
+    /// Mirror the resolved locale into the shared App Group so the watch widget
+    /// follows the same language as the app (explicit toggle or device default).
+    private func syncSharedLocale() {
+        SharedDefaults.suite.set(locale.rawValue, forKey: Key.locale)
     }
 
     /// Font scale for the chosen text size: 1…5 → 0.9…1.7 (step 0.2).

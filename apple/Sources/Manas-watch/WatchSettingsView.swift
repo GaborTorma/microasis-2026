@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 struct WatchSettingsView: View {
     @EnvironmentObject var store: ScheduleStore
@@ -13,6 +14,8 @@ struct WatchSettingsView: View {
                     ForEach(AppLocale.allCases, id: \.self) { loc in
                         Button {
                             settings.locale = loc
+                            // Push the new language to the shared App Group widgets.
+                            WidgetCenter.shared.reloadAllTimelines()
                         } label: {
                             HStack {
                                 Text(loc.label).font(.system(size: 14, weight: .semibold))
