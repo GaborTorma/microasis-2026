@@ -61,13 +61,26 @@ struct DisclaimerSheet: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text(L.t("disclaimer.title", settings.locale))
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(Theme.cream)
-                .padding(.top, 12)
+            // Same lockup as the PWA modal: kicker / gradient wordmark / sub-label.
+            VStack(spacing: 2) {
+                Text(L.t("app.guidefor", settings.locale).uppercased())
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .tracking(2)
+                    .foregroundStyle(Theme.cream.opacity(0.75))
+                Text(L.t("app.title", settings.locale).uppercased())
+                    .font(.system(size: 26, weight: .heavy, design: .rounded))
+                    .foregroundStyle(
+                        LinearGradient(colors: [Theme.cream, Theme.sun, Theme.teal],
+                                       startPoint: .leading, endPoint: .trailing))
+                Text(L.t("disclaimer.title", settings.locale).uppercased())
+                    .font(.system(size: 11, weight: .semibold))
+                    .tracking(2)
+                    .foregroundStyle(Theme.cream.opacity(0.5))
+            }
+            .padding(.top, 12)
             Text(L.t("about.disclaimer", settings.locale))
                 .font(.callout)
-                .foregroundStyle(Theme.cream.opacity(0.85))
+                .foregroundStyle(Theme.cream.opacity(0.9))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 8)

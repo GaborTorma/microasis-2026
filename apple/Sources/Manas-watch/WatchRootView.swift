@@ -301,19 +301,38 @@ struct WatchDisclaimerSheet: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 10) {
-                Text(L.t("disclaimer.title", settings.locale))
-                    .font(.headline)
-                    .foregroundStyle(Theme.cream)
-                    .multilineTextAlignment(.center)
+            VStack(spacing: 8) {
+                // Same lockup as the PWA / iOS modal, sized for the watch.
+                VStack(spacing: 1) {
+                    Text(L.t("app.guidefor", settings.locale).uppercased())
+                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .tracking(1.5)
+                        .foregroundStyle(Theme.cream.opacity(0.75))
+                    Text(L.t("app.title", settings.locale).uppercased())
+                        .font(.system(size: 19, weight: .heavy, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(colors: [Theme.cream, Theme.sun, Theme.teal],
+                                           startPoint: .leading, endPoint: .trailing))
+                    Text(L.t("disclaimer.title", settings.locale).uppercased())
+                        .font(.system(size: 8, weight: .semibold))
+                        .tracking(1.5)
+                        .foregroundStyle(Theme.cream.opacity(0.5))
+                }
                 Text(L.t("about.disclaimer", settings.locale))
                     .font(.footnote)
-                    .foregroundStyle(Theme.cream.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                Button(L.t("disclaimer.ok", settings.locale), action: onAck)
-                    .tint(Theme.sun)
-                    .padding(.top, 4)
+                    .foregroundStyle(Theme.cream.opacity(0.9))
+                Button(action: onAck) {
+                    Text(L.t("disclaimer.ok", settings.locale))
+                        .font(.headline)
+                        .foregroundStyle(Theme.ink)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Theme.sun, in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 2)
             }
+            .multilineTextAlignment(.center)
             .padding(.horizontal, 4)
             .padding(.vertical, 8)
         }
