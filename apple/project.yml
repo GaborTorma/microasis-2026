@@ -43,7 +43,9 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         # On-device name (home screen, app switcher, Safari "‹ <app>" back button).
-        CFBundleDisplayName: "Guide for MANAS 2026"
+        # Kept short so the home-screen label doesn't truncate; the App Store
+        # listing name is the longer "Guide for MANAS 2026".
+        CFBundleDisplayName: "MANAS 2026"
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."

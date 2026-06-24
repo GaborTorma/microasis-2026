@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Guide for MANAS 2026",
-    short_name: "Manas 2026",
+    short_name: "MANAS 2026",
     description:
       "Unofficial timetable, now-playing and map for the Manas 2026 gathering.",
     start_url: "/",

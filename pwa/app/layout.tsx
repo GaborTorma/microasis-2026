@@ -31,7 +31,8 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Guide for MANAS 2026",
+    // Home-screen label for an installed PWA — short so it doesn't truncate.
+    title: "MANAS 2026",
   },
   formatDetection: { telephone: false },
 };
