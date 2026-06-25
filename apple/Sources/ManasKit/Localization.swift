@@ -20,6 +20,7 @@ public enum L {
         "app.unofficial": ("Nem hivatalos", "Unofficial"),
         "nav.timetable": ("Időrend", "Timetable"),
         "nav.now": ("Most", "Now"),
+        "nav.share": ("Megosztás", "Share"),
         "now.live": ("Most", "Live"),
         "now.playingNow": ("Most játszik", "Playing now"),
         "now.upNext": ("Következik", "Up next"),
@@ -50,6 +51,13 @@ public enum L {
         "about.makername": ("Torma Gábor", "Gábor Torma"),
         "disclaimer.title": ("Nem hivatalos alkalmazás", "Unofficial app"),
         "disclaimer.ok": ("Értem", "Got it"),
+        // Share sheet — mirrors the web /share page.
+        "share.title": ("Add tovább!", "Pass it on!"),
+        "share.body": (
+            "Olvastasd be valakivel ezt a kódot,\nés már meg is osztottad az appot.",
+            "Let a friend scan this code,\nand you've shared the app."),
+        "share.button": ("Megosztás", "Share"),
+        "share.invite": ("Nézd meg a MANAS 2026 programját 🎶", "Check out the MANAS 2026 schedule 🎶"),
         "settings.testing": ("Teszt", "Testing"),
         "settings.testTime": ("Teszt idő", "Test time"),
         "settings.testLocation": ("Teszt hely", "Test location"),

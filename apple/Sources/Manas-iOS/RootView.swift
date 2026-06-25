@@ -34,6 +34,9 @@ struct RootView: View {
                         NowView()
                             .tabItem { Label(L.t("nav.now", settings.locale), systemImage: "dot.radiowaves.left.and.right") }
                             .tag(1)
+                        ShareView()
+                            .tabItem { Label(L.t("nav.share", settings.locale), systemImage: "qrcode") }
+                            .tag(2)
                     }
                 }
                 .animation(.easeInOut(duration: 0.2), value: hideHeader)
@@ -55,15 +58,19 @@ struct RootView: View {
         }
     }
 
-    /// Screenshot-harness hooks (DEBUG/TestFlight only) so a capture can target
-    /// any screen without UI taps: `manas.startTab` (0 = timetable, 1 = now)
-    /// jumps straight to a tab, `manas.startSettings` opens the Settings sheet.
-    /// Undocumented, invisible defaults — no-op in App Store builds.
+    /// Screenshot-harness hook (DEBUG/TestFlight only) so a capture can target any
+    /// screen without UI taps: `manas.startView` names the view to open —
+    /// `timetable` / `now` / `share` (tabs) or `settings` (the sheet). Invisible
+    /// default, no-op in App Store builds.
     private func applyScreenshotOverrides() {
         guard AppEnv.debugToolsEnabled else { return }
-        let d = UserDefaults.standard
-        if d.object(forKey: "manas.startTab") != nil { tab = d.integer(forKey: "manas.startTab") }
-        if d.bool(forKey: "manas.startSettings") { showSettings = true }
+        switch UserDefaults.standard.string(forKey: "manas.startView") {
+        case "timetable": tab = 0
+        case "now": tab = 1
+        case "share": tab = 2
+        case "settings": showSettings = true
+        default: break
+        }
     }
 }
 

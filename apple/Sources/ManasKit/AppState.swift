@@ -14,6 +14,14 @@ public enum SharedDefaults {
     public static let localeKey = "manas.locale"
 }
 
+/// Canonical outbound links. `share` is the universal hand-off URL the QR / share
+/// sheet passes around (web `/get`: iPhone → App Store, anything else → the PWA),
+/// mirroring the web share page. Apple ID matches `apple/CLAUDE.md`.
+public enum AppLinks {
+    public static let appStore = URL(string: "https://apps.apple.com/app/id6782099675")!
+    public static let share = URL(string: "https://manas2026.vercel.app/get")!
+}
+
 /// User preferences: stage order, hidden stages, language, and how many stage
 /// columns the timetable shows at once. Persisted locally (each device keeps
 /// its own — phone and watch are independent apps).

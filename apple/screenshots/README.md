@@ -33,8 +33,8 @@ across rapid relaunches and shots bled into each other.
 | Config field | App default key | Effect |
 |---|---|---|
 | `languages: [hu, en]` | `manas.locale` | one capture per language |
-| `view: timetable\|now` | `manas.startTab` (0/1) | which iPhone tab opens |
-| `view: settings` | `manas.startSettings` | opens the Settings sheet |
+| `view: timetable\|now\|share` | `manas.startView` | which iPhone tab opens |
+| `view: settings` | `manas.startView` | opens the Settings sheet |
 | `view: widget` + `stage:` | `manas.startWidgetPreview` | watch: render that stage's widget card full-screen |
 | `empty: true` | `manas.startNoProgram` | watch: force the "nothing on" card |
 | `time: "yyyy-MM-dd HH:mm"` | `manas.debugNow` | the debug clock (Budapest-local) |
@@ -44,7 +44,7 @@ across rapid relaunches and shots bled into each other.
 | *(always)* | `manas.hideTestUI` | hides the in-app **Testing** settings section |
 | *(always)* | `manas.disclaimerSeen` | skips the first-launch modal |
 
-`manas.startTab`, `manas.startSettings`, `manas.hideTestUI` are invisible,
+`manas.startView`, `manas.hideTestUI` are invisible,
 undocumented defaults that only exist for screenshots. They are gated to
 DEBUG/TestFlight (`AppEnv.debugToolsEnabled`) and are no-ops in App Store builds.
 Stage coordinates are fetched live from `/api/schedule` (the DB is the source of

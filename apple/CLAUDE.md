@@ -70,7 +70,10 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 
 - **iOS:** time-proportional `TimetableView` (fixed hour gutter, horizontally
   scrollable stage columns, live now-line, phone-portrait paging) + `NowView`
-  (per-stage now-playing / up-next / pre-festival countdown). Map is intentionally omitted.
+  (per-stage now-playing / up-next / pre-festival countdown) + a `ShareView` tab
+  ("Add tovább") — a QR encoding `AppLinks.share` (web `/get`) plus a native
+  `ShareLink`, mirroring the web `/share` page. Map is intentionally omitted; watch
+  has no share UI yet.
 - **watch:** one stage at a time. Swipe up/down = prev/next act; swipe left/right =
   switch stage keeping the same anchor time (so browsing never drifts). Geofence can
   auto-jump to the nearest stage on foreground.
@@ -106,8 +109,8 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   injects state as **launch arguments** (NSArgumentDomain — `defaults write` is
   cfprefsd-cached and bleeds across rapid relaunches), so prefer that for any
   scripted capture. Extra invisible, DEBUG-gated screenshot-only defaults beyond
-  the two above: `manas.startTab` (0 timetable / 1 now), `manas.startSettings`
-  (open Settings), `manas.hideTestUI` (hide the in-app Testing section),
+  the two above: `manas.startView` (`timetable`/`now`/`share` tab or `settings`
+  sheet), `manas.hideTestUI` (hide the in-app Testing section),
   `manas.startWidgetPreview` (watch: render a stage's widget card full-screen).
   The widget shot reuses the real `NowWidgetView` (moved to `ManasKit/NowWidgetCard.swift`
   so the app + the WidgetKit extension share it); the extension itself still

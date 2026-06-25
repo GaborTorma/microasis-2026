@@ -35,8 +35,8 @@ devices:
     scheme: ManasWatch
     bundle: ai.torma.manas.2026.watchkitapp
 
-# view:     timetable | now | settings   (iPhone tab / sheet to open)
-#           widget                        (watch: render one stage's widget card)
+# view:     timetable | now | share | settings  (iPhone tab / sheet to open)
+#           widget                                (watch: render one stage's widget card)
 # stage:    stage slug, required for view: widget -> manas.startWidgetPreview
 # time:     "yyyy-MM-dd HH:mm" Budapest-local -> manas.debugNow
 # location: stage slug -> that stage's lat,lng -> manas.debugCoord (selects the
@@ -76,6 +76,10 @@ shots:
   - name: "05-settings"
     device: iphone
     view: settings
+
+  - name: "06-share"
+    device: iphone
+    view: share                   # the "Add tovább" QR / share tab (static content)
 
   - name: "01-now-portal"
     device: watch

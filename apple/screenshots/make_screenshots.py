@@ -7,7 +7,7 @@
 
 Drives the iOS and watchOS simulators entirely through `xcrun simctl`: it writes
 the app's debug-override defaults (manas.debugNow / debugCoord / locale / columns
-/ startTab / startSettings / hideTestUI), launches a Debug build, and captures the
+/ startView / hideTestUI), launches a Debug build, and captures the
 screen. No fastlane, no UITest target — see screenshots.yaml for the shot list.
 
   python3 make_screenshots.py [--no-build] [--lang hu] [--only SUBSTR] [--keep-status-bar]
@@ -40,8 +40,8 @@ FAR_COORD = "46.6900,17.6800"   # mirrors Geo.farTestCoord — outside every sta
 # manas.* defaults reset before every shot so a value never leaks across shots.
 RESET_KEYS = [
     "manas.locale", "manas.debugNow", "manas.debugCoord", "manas.columns",
-    "manas.fontSize", "manas.order", "manas.hidden", "manas.startTab",
-    "manas.startSettings", "manas.hideTestUI", "manas.disclaimerSeen",
+    "manas.fontSize", "manas.order", "manas.hidden", "manas.startView",
+    "manas.hideTestUI", "manas.disclaimerSeen",
 ]
 
 
@@ -154,12 +154,8 @@ def launch_args(shot: dict, lang: str, coords: dict) -> list[str]:
     if shot.get("empty"):                       # watch: force the "nothing on" card
         a += ["-manas.startNoProgram", "YES"]
     view = shot.get("view")
-    if view == "timetable":
-        a += ["-manas.startTab", "0"]
-    elif view == "now":
-        a += ["-manas.startTab", "1"]
-    elif view == "settings":
-        a += ["-manas.startSettings", "YES"]
+    if view in ("timetable", "now", "share", "settings"):
+        a += ["-manas.startView", view]
     elif view == "widget":
         stage = shot.get("stage")
         if not stage:
