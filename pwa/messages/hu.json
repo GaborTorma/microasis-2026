@@ -8,7 +8,8 @@
   "nav": {
     "timetable": "Időrend",
     "now": "Most",
-    "map": "Térkép"
+    "map": "Térkép",
+    "share": "Megosztás"
   },
   "common": {
     "loading": "Betöltés…",
@@ -85,5 +86,25 @@
   "disclaimer": {
     "title": "Nem hivatalos alkalmazás",
     "ok": "Értem"
+  },
+  "install": {
+    "ios": {
+      "title": "Töltsd le az appot",
+      "body": "Telepítsd a MANAS 2026 appot az App Store-ból a legjobb élményért.",
+      "cta": "App Store"
+    },
+    "android": {
+      "title": "Tedd ki a kezdőképernyőre",
+      "body": "Telepítsd a MANAS 2026-ot — teljes képernyő, offline is működik.",
+      "cta": "Telepítés"
+    },
+    "dismiss": "Bezárás"
+  },
+  "share": {
+    "kicker": "Add tovább",
+    "title": "Oszd meg az appot",
+    "body": "Olvastasd be valakivel ezt a kódot — iPhone-on az App Store-ba, máson a weboldalra visz.",
+    "copy": "Link másolása",
+    "copied": "Másolva"
   }
 }

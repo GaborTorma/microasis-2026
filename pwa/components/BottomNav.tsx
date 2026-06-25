@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { CalendarRange, Disc3 } from "lucide-react";
+import { CalendarRange, Disc3, QrCode } from "lucide-react";
 
 // Map route still exists at /map but is intentionally unlinked for now.
+// /share shows a QR code so festival-goers can hand the app to each other.
 const TABS = [
   { href: "/", key: "timetable", Icon: CalendarRange },
   { href: "/now", key: "now", Icon: Disc3 },
+  { href: "/share", key: "share", Icon: QrCode },
 ] as const;
 
 export function BottomNav() {
@@ -22,7 +24,8 @@ export function BottomNav() {
     >
       <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-leaf/40 bg-ink/85 p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl">
         {TABS.map(({ href, key, Icon }) => {
-          const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          const active =
+            href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
           return (
             <Link
               key={key}

@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { SWRegister } from "@/components/SWRegister";
 import { DisclaimerGate } from "@/components/DisclaimerGate";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import { SettingsProvider } from "@/components/settings/SettingsContext";
 
 const display = Baloo_2({
@@ -34,6 +35,9 @@ export const metadata: Metadata = {
     // Home-screen label for an installed PWA — short so it doesn't truncate.
     title: "MANAS 2026",
   },
+  // Apple Smart App Banner: native "open in App Store" strip Safari shows on iOS.
+  // Covers real Safari; InstallPrompt covers the in-app / non-Safari iOS cases.
+  itunes: { appId: "6782099675" },
   formatDetection: { telephone: false },
 };
 
@@ -67,6 +71,7 @@ export default async function RootLayout({
             <BottomNav />
             <SWRegister />
             <DisclaimerGate />
+            <InstallPrompt />
           </SettingsProvider>
         </NextIntlClientProvider>
       </body>

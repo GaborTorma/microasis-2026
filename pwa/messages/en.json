@@ -8,7 +8,8 @@
   "nav": {
     "timetable": "Timetable",
     "now": "Now",
-    "map": "Map"
+    "map": "Map",
+    "share": "Share"
   },
   "common": {
     "loading": "Loading…",
@@ -85,5 +86,25 @@
   "disclaimer": {
     "title": "Unofficial app",
     "ok": "Got it"
+  },
+  "install": {
+    "ios": {
+      "title": "Get the app",
+      "body": "Install MANAS 2026 from the App Store for the best experience.",
+      "cta": "App Store"
+    },
+    "android": {
+      "title": "Add to Home Screen",
+      "body": "Install MANAS 2026 — full-screen and works offline.",
+      "cta": "Install"
+    },
+    "dismiss": "Dismiss"
+  },
+  "share": {
+    "kicker": "Pass it on",
+    "title": "Share the app",
+    "body": "Let a friend scan this code — it opens the App Store on iPhone, the web app on anything else.",
+    "copy": "Copy link",
+    "copied": "Copied"
   }
 }
