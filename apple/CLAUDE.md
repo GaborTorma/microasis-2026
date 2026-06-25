@@ -61,6 +61,8 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - **Bundle IDs:** `ai.torma.manas.2026` (iOS) · `.watchkitapp` (watch) ·
   `.watchkitapp.widget` (widget). Team `5HW26FBLH4`, deployment targets iOS 17 /
   watchOS 10.
+- **App Store:** live. Apple ID `6782099675` →
+  <https://apps.apple.com/app/id6782099675>.
 - **Commits** follow the repo-wide Conventional Commits with scope (`feat(watch):`,
   `build(ios):`), see `../CLAUDE.md`.
 
