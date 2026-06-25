@@ -55,11 +55,10 @@ export function ShareView() {
 
   return (
     <div className="flex flex-col items-center px-6 py-8 text-center">
-      <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-cream/75">
-        {t("kicker")}
+      <h2 className="font-display text-2xl font-extrabold text-cream">{t("title")}</h2>
+      <p className="mt-2 max-w-xs whitespace-pre-line text-sm leading-snug text-cream-dim">
+        {t("body")}
       </p>
-      <h2 className="mt-1 font-display text-2xl font-extrabold text-cream">{t("title")}</h2>
-      <p className="mt-2 max-w-xs text-sm leading-snug text-cream-dim">{t("body")}</p>
 
       <div className="mt-6 rounded-3xl bg-cream p-5 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
         {url ? (

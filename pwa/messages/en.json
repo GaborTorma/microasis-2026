@@ -101,12 +101,14 @@
     "dismiss": "Dismiss"
   },
   "share": {
-    "kicker": "Pass it on",
-    "title": "Share the app",
-    "body": "Let a friend scan this code — it opens the App Store on iPhone, the web app on anything else.",
+    "title": "Pass it on!",
+    "body": "Let a friend scan this code,\nand you've shared the app.",
     "share": "Share",
     "invite": "Check out the MANAS 2026 schedule 🎶",
     "copy": "Copy link",
     "copied": "Copied"
+  },
+  "get": {
+    "redirecting": "Redirecting…"
   }
 }

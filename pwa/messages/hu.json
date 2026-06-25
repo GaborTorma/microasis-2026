@@ -101,12 +101,14 @@
     "dismiss": "Bezárás"
   },
   "share": {
-    "kicker": "Add tovább",
-    "title": "Oszd meg az appot",
-    "body": "Olvastasd be valakivel ezt a kódot — iPhone-on az App Store-ba, máson a weboldalra visz.",
+    "title": "Add tovább!",
+    "body": "Olvastasd be valakivel ezt a kódot,\nés már meg is osztottad az appot.",
     "share": "Megosztás",
     "invite": "Nézd meg a MANAS 2026 programját 🎶",
     "copy": "Link másolása",
     "copied": "Másolva"
+  },
+  "get": {
+    "redirecting": "Átirányítás…"
   }
 }

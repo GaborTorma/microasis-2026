@@ -24,11 +24,23 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
+  // Absolute base so og:image (and other relative URLs) resolve on prod, which is
+  // what link-preview fetchers (iOS share sheet, iMessage, Telegram, Messenger)
+  // read to show the app icon when a link is shared.
+  metadataBase: new URL("https://manas2026.vercel.app"),
   title: "Guide for MANAS 2026",
   description:
     "Unofficial timetable, now-playing and map for the Manas 2026 gathering. Not affiliated with the festival.",
   applicationName: "Guide for MANAS 2026",
   manifest: "/manifest.webmanifest",
+  openGraph: {
+    type: "website",
+    siteName: "Guide for MANAS 2026",
+    title: "Guide for MANAS 2026",
+    description:
+      "Unofficial timetable, now-playing and map for the Manas 2026 gathering.",
+    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "MANAS 2026" }],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
