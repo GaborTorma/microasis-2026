@@ -6,11 +6,15 @@ import { QRCodeSVG } from "qrcode.react";
 import { Check, Copy, Share2 } from "lucide-react";
 import { SHARE_PATH } from "@/lib/platform";
 
+// Refined pill shared by the share / copy primary actions.
+const PRIMARY_BTN =
+  "inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-sun to-leaf px-6 py-2.5 font-display text-sm font-bold text-ink shadow-[0_8px_24px_-6px_rgba(94,201,138,0.55)] transition active:scale-95";
+
 // The /share page: a big QR a friend just points their phone at. The code encodes
 // the /get redirect, which sends iPhones to the App Store and everything else to
 // the PWA. On devices with the native share sheet (iOS / macOS / Android) the
-// primary action opens it; elsewhere it falls back to copying the link. A small
-// copy button always sits next to the printed URL.
+// primary action opens it and a small copy button sits next to the URL; elsewhere
+// the primary action copies the link (so no separate inline copy is needed).
 export function ShareView() {
   const t = useTranslations("share");
   const [url, setUrl] = useState("");
@@ -65,38 +69,32 @@ export function ShareView() {
         )}
       </div>
 
-      {/* Printed URL with an always-available inline copy button. */}
-      <div className="mt-5 flex items-center justify-center gap-2">
-        <span className="break-all font-mono text-xs text-cream-dim">{pretty}</span>
-        <button
-          type="button"
-          onClick={copy}
-          aria-label={t("copy")}
-          className="shrink-0 rounded-md p-1.5 text-cream-faint transition-colors hover:bg-cream/5 hover:text-cream-dim"
-        >
-          {copied ? <Check size={15} strokeWidth={2.6} /> : <Copy size={15} strokeWidth={2.2} />}
-        </button>
-      </div>
-
       {canShare ? (
-        <button
-          type="button"
-          onClick={share}
-          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-sun px-6 py-3 font-display font-bold text-ink"
-        >
-          <Share2 size={18} strokeWidth={2.4} />
+        <button type="button" onClick={share} className={`mt-6 ${PRIMARY_BTN}`}>
+          <Share2 size={16} strokeWidth={2.4} />
           {t("share")}
         </button>
       ) : (
-        <button
-          type="button"
-          onClick={copy}
-          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-sun px-6 py-3 font-display font-bold text-ink"
-        >
-          {copied ? <Check size={18} strokeWidth={2.6} /> : <Copy size={18} strokeWidth={2.4} />}
+        <button type="button" onClick={copy} className={`mt-6 ${PRIMARY_BTN}`}>
+          {copied ? <Check size={16} strokeWidth={2.6} /> : <Copy size={16} strokeWidth={2.4} />}
           {copied ? t("copied") : t("copy")}
         </button>
       )}
+
+      {/* URL below the action. Inline copy only when the big button isn't copy. */}
+      <div className="mt-4 flex items-center justify-center gap-2">
+        <span className="break-all font-mono text-xs text-cream-dim">{pretty}</span>
+        {canShare && (
+          <button
+            type="button"
+            onClick={copy}
+            aria-label={t("copy")}
+            className="shrink-0 rounded-md p-1.5 text-cream-faint transition-colors hover:bg-cream/5 hover:text-cream-dim"
+          >
+            {copied ? <Check size={15} strokeWidth={2.6} /> : <Copy size={15} strokeWidth={2.2} />}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
