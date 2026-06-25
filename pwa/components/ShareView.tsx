@@ -3,20 +3,25 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, Share2 } from "lucide-react";
 import { SHARE_PATH } from "@/lib/platform";
 
 // The /share page: a big QR a friend just points their phone at. The code encodes
 // the /get redirect, which sends iPhones to the App Store and everything else to
-// the PWA. The copyable link below covers people without a QR-capable camera.
+// the PWA. On devices with the native share sheet (iOS / macOS / Android) the
+// primary action opens it; elsewhere it falls back to copying the link. A small
+// copy button always sits next to the printed URL.
 export function ShareView() {
   const t = useTranslations("share");
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [canShare, setCanShare] = useState(false);
 
-  // Build the absolute URL on the client so it works on prod, preview and local.
+  // Build the absolute URL on the client so it works on prod, preview and local,
+  // and feature-detect the Web Share API (only available client-side, post-mount).
   useEffect(() => {
     setUrl(window.location.origin + SHARE_PATH);
+    setCanShare(typeof navigator !== "undefined" && !!navigator.share);
   }, []);
 
   useEffect(() => {
@@ -31,6 +36,14 @@ export function ShareView() {
       setCopied(true);
     } catch {
       /* clipboard unavailable */
+    }
+  };
+
+  const share = async () => {
+    try {
+      await navigator.share({ title: "MANAS 2026", text: t("invite"), url });
+    } catch {
+      /* user cancelled, or share unsupported for this payload */
     }
   };
 
@@ -52,16 +65,38 @@ export function ShareView() {
         )}
       </div>
 
-      <p className="mt-5 break-all font-mono text-xs text-cream-dim">{pretty}</p>
+      {/* Printed URL with an always-available inline copy button. */}
+      <div className="mt-5 flex items-center justify-center gap-2">
+        <span className="break-all font-mono text-xs text-cream-dim">{pretty}</span>
+        <button
+          type="button"
+          onClick={copy}
+          aria-label={t("copy")}
+          className="shrink-0 rounded-md p-1.5 text-cream-faint transition-colors hover:bg-cream/5 hover:text-cream-dim"
+        >
+          {copied ? <Check size={15} strokeWidth={2.6} /> : <Copy size={15} strokeWidth={2.2} />}
+        </button>
+      </div>
 
-      <button
-        type="button"
-        onClick={copy}
-        className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-sun px-6 py-3 font-display font-bold text-ink"
-      >
-        {copied ? <Check size={18} strokeWidth={2.6} /> : <Copy size={18} strokeWidth={2.4} />}
-        {copied ? t("copied") : t("copy")}
-      </button>
+      {canShare ? (
+        <button
+          type="button"
+          onClick={share}
+          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-sun px-6 py-3 font-display font-bold text-ink"
+        >
+          <Share2 size={18} strokeWidth={2.4} />
+          {t("share")}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={copy}
+          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-sun px-6 py-3 font-display font-bold text-ink"
+        >
+          {copied ? <Check size={18} strokeWidth={2.6} /> : <Copy size={18} strokeWidth={2.4} />}
+          {copied ? t("copied") : t("copy")}
+        </button>
+      )}
     </div>
   );
 }
