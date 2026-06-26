@@ -5,7 +5,7 @@ import { AppShowcase } from "@/components/showcase/AppShowcase";
 // Indexable. The og:image is the script-generated card
 // (pwa/scripts/build_landing_images.py → public/landing/og.png) showing the framed
 // iPhone + Apple Watch above the fold.
-const title = "Guide for MANAS 2026 — iPhone & Apple Watch app";
+const title = "Guide for MANAS 2026 — iOS, watchOS, WebApp (Android)";
 const description =
   "The unofficial Guide for MANAS 2026 native app: the full festival timetable across every stage, a live Now view and Apple Watch widgets. On iPhone and on your wrist — free, no sign-up.";
 
