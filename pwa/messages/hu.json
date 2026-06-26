@@ -130,6 +130,11 @@
       "noAds": "Reklámmentes",
       "noTracking": "Nyomkövetés nélkül"
     },
+    "install": {
+      "addToHome1": "Hozzáadás a",
+      "addToHome2": "kezdőképernyőhöz",
+      "aria": "Hozzáadás a kezdőképernyőhöz"
+    },
     "featuresHeading": "Minden, ami a helyszínen kell",
     "features": {
       "timetable": {

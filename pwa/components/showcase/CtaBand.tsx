@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
+import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
+import { AddToHomeButton } from "./AddToHomeButton";
 import { Reveal } from "./Reveal";
 
-// Closing call-to-action band, shared by every direction.
+// Closing call-to-action band. The App Store badge is always present; on an
+// installable non-Apple device the "Add to Home Screen" button sits beside it.
 export function CtaBand() {
   const t = useTranslations("showcase");
+  const { canInstall, promptInstall } = useInstallPrompt();
   return (
     <section className="relative overflow-hidden px-6 py-20 sm:py-28">
       <div
@@ -24,7 +28,10 @@ export function CtaBand() {
           {t("cta.title")}
         </h2>
         <p className="mt-3 max-w-lg text-base leading-relaxed text-cream-dim">{t("cta.body")}</p>
-        <AppStoreButton height={50} className="mt-7" />
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+          <AppStoreButton height={50} />
+          {canInstall && <AddToHomeButton height={50} onClick={promptInstall} />}
+        </div>
         <Link
           href="/"
           className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-sun underline-offset-2 hover:underline"

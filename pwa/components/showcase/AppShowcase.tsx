@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight, MapPin, WifiOff } from "lucide-react";
@@ -8,7 +9,7 @@ import { framedHero, framedPhone } from "@/lib/showcase";
 import { AndroidIcon } from "./AndroidIcon";
 import { ShowcaseTopBar } from "./ShowcaseTopBar";
 import { Framed } from "./Framed";
-import { AppStoreButton } from "./AppStoreButton";
+import { InstallCta } from "./InstallCta";
 import { TrustPills } from "./TrustPills";
 import { SectionHeading } from "./SectionHeading";
 import { FeatureRow } from "./FeatureRow";
@@ -36,9 +37,24 @@ export function AppShowcase() {
   const t = useTranslations("showcase");
   const locale = useLocale() as Locale;
 
+  // The top bar swaps the language toggle for the install/download CTA only once
+  // the hero's own CTA has scrolled out of view (behind the fixed bar — hence the
+  // negative top rootMargin).
+  const heroCtaRef = useRef<HTMLDivElement>(null);
+  const [heroCtaInView, setHeroCtaInView] = useState(true);
+  useEffect(() => {
+    const el = heroCtaRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setHeroCtaInView(e.isIntersecting), {
+      rootMargin: "-64px 0px 0px 0px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div className="relative">
-      <ShowcaseTopBar />
+      <ShowcaseTopBar showInstall={!heroCtaInView} />
 
       {/* ── Hero ── (top padding clears the fixed top bar) */}
       <section className="relative overflow-hidden px-6 pb-10 pt-20 sm:pt-24">
@@ -58,7 +74,9 @@ export function AppShowcase() {
               {t("hero.headline")}
             </h1>
             <p className="mt-4 max-w-md text-lg leading-relaxed text-cream-dim">{t("hero.sub")}</p>
-            <AppStoreButton height={52} className="mt-7" pulse />
+            <div ref={heroCtaRef} className="mt-7 w-fit">
+              <InstallCta height={52} pulse />
+            </div>
             <Link
               href="/"
               className="mt-4 flex w-fit items-center gap-1 text-sm font-semibold text-sun underline-offset-2 hover:underline"

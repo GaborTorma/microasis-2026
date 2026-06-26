@@ -164,6 +164,21 @@ body {
   animation: badge-pulse 2.4s ease-in-out infinite;
 }
 
+/* The top-bar install CTA slides down as it takes over from the hero's button. */
+@keyframes slide-in-top {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.slide-in-top {
+  animation: slide-in-top 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* Barely-there device float. Amplitude / duration / phase are overridable via CSS
    vars so several devices can drift out of sync (see the feature rows). */
 @keyframes float-soft {
@@ -189,7 +204,8 @@ body {
   .float-soft,
   .pulse-dot,
   .countdown-pulse,
-  .badge-pulse {
+  .badge-pulse,
+  .slide-in-top {
     animation: none !important;
   }
 }

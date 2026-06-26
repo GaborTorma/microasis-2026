@@ -130,6 +130,11 @@
       "noAds": "No ads",
       "noTracking": "No tracking"
     },
+    "install": {
+      "addToHome1": "Add to",
+      "addToHome2": "Home Screen",
+      "aria": "Add to Home Screen"
+    },
     "featuresHeading": "Everything you need on the ground",
     "features": {
       "timetable": {
