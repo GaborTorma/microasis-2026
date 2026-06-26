@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
-// Minimal footer: nav links + the app's exact disclaimer + author credit. No
-// logo / wordmark / App Store badge / language toggle (those live in the hero and
-// the top bar). Text is neutral cream — not the green accent.
+// Minimal footer: nav links + the app's exact disclaimer + author credit. Text is
+// neutral cream — not the green accent. The only control is a language toggle
+// beside the credit, shown ONLY on mobile (the top bar's toggle is desktop-only,
+// so phones would otherwise have no way to switch language).
 export function ShowcaseFooter() {
   const t = useTranslations("showcase.footer");
   const s = useTranslations("settings");
@@ -25,17 +27,23 @@ export function ShowcaseFooter() {
         </nav>
 
         <p className="max-w-2xl text-xs leading-relaxed text-[#8a8a8a]">{s("disclaimer")}</p>
-        <p className="text-xs text-[#8a8a8a]">
-          {s("madeprefix")}{" "}
-          <a
-            href="https://torma.ai"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#a3a3a3] underline underline-offset-2 hover:text-white"
-          >
-            {s("makername")}
-          </a>
-        </p>
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-xs text-[#8a8a8a]">
+            {s("madeprefix")}{" "}
+            <a
+              href="https://torma.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#a3a3a3] underline underline-offset-2 hover:text-white"
+            >
+              {s("makername")}
+            </a>
+          </p>
+          {/* Mobile-only: the top bar's toggle is hidden below sm. */}
+          <div className="w-24 shrink-0 sm:hidden">
+            <LanguageToggle />
+          </div>
+        </div>
       </div>
     </footer>
   );

@@ -13,7 +13,7 @@ export function ShowcaseTopBar() {
     >
       <div className="relative mx-auto flex w-full max-w-5xl items-center gap-3 px-4 py-2">
         <img src="/icon.svg" alt="" width={28} height={28} className="shrink-0 rounded-lg" />
-        <Wordmark compact />
+        <Wordmark />
         <div className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 md:block">
           <Countdown className="text-sm text-cream-dim" />
         </div>

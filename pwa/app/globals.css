@@ -164,18 +164,20 @@ body {
   animation: badge-pulse 2.4s ease-in-out infinite;
 }
 
-/* Barely-there device float. */
+/* Barely-there device float. Amplitude / duration / phase are overridable via CSS
+   vars so several devices can drift out of sync (see the feature rows). */
 @keyframes float-soft {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(var(--float-amp, -10px));
   }
 }
 .float-soft {
-  animation: float-soft 7s ease-in-out infinite;
+  animation: float-soft var(--float-dur, 7s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
 }
 
 @media (prefers-reduced-motion: reduce) {

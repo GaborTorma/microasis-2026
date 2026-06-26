@@ -7,7 +7,7 @@ import { GetRedirect } from "@/components/GetRedirect";
 // title/description/Twitter card for the best preview when re-shared.
 const title = "Guide for MANAS 2026 — nem hivatalos fesztivál app";
 const description =
-  "Teljes időrend, élő most-megy nézet és fesztiváltérkép a MANAS 2026-hoz. iPhone-on az App Store nyílik, minden máson a webapp. Nem hivatalos app — nem a fesztivál szoftvere.";
+  "Teljes időrend, élő most-megy nézet a MANAS 2026-hoz. iPhone-on az App Store nyílik, minden máson a WebApp.";
 const ogImage = { url: "/landing/og.png", width: 1200, height: 630, alt: "Guide for MANAS 2026" };
 
 export const metadata: Metadata = {

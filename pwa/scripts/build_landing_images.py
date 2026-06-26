@@ -32,6 +32,7 @@ beside a strapped Ultra watch (Koubou). Run:
 """
 from __future__ import annotations
 
+import functools
 import shutil
 import subprocess
 import sys
@@ -184,6 +185,7 @@ def build_hero() -> None:
 
 # ── OpenGraph card ──────────────────────────────────────────────────────────
 
+@functools.lru_cache(maxsize=None)
 def font(p, s):
     return ImageFont.truetype(str(FONTS / p), s)
 

@@ -112,9 +112,7 @@
     "redirecting": "Átirányítás…"
   },
   "showcase": {
-    "topbarInstall": "App Store",
     "countdown": {
-      "prefix": "Visszaszámlálás a Manas 2026-ig",
       "days": "nap",
       "hours": "óra",
       "mins": "perc",
@@ -135,20 +133,16 @@
     "featuresHeading": "Minden, ami a helyszínen kell",
     "features": {
       "timetable": {
-        "title": "Idő-arányos időrend",
-        "body": "Minden színpad külön oszlop, a nap pedig valós arányban van kiterítve — egy pillantással látod az átfedéseket, a réseket, és azt, mennyi időd marad két fellépő között."
+        "title": "Folyamatos és napi nézet",
+        "body": "Minden színpad külön oszlop, így egy pillantással látod az átfedéseket, a réseket, és azt, mennyi időd marad két fellépő között. Beállíthatod hány oszlopot láss egyszerre és változtathatod a betűk méretét is."
       },
       "now": {
-        "title": "Most megy, és mi jön",
-        "body": "A „Most” nézet színpadonként mutatja, mi szól éppen és mi következik, élő jelzéssel a futó programokon — egyetlen képernyőn az egész fesztivál pulzusa. Kapunyitás előtt pedig napra, órára, percre visszaszámol a kezdésig, hogy pontosan tudd, mennyi van még hátra."
+        "title": "„Most” nézet",
+        "body": "Ebben a nézetben színpadonként mutatja, mi szól éppen és ki következik, visszaszámlálóval az aktuális programokon — egyetlen képernyőn az egész fesztivál pulzusa. Kapunyitás előtt pedig visszaszámol a kezdésig, hogy pontosan tudd, mennyit kell még várni."
       },
       "settings": {
-        "title": "Szabd a magadévá",
-        "body": "Húzd a színpadokat abba a sorrendbe, ahogyan te járod a fesztivált, és rejtsd el, amit úgysem követsz. Válts egyetlen koppintással magyar és angol között, állítsd a betűméretet — és minden beállításod a készülékeden marad, fiók és felhő nélkül."
-      },
-      "field": {
-        "title": "A helyszínre tervezve",
-        "body": "Az első betöltés után az egész program a készülékeden marad, így a tömegben, gyenge térerő mellett is működik. Ha engedélyezed, a helyzeted alapján — kizárólag a telefonodon — kiemeli a hozzád legközelebbi színpadot, és minden időpontot budapesti idő szerint mutat."
+        "title": "Állítsd be magadnak",
+        "body": "Húzd a színpadokat abba a sorrendbe, ahogyan te járod a fesztivált, és rejtsd el, amit úgysem követsz. Válts egyetlen koppintással magyar és angol között, állítsd a betűméretet vagy az oszlopok számát."
       },
       "offline": {
         "title": "Offline is működik",
@@ -156,17 +150,17 @@
       },
       "location": {
         "title": "A legközelebbi színpad",
-        "body": "Ha engedélyezed, a helyzeted alapján — kizárólag a telefonodon — kiemeli a hozzád legközelebbi színpadot."
+        "body": "Ha engedélyezed, a helyzeted alapján kiemeli a hozzád legközelebbi színpadot. Amikor megnyitod az appot az időpont és helyszín alapján azonnal azt látod ahol éppen vagy."
       },
-      "language": {
-        "title": "Magyarul és angolul",
-        "body": "Egyérintéses nyelvváltó, és minden időpont budapesti idő szerint."
+      "android": {
+        "title": "Androidon is",
+        "body": "Nincs külön app: a webes verziót a böngészőből egyetlen koppintással a kezdőképernyődre teheted, és onnantól úgy nyílik meg, mint egy alkalmazás."
       }
     },
     "watch": {
       "eyebrow": "Apple Watch · watchOS",
       "title": "Ott van a csuklódon is",
-      "body": "A teljes program egy beépített watchOS-appban: egyszerre egy színpad, rács és pötyögés nélkül — épp annyi, amennyit egy pillantással be akarsz fogadni.",
+      "body": "A teljes program egy natív watchOS-appban: egyszerre egy színpad, egy fellépő — épp annyi, amennyit egy pillantással megértesz.",
       "swipeTitle": "Egy színpad, egy mozdulat",
       "swipeBody": "Fel-le húzva lépsz a fellépők között, balra-jobbra váltasz színpadot — végig ugyanazon az időponton maradva, így a böngészés sosem visz el a jelenből.",
       "widgetTitle": "Smart Stack widgetek",
@@ -178,11 +172,9 @@
       "web": "Inkább a böngészőben nézném"
     },
     "footer": {
-      "madeBy": "Készítette: Torma Gábor",
-      "unofficial": "Nem hivatalos, rajongói alkalmazás — nem áll kapcsolatban a Manas fesztivállal vagy szervezőivel, és nem azok jóváhagyásával készült. A „MANAS 2026” megnevezés csak azt jelzi, melyik fesztiválhoz készült ez a kalauz.",
       "privacy": "Adatvédelem",
       "support": "Támogatás",
-      "web": "Webapp"
+      "web": "WebApp"
     }
   }
 }

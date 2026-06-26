@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 // A pre-framed device image (real frame baked in by build_landing_images.py).
 // Served as a plain <img> of a small .webp — deliberately NOT next/image: the
 // optimizer cached stale copies that survived server restarts, and these are
@@ -15,6 +17,7 @@ export function Framed({
   src,
   alt,
   className = "",
+  style,
   priority = false,
   glow,
   sizes,
@@ -23,13 +26,14 @@ export function Framed({
   src: string;
   alt: string;
   className?: string;
+  style?: CSSProperties;
   priority?: boolean;
   glow?: string;
   sizes?: string;
 }) {
   const [w, h] = DIM[kind];
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} style={style}>
       {glow && (
         <div
           aria-hidden

@@ -1,7 +1,8 @@
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 import { Reveal } from "./Reveal";
 
-// Frosted card for a one-liner proof point (offline, nearest stage, language …).
+// Frosted card for a one-liner proof point (Android, offline, nearest stage …).
+// Icon is any component taking size/strokeWidth — lucide icons or our AndroidIcon.
 export function MiniFeature({
   Icon,
   title,
@@ -9,7 +10,7 @@ export function MiniFeature({
   accent = "var(--color-sun)",
   delay = 0,
 }: {
-  Icon: LucideIcon;
+  Icon: ComponentType<{ size?: number; strokeWidth?: number }>;
   title: string;
   body: string;
   accent?: string;

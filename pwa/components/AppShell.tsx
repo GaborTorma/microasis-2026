@@ -14,6 +14,9 @@ import { isShowcasePath } from "@/lib/showcase";
 // would otherwise cap the layout and clip sticky ancestors. The root layout
 // still owns <html>/<body>, the intl + settings providers and the service
 // worker, so everything else is unchanged.
+//
+// Any new app-global chrome (banners, prompts, etc.) belongs HERE, not in the
+// root layout, so the showcase opt-out stays expressed in one place.
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 

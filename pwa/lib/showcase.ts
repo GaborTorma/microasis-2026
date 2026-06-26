@@ -15,11 +15,6 @@ export function isShowcasePath(pathname: string): boolean {
   return SHOWCASE_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
-// Aspect ratios of the pre-framed PNGs (device baked into a Koubou frame, see
-// pwa/scripts/frame_landing.py). Used to size the <img> containers.
-export const FRAMED_PHONE_AR = 1419 / 2796; // ≈ 0.508
-export const FRAMED_WATCH_AR = 600 / 940; // ≈ 0.638
-
 // Screenshot keys → file basename under public/landing/framed/<locale>/. The HU and
 // EN folders hold the same basenames with localized UI, so locale is a folder swap.
 export const PHONE_SHOTS = {
@@ -58,12 +53,12 @@ export function framedHero(locale: Locale): string {
 
 // The five stages in festival sort order, with the exact DB accent colors from
 // scripts/seed.ts — used for the faint per-stage glow on the watch widget cards.
-export type Stage = { slug: string; name: string; accent: string };
+export type Stage = { slug: string; accent: string };
 
 export const STAGES: readonly Stage[] = [
-  { slug: "portal", name: "Portal", accent: "#e8a04c" },
-  { slug: "field", name: "Field", accent: "#4fb3a6" },
-  { slug: "bowl", name: "Bowl", accent: "#d98c3a" },
-  { slug: "terrace", name: "Terrace", accent: "#93c06a" },
-  { slug: "mandala", name: "Mandala", accent: "#b79be0" },
+  { slug: "portal", accent: "#e8a04c" },
+  { slug: "field", accent: "#4fb3a6" },
+  { slug: "bowl", accent: "#d98c3a" },
+  { slug: "terrace", accent: "#93c06a" },
+  { slug: "mandala", accent: "#b79be0" },
 ] as const;
