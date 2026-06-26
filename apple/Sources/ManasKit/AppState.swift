@@ -23,6 +23,8 @@ public enum SharedDefaults {
 public enum AppLinks {
     public static let appStore = URL(string: "https://apps.apple.com/app/id6782099675")!
     public static let share = URL(string: "https://manas.torma.ai/app")!
+    // Baked into the watch share asset (Sources/Manas-watch/Assets.xcassets/ShareQR…)
+    // since watchOS has no CoreImage. Change this → re-run apple/scripts/build_share_qr.py.
     public static let qr = URL(string: "https://manas.torma.ai/get")!
 }
 

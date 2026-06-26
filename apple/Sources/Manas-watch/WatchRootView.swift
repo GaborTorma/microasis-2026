@@ -13,6 +13,7 @@ struct WatchRootView: View {
     @State private var eventIndex = 0
     @State private var didInit = false
     @State private var showSettings = false
+    @State private var showShare = false
     @AppStorage("manas.disclaimerSeen") private var disclaimerSeen = false
     @State private var showDisclaimer = false
     @State private var now = Fmt.now
@@ -55,52 +56,80 @@ struct WatchRootView: View {
     private var displayedEvent: EventDTO? { showsNoProgram ? nil : currentEvent }
 
     var body: some View {
-        ZStack {
-            if let stage {
-                card(stage)
-            } else {
-                Text(L.t(store.isLoading ? "common.loading" : "common.error", settings.locale))
-                    .foregroundStyle(Theme.creamFaint)
-            }
-            // Settings gear (top-trailing)
-            VStack {
-                HStack {
-                    Spacer()
-                    Button { showSettings = true } label: {
-                        Image(systemName: "gearshape.fill").font(.system(size: 13))
-                            .foregroundStyle(Theme.cream.opacity(0.8))
-                            .padding(6).background(.black.opacity(0.35), in: Circle())
-                    }
-                    .buttonStyle(.plain)
+        NavigationStack {
+            ZStack {
+                if let stage {
+                    card(stage)
+                } else {
+                    Text(L.t(store.isLoading ? "common.loading" : "common.error", settings.locale))
+                        .foregroundStyle(Theme.creamFaint)
                 }
-                Spacer()
             }
-            .padding(.top, 2)
+            .background(bg.gradient)
+            .gesture(swipe)
+            // Settings (leading) + the share QR (trailing) live in the system bottom
+            // bar, so they never overlap the card's stage dots or its workshop chip the
+            // way a bottom-corner overlay would. One bottomBar item with an HStack +
+            // Spacer splits them to the corners; a multi-item ToolbarItemGroup doesn't
+            // honour Spacer on watchOS, so both would clump in the middle.
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    HStack {
+                        toolbarButton("gearshape.fill") { showSettings = true }
+                        Spacer()
+                        toolbarButton("qrcode") { showShare = true }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .sheet(isPresented: $showSettings) { WatchSettingsView() }
+            .sheet(isPresented: $showShare) { WatchShareView().environmentObject(settings) }
+            .sheet(isPresented: $showDisclaimer) {
+                WatchDisclaimerSheet { disclaimerSeen = true; showDisclaimer = false }
+                    .environmentObject(settings)
+            }
+            .onReceive(tick) { _ in now = Fmt.now }
+            .onChange(of: store.data?.events.count ?? 0) { _, _ in initIfNeeded() }
+            .onAppear {
+                initIfNeeded(); location.refresh(stages: stages)
+                // Screenshot-only (DEBUG/TestFlight): open the share sheet for a
+                // marketing capture. Set `manas.startShare`. No-op in App Store builds.
+                if AppEnv.debugToolsEnabled, UserDefaults.standard.bool(forKey: "manas.startShare") {
+                    showShare = true
+                } else if !disclaimerSeen {
+                    showDisclaimer = true
+                }
+            }
+            // Changing the debug time, or returning to the foreground, re-centres on
+            // "now" so the live act and its dot are correct immediately.
+            .onChange(of: settings.debugNow) { _, _ in now = Fmt.now; resetToNow() }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { now = Fmt.now; resetToNow(); location.refresh(stages: stages) }
+            }
+            // Nearest stage (within 150 m) becomes the selected stage.
+            .onChange(of: location.nearestSlug) { _, _ in resetToNow() }
+            .onChange(of: settings.debugCoord) { _, _ in location.refresh(stages: stages) }
         }
-        .background(bg.gradient)
-        .gesture(swipe)
-        .sheet(isPresented: $showSettings) { WatchSettingsView() }
-        .sheet(isPresented: $showDisclaimer) {
-            WatchDisclaimerSheet { disclaimerSeen = true; showDisclaimer = false }
-                .environmentObject(settings)
-        }
-        .onReceive(tick) { _ in now = Fmt.now }
-        .onChange(of: store.data?.events.count ?? 0) { _, _ in initIfNeeded() }
-        .onAppear { initIfNeeded(); location.refresh(stages: stages); if !disclaimerSeen { showDisclaimer = true } }
-        // Changing the debug time, or returning to the foreground, re-centres on
-        // "now" so the live act and its dot are correct immediately.
-        .onChange(of: settings.debugNow) { _, _ in now = Fmt.now; resetToNow() }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { now = Fmt.now; resetToNow(); location.refresh(stages: stages) }
-        }
-        // Nearest stage (within 150 m) becomes the selected stage.
-        .onChange(of: location.nearestSlug) { _, _ in resetToNow() }
-        .onChange(of: settings.debugCoord) { _, _ in location.refresh(stages: stages) }
     }
 
     private var bg: Color {
         guard let stage else { return Theme.ink }
         return Color(hex: stage.color).opacity(0.55)
+    }
+
+    /// A bottom-bar glyph button styled like the rest of the watch chrome. The
+    /// system's default `.bottomBar` button fills a disc with its own tint and hides
+    /// the symbol inside it, so we drop to `.plain` and draw the symbol on a faint
+    /// dark disc ourselves — legible on any stage colour.
+    private func toolbarButton(_ symbol: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 15))
+                .foregroundStyle(Theme.cream.opacity(0.85))
+                .frame(width: 30, height: 30)
+                .background(.black.opacity(0.3), in: Circle())
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Card
@@ -200,13 +229,17 @@ struct WatchRootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(.horizontal, 4)
+        .padding(.top, 12)
+        .padding(.bottom, -14)   // let the dots drop close to the bottom toolbar
         .overlay(alignment: .bottomTrailing) {
             if let event = displayedEvent, event.kind == EventKind.workshop {
                 let chip = Theme.chip(event.langAvailability)
                 Text(chip.label).font(.system(size: 11, weight: .bold))
                     .padding(.horizontal, 7).padding(.vertical, 3)
                     .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
-                    .padding(.trailing, 2).padding(.bottom, 16)
+                    // +14 compensates the card's negative bottom padding so the chip
+                    // stays clear of the bottom toolbar's share button.
+                    .padding(.trailing, 2).padding(.bottom, 30)
             }
         }
     }
