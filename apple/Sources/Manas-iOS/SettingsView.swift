@@ -119,9 +119,9 @@ struct SettingsView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     Link(L.t("settings.privacy", settings.locale),
-                         destination: URL(string: "https://manas2026.vercel.app/privacy")!)
+                         destination: URL(string: "https://manas.torma.ai/privacy")!)
                     Link(L.t("settings.support", settings.locale),
-                         destination: URL(string: "https://manas2026.vercel.app/support")!)
+                         destination: URL(string: "https://manas.torma.ai/support")!)
                 }
             }
             .navigationTitle(L.t("settings.title", settings.locale))

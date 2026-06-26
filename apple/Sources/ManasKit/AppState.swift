@@ -15,11 +15,11 @@ public enum SharedDefaults {
 }
 
 /// Canonical outbound links. `share` is the universal hand-off URL the QR / share
-/// sheet passes around (web `/get`: iPhone → App Store, anything else → the PWA),
+/// sheet passes around (the `/app` showcase page on the canonical domain),
 /// mirroring the web share page. Apple ID matches `apple/CLAUDE.md`.
 public enum AppLinks {
     public static let appStore = URL(string: "https://apps.apple.com/app/id6782099675")!
-    public static let share = URL(string: "https://manas2026.vercel.app/get")!
+    public static let share = URL(string: "https://manas.torma.ai/app")!
 }
 
 /// User preferences: stage order, hidden stages, language, and how many stage

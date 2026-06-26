@@ -71,7 +71,7 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - **iOS:** time-proportional `TimetableView` (fixed hour gutter, horizontally
   scrollable stage columns, live now-line, phone-portrait paging) + `NowView`
   (per-stage now-playing / up-next / pre-festival countdown) + a `ShareView` tab
-  ("Add tovább") — a QR encoding `AppLinks.share` (web `/get`) plus a native
+  ("Add tovább") — a QR encoding `AppLinks.share` (web `/app`) plus a native
   `ShareLink`, mirroring the web `/share` page. Map is intentionally omitted; watch
   has no share UI yet.
 - **watch:** one stage at a time. Swipe up/down = prev/next act; swipe left/right =

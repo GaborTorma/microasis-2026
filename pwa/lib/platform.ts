@@ -2,10 +2,14 @@
 // SSR-safe (returns false on the server) so it can be called from "use client"
 // components without guarding each call site.
 
+// Canonical public origin (CNAME → manas2026.vercel.app). Use this for any URL we
+// hand out (share, QR, metadata) so it reads as our own domain, not the Vercel host.
+export const SITE_URL = "https://manas.torma.ai";
+
 export const APP_STORE_URL = "https://apps.apple.com/app/id6782099675";
 
-// QR / share target. A scanned phone lands here and `/get` decides where to go.
-export const SHARE_PATH = "/get";
+// Web Share / QR target: the /app showcase landing page on the canonical domain.
+export const SHARE_URL = `${SITE_URL}/app`;
 
 function ua(): string {
   return typeof navigator === "undefined" ? "" : navigator.userAgent;

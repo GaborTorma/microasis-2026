@@ -4,27 +4,25 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
 import { Check, Copy, Share2 } from "lucide-react";
-import { SHARE_PATH } from "@/lib/platform";
+import { SHARE_URL } from "@/lib/platform";
 
 // Refined pill shared by the share / copy primary actions.
 const PRIMARY_BTN =
   "inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-sun to-leaf px-6 py-2.5 font-display text-sm font-bold text-ink shadow-[0_8px_24px_-6px_rgba(94,201,138,0.55)] transition active:scale-95";
 
 // The /share page: a big QR a friend just points their phone at. The code encodes
-// the /get redirect, which sends iPhones to the App Store and everything else to
-// the PWA. On devices with the native share sheet (iOS / macOS / Android) the
-// primary action opens it and a small copy button sits next to the URL; elsewhere
-// the primary action copies the link (so no separate inline copy is needed).
+// the canonical /app showcase page (App Store / web app download links). On devices
+// with the native share sheet (iOS / macOS / Android) the primary action opens it
+// and a small copy button sits next to the URL; elsewhere the primary action copies
+// the link (so no separate inline copy is needed).
 export function ShareView() {
   const t = useTranslations("share");
-  const [url, setUrl] = useState("");
+  const url = SHARE_URL;
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
 
-  // Build the absolute URL on the client so it works on prod, preview and local,
-  // and feature-detect the Web Share API (only available client-side, post-mount).
+  // Feature-detect the Web Share API (only available client-side, post-mount).
   useEffect(() => {
-    setUrl(window.location.origin + SHARE_PATH);
     setCanShare(typeof navigator !== "undefined" && !!navigator.share);
   }, []);
 
@@ -61,11 +59,7 @@ export function ShareView() {
       </p>
 
       <div className="mt-6 rounded-3xl bg-cream p-5 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
-        {url ? (
-          <QRCodeSVG value={url} size={248} bgColor="#edf4ec" fgColor="#0c1611" level="M" />
-        ) : (
-          <div className="h-[248px] w-[248px]" />
-        )}
+        <QRCodeSVG value={url} size={248} bgColor="#edf4ec" fgColor="#0c1611" level="M" />
       </div>
 
       {canShare ? (

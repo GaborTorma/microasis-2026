@@ -5,7 +5,8 @@
       "name": "manas-pwa",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--dir", "pwa", "dev"],
-      "port": 3000
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

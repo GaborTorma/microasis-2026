@@ -7,9 +7,9 @@ limits. The privacy/support URLs point at the deployed pwa.
 > it is the official festival app. See `../CLAUDE.md` and the in-app disclaimer.
 
 ## URLs
-- **Privacy Policy URL:** https://manas2026.vercel.app/privacy
-- **Support URL:** https://manas2026.vercel.app/support
-- **Marketing URL:** _(optional — leave blank)_
+- **Privacy Policy URL:** https://manas.torma.ai/privacy
+- **Support URL:** https://manas.torma.ai/support
+- **Marketing URL:** https://manas.torma.ai/app
 
 ## App information (app-level)
 - **Primary category:** Entertainment

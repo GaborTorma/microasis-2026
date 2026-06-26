@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   // Absolute base so og:image (and other relative URLs) resolve on prod, which is
   // what link-preview fetchers (iOS share sheet, iMessage, Telegram, Messenger)
   // read to show the app icon when a link is shared.
-  metadataBase: new URL("https://manas2026.vercel.app"),
+  metadataBase: new URL("https://manas.torma.ai"),
   title: "Guide for MANAS 2026",
   description:
     "Unofficial timetable, now-playing and map for the Manas 2026 gathering. Not affiliated with the festival.",
