@@ -26,8 +26,22 @@ public enum L {
         "now.upNext": ("Következik", "Up next"),
         "now.until": ("eddig", "until"),
         "now.nothing": ("Most nincs program", "Nothing on right now"),
-        "now.ended": ("A fesztivál véget ért", "The festival has ended"),
+        "now.ended": ("Jövőre újra találkozunk", "See you again next year"),
+        "now.endedEyebrow": ("A fesztiválnak vége", "The festival is over"),
         "now.countdown": ("Visszaszámlálás", "Countdown"),
+        // Opening-day camp scene (festival start → Mandala opening ceremony).
+        "now.tent.title": ("Épül a tábor", "Setting up camp"),
+        "now.tent.body": (
+            "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel a megnyitóra!",
+            "Find yourself a good spot, pitch your tent and get ready for the opening!"),
+        // Post-festival GROUNDING Days link.
+        "now.grounding.eyebrow": ("Fesztivál után", "After the festival"),
+        "now.grounding.title": ("GROUNDING Napok", "GROUNDING Days"),
+        "now.grounding.when": ("Júl 12. 19:00 – Júl 15. 12:00", "Jul 12, 19:00 – Jul 15, 12:00"),
+        "now.grounding.body": (
+            "A fesztivál véget ért, de a folyamat még tart. A GROUNDING Napok lassú, 2,5 napos földet érés: integrációs műhelyek, pihenés, közös csend és feltöltődés, mielőtt hazaindulsz.",
+            "The festival is over, but the process isn't. GROUNDING Days is a slow, 2.5-day landing — integration workshops, rest, shared stillness and recovery before you head home."),
+        "now.grounding.cta": ("Részletek", "Details"),
         "time.days": ("nap", "days"),
         "time.hours": ("óra", "hrs"),
         "time.minutes": ("perc", "min"),
