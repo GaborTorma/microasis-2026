@@ -115,6 +115,55 @@ body {
   animation: manas-pulse 1.8s ease-in-out infinite;
 }
 
+/* ── Now view: opening-day camp build ──
+   The tent pitches up from its base, holds, then fades and re-pitches in a slow
+   loop; a small pennant keeps waving. Reduced-motion shows the tent fully up. */
+@keyframes tent-pitch {
+  0% {
+    transform: scaleY(0.05);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.92;
+  }
+  40%,
+  82% {
+    transform: scaleY(1);
+    opacity: 0.92;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+.tent-pitch {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tent-pitch 5.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes flag-wave {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.5);
+  }
+}
+.flag-wave {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+  animation: flag-wave 1.7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tent-pitch,
+  .flag-wave {
+    animation: none !important;
+    transform: none;
+    opacity: 1;
+  }
+}
+
 /* ───────────────────────── Showcase / landing (/app*) ─────────────────────────
    Decorative motion + texture for the App-showcase pages only. Everything here is
    hard-gated behind prefers-reduced-motion at the bottom of this block. */

@@ -35,11 +35,23 @@
     "until": "until {time}",
     "from": "from {time}",
     "countdown": "Festival begins in",
-    "ended": "See you next year",
+    "ended": "See you again next year",
+    "endedEyebrow": "The festival is over",
     "days": "days",
     "hours": "hrs",
     "minutes": "min",
-    "seconds": "sec"
+    "seconds": "sec",
+    "tent": {
+      "title": "Setting up camp",
+      "body": "Find yourself a good spot, pitch your tent and get ready for the opening!"
+    },
+    "grounding": {
+      "eyebrow": "After the festival",
+      "title": "GROUNDING Days",
+      "when": "Jul 12, 19:00 – Jul 15, 12:00",
+      "body": "The festival is over, but the process isn't. GROUNDING Days is a slow, 2.5-day landing — integration workshops, rest, shared stillness and recovery before you head home.",
+      "cta": "Details"
+    }
   },
   "map": {
     "title": "Map",

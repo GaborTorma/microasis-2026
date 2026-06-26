@@ -35,11 +35,23 @@
     "until": "eddig: {time}",
     "from": "ettől: {time}",
     "countdown": "A fesztiválig",
-    "ended": "Jövőre találkozunk",
+    "ended": "Jövőre újra találkozunk",
+    "endedEyebrow": "A fesztiválnak vége",
     "days": "nap",
     "hours": "óra",
     "minutes": "perc",
-    "seconds": "mp"
+    "seconds": "mp",
+    "tent": {
+      "title": "Épül a tábor",
+      "body": "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel a megnyitóra!"
+    },
+    "grounding": {
+      "eyebrow": "Fesztivál után",
+      "title": "GROUNDING Napok",
+      "when": "Júl 12. 19:00 – Júl 15. 12:00",
+      "body": "A fesztivál véget ért, de a folyamat még tart. A GROUNDING Napok lassú, 2,5 napos földet érés: integrációs műhelyek, pihenés, közös csend és feltöltődés, mielőtt hazaindulsz.",
+      "cta": "Részletek"
+    }
   },
   "map": {
     "title": "Térkép",
