@@ -110,5 +110,79 @@
   },
   "get": {
     "redirecting": "Redirecting…"
+  },
+  "showcase": {
+    "topbarInstall": "App Store",
+    "countdown": {
+      "prefix": "Counting down to Manas 2026",
+      "days": "days",
+      "hours": "hrs",
+      "mins": "min",
+      "live": "Manas 2026 is happening now"
+    },
+    "hero": {
+      "eyebrow": "iPhone · Apple Watch · Web app (Android)",
+      "headline": "The whole of Manas 2026, in your pocket",
+      "sub": "The full timetable for every stage, a live NOW view and Apple Watch widgets, so you always know when each act starts.",
+      "webSchedule": "Open the web version instead"
+    },
+    "trust": {
+      "free": "Free",
+      "noAccount": "No sign-up",
+      "noAds": "No ads",
+      "noTracking": "No tracking"
+    },
+    "featuresHeading": "Everything you need on the ground",
+    "features": {
+      "timetable": {
+        "title": "A timetable drawn to scale",
+        "body": "Every stage gets its own column and the day is laid out to scale — at a glance you see the overlaps, the gaps, and how much time you have between two acts."
+      },
+      "now": {
+        "title": "Playing now, and up next",
+        "body": "The “Now” view shows what’s playing right now and what’s coming up on each stage, with a live marker on whatever is running — the whole festival’s pulse on one screen. Before the gates open it counts the days, hours and minutes down to the start."
+      },
+      "settings": {
+        "title": "Make it your own",
+        "body": "Drag the stages into the order you actually walk the festival, and hide the ones you’re not following. Switch between Hungarian and English with a single tap, set the text size — and every preference stays on your device, with no account and no cloud."
+      },
+      "field": {
+        "title": "Built for the field",
+        "body": "After the first load the whole programme lives on your device, so it keeps working when the signal drops in a crowd. If you allow it, your location — only ever on your phone — highlights the stage nearest you, and every time is shown in Budapest time."
+      },
+      "offline": {
+        "title": "Works offline",
+        "body": "After the first load the whole schedule stays on your device — it keeps working even with a weak signal in a crowd."
+      },
+      "location": {
+        "title": "The nearest stage",
+        "body": "If you allow it, your location — only ever on your phone — highlights the stage nearest you."
+      },
+      "language": {
+        "title": "Hungarian and English",
+        "body": "A one-tap language switch, and every time shown in Budapest time."
+      }
+    },
+    "watch": {
+      "eyebrow": "Apple Watch · watchOS",
+      "title": "It’s right there on your wrist",
+      "body": "The whole programme in a built-in watchOS app: one stage at a time, no grid and no fuss — just as much as you want to take in with a single glance.",
+      "swipeTitle": "One stage, one gesture",
+      "swipeBody": "Swipe up and down to move through the acts, left and right to change stage — always anchored to the same moment in time, so browsing never drifts away from now.",
+      "widgetTitle": "Smart Stack widgets",
+      "widgetBody": "Raise your wrist and the Smart Stack already shows what’s on. Pin one per stage, add them all, and turn the crown to page between them — plus watch-face complications, so a glance really is all it takes."
+    },
+    "cta": {
+      "title": "Take the whole programme with you",
+      "body": "Download it free and every stage of Manas 2026 is in your pocket and on your wrist — offline, too.",
+      "web": "Open the web version instead"
+    },
+    "footer": {
+      "madeBy": "Made by Gábor Torma",
+      "unofficial": "Unofficial, fan-made app — not affiliated with, endorsed by or sponsored by the Manas festival or its organizers. “MANAS 2026” is used only to indicate which festival this guide is for.",
+      "privacy": "Privacy",
+      "support": "Support",
+      "web": "Web app"
+    }
   }
 }

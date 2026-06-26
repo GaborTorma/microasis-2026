@@ -84,6 +84,7 @@ body {
 @utility card {
   background: color-mix(in oklab, var(--color-ink-2) 86%, transparent);
   border: 1px solid color-mix(in oklab, var(--color-line) 80%, transparent);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 }
 
@@ -112,4 +113,81 @@ body {
 }
 .pulse-dot {
   animation: manas-pulse 1.8s ease-in-out infinite;
+}
+
+/* ───────────────────────── Showcase / landing (/app*) ─────────────────────────
+   Decorative motion + texture for the App-showcase pages only. Everything here is
+   hard-gated behind prefers-reduced-motion at the bottom of this block. */
+
+/* Scroll-reveal: elements start shifted+faded; the <Reveal> client component adds
+   .is-in via IntersectionObserver. Without JS / on reduced-motion they're visible. */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal-up.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Countdown breathes in size (no dot). */
+@keyframes countdown-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.065);
+  }
+}
+.countdown-pulse {
+  display: inline-block;
+  animation: countdown-pulse 2.6s ease-in-out infinite;
+}
+
+/* Hero App Store badge gently pulses to draw the eye to the primary CTA. */
+@keyframes badge-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+.badge-pulse {
+  animation: badge-pulse 2.4s ease-in-out infinite;
+}
+
+/* Barely-there device float. */
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.float-soft {
+  animation: float-soft 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .float-soft,
+  .pulse-dot,
+  .countdown-pulse,
+  .badge-pulse {
+    animation: none !important;
+  }
 }

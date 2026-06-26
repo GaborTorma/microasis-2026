@@ -3,11 +3,8 @@ import { Baloo_2, Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
-import { Header } from "@/components/Header";
-import { BottomNav } from "@/components/BottomNav";
+import { AppShell } from "@/components/AppShell";
 import { SWRegister } from "@/components/SWRegister";
-import { DisclaimerGate } from "@/components/DisclaimerGate";
-import { InstallPrompt } from "@/components/InstallPrompt";
 import { SettingsProvider } from "@/components/settings/SettingsContext";
 
 const display = Baloo_2({
@@ -74,16 +71,8 @@ export default async function RootLayout({
       <body className="min-h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SettingsProvider>
-            <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col">
-              <Header />
-              <main className="flex-1 pb-[calc(var(--nav-h)+var(--safe-bottom)+0.5rem)]">
-                {children}
-              </main>
-            </div>
-            <BottomNav />
+            <AppShell>{children}</AppShell>
             <SWRegister />
-            <DisclaimerGate />
-            <InstallPrompt />
           </SettingsProvider>
         </NextIntlClientProvider>
       </body>

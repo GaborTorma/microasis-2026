@@ -22,7 +22,7 @@ export function LanguageToggle() {
           disabled={pending}
           onClick={() => startTransition(() => setLocale(l))}
           aria-pressed={locale === l}
-          className={`flex-1 rounded-lg px-3 py-1.5 uppercase tracking-wide transition-colors ${
+          className={`flex-1 rounded-[0.85rem] px-3 py-1.5 uppercase tracking-wide transition-colors ${
             locale === l
               ? "bg-sun text-ink"
               : "text-cream-dim hover:text-cream"

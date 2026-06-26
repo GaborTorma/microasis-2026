@@ -110,5 +110,79 @@
   },
   "get": {
     "redirecting": "Átirányítás…"
+  },
+  "showcase": {
+    "topbarInstall": "App Store",
+    "countdown": {
+      "prefix": "Visszaszámlálás a Manas 2026-ig",
+      "days": "nap",
+      "hours": "óra",
+      "mins": "perc",
+      "live": "Most zajlik a Manas 2026"
+    },
+    "hero": {
+      "eyebrow": "iPhone · Apple Watch · WebApp (Android)",
+      "headline": "Az egész Manas 2026 a zsebedben",
+      "sub": "Teljes időrend minden színpadról, élő MOST nézet és Apple Watch widgetek, hogy mindig tudd melyik program mikor kezdődik.",
+      "webSchedule": "Inkább a böngészőben nézném"
+    },
+    "trust": {
+      "free": "Ingyenes",
+      "noAccount": "Regisztráció nélkül",
+      "noAds": "Reklámmentes",
+      "noTracking": "Nyomkövetés nélkül"
+    },
+    "featuresHeading": "Minden, ami a helyszínen kell",
+    "features": {
+      "timetable": {
+        "title": "Idő-arányos időrend",
+        "body": "Minden színpad külön oszlop, a nap pedig valós arányban van kiterítve — egy pillantással látod az átfedéseket, a réseket, és azt, mennyi időd marad két fellépő között."
+      },
+      "now": {
+        "title": "Most megy, és mi jön",
+        "body": "A „Most” nézet színpadonként mutatja, mi szól éppen és mi következik, élő jelzéssel a futó programokon — egyetlen képernyőn az egész fesztivál pulzusa. Kapunyitás előtt pedig napra, órára, percre visszaszámol a kezdésig, hogy pontosan tudd, mennyi van még hátra."
+      },
+      "settings": {
+        "title": "Szabd a magadévá",
+        "body": "Húzd a színpadokat abba a sorrendbe, ahogyan te járod a fesztivált, és rejtsd el, amit úgysem követsz. Válts egyetlen koppintással magyar és angol között, állítsd a betűméretet — és minden beállításod a készülékeden marad, fiók és felhő nélkül."
+      },
+      "field": {
+        "title": "A helyszínre tervezve",
+        "body": "Az első betöltés után az egész program a készülékeden marad, így a tömegben, gyenge térerő mellett is működik. Ha engedélyezed, a helyzeted alapján — kizárólag a telefonodon — kiemeli a hozzád legközelebbi színpadot, és minden időpontot budapesti idő szerint mutat."
+      },
+      "offline": {
+        "title": "Offline is működik",
+        "body": "Az első betöltés után a teljes program a készülékeden marad — a tömegben, gyenge térerő mellett is működik."
+      },
+      "location": {
+        "title": "A legközelebbi színpad",
+        "body": "Ha engedélyezed, a helyzeted alapján — kizárólag a telefonodon — kiemeli a hozzád legközelebbi színpadot."
+      },
+      "language": {
+        "title": "Magyarul és angolul",
+        "body": "Egyérintéses nyelvváltó, és minden időpont budapesti idő szerint."
+      }
+    },
+    "watch": {
+      "eyebrow": "Apple Watch · watchOS",
+      "title": "Ott van a csuklódon is",
+      "body": "A teljes program egy beépített watchOS-appban: egyszerre egy színpad, rács és pötyögés nélkül — épp annyi, amennyit egy pillantással be akarsz fogadni.",
+      "swipeTitle": "Egy színpad, egy mozdulat",
+      "swipeBody": "Fel-le húzva lépsz a fellépők között, balra-jobbra váltasz színpadot — végig ugyanazon az időponton maradva, így a böngészés sosem visz el a jelenből.",
+      "widgetTitle": "Smart Stack widgetek",
+      "widgetBody": "Emeld fel a csuklód, és a Smart Stack máris mutatja, mi szól. Rögzítsd színpadonként, add hozzá mindegyiket, és a koronával lapozz közöttük — plusz óraszámlap-kiegészítők, hogy tényleg elég legyen egy pillantás."
+    },
+    "cta": {
+      "title": "Vidd magaddal a teljes programot",
+      "body": "Töltsd le ingyen, és a Manas 2026 minden színpada ott lesz a zsebedben és a csuklódon — még offline is.",
+      "web": "Inkább a böngészőben nézném"
+    },
+    "footer": {
+      "madeBy": "Készítette: Torma Gábor",
+      "unofficial": "Nem hivatalos, rajongói alkalmazás — nem áll kapcsolatban a Manas fesztivállal vagy szervezőivel, és nem azok jóváhagyásával készült. A „MANAS 2026” megnevezés csak azt jelzi, melyik fesztiválhoz készült ez a kalauz.",
+      "privacy": "Adatvédelem",
+      "support": "Támogatás",
+      "web": "Webapp"
+    }
   }
 }
