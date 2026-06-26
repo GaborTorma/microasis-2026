@@ -8,8 +8,11 @@ export const SITE_URL = "https://manas.torma.ai";
 
 export const APP_STORE_URL = "https://apps.apple.com/app/id6782099675";
 
-// Web Share / QR target: the /app showcase landing page on the canonical domain.
+// The native share sheet hands out the /app showcase landing page; the QR (and the
+// printed/copied link beneath it) use /get, which routes the scanner: iPhone → App
+// Store, anything else → the web app.
 export const SHARE_URL = `${SITE_URL}/app`;
+export const QR_URL = `${SITE_URL}/get`;
 
 function ua(): string {
   return typeof navigator === "undefined" ? "" : navigator.userAgent;

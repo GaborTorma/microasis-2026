@@ -2,13 +2,14 @@ import SwiftUI
 import CoreImage.CIFilterBuiltins
 
 /// "Add tovább" tab — the iOS parity of the web `/share` page: a full screen with
-/// a big QR a friend points their phone at (encodes `AppLinks.share` → App Store
-/// on iPhone, the web app elsewhere) plus the native iOS share sheet.
+/// a big QR a friend points their phone at (encodes `AppLinks.qr` → `/get` → App
+/// Store on iPhone, the web app elsewhere) plus the native iOS share sheet, which
+/// hands out the `/app` showcase page (`AppLinks.share`).
 struct ShareView: View {
     @EnvironmentObject var settings: Settings
 
     private var prettyURL: String {
-        AppLinks.share.absoluteString.replacingOccurrences(of: "https://", with: "")
+        AppLinks.qr.absoluteString.replacingOccurrences(of: "https://", with: "")
     }
 
     var body: some View {
@@ -23,7 +24,7 @@ struct ShareView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                if let qr = QRCode.image(AppLinks.share.absoluteString) {
+                if let qr = QRCode.image(AppLinks.qr.absoluteString) {
                     Image(uiImage: qr)
                         .interpolation(.none)           // keep the modules crisp when scaled
                         .resizable()

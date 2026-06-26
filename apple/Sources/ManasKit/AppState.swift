@@ -17,12 +17,13 @@ public enum SharedDefaults {
     public static let debugNowKey = "manas.debugNow"
 }
 
-/// Canonical outbound links. `share` is the universal hand-off URL the QR / share
-/// sheet passes around (the `/app` showcase page on the canonical domain),
-/// mirroring the web share page. Apple ID matches `apple/CLAUDE.md`.
+/// Canonical outbound links. The native share sheet hands out `share` (the `/app`
+/// showcase page); the QR encodes `qr` (`/get`), which routes the scanner: iPhone →
+/// App Store, anything else → the web app. Apple ID matches `apple/CLAUDE.md`.
 public enum AppLinks {
     public static let appStore = URL(string: "https://apps.apple.com/app/id6782099675")!
     public static let share = URL(string: "https://manas.torma.ai/app")!
+    public static let qr = URL(string: "https://manas.torma.ai/get")!
 }
 
 /// User preferences: stage order, hidden stages, language, and how many stage

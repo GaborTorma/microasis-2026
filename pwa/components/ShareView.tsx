@@ -4,20 +4,21 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrcode.react";
 import { Check, Copy, Share2 } from "lucide-react";
-import { SHARE_URL } from "@/lib/platform";
+import { QR_URL, SHARE_URL } from "@/lib/platform";
 
 // Refined pill shared by the share / copy primary actions.
 const PRIMARY_BTN =
   "inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-sun to-leaf px-6 py-2.5 font-display text-sm font-bold text-ink shadow-[0_8px_24px_-6px_rgba(94,201,138,0.55)] transition active:scale-95";
 
-// The /share page: a big QR a friend just points their phone at. The code encodes
-// the canonical /app showcase page (App Store / web app download links). On devices
-// with the native share sheet (iOS / macOS / Android) the primary action opens it
-// and a small copy button sits next to the URL; elsewhere the primary action copies
-// the link (so no separate inline copy is needed).
+// The /share page: a big QR a friend just points their phone at. The QR (and the
+// printed/copied link) encodes /get, which routes the scanner: iPhone → App Store,
+// anything else → the web app. The native share button hands out the /app showcase
+// page instead. On devices with the share sheet (iOS / macOS / Android) the primary
+// action opens it and a small copy button sits next to the URL; elsewhere the
+// primary action copies the link (so no separate inline copy is needed).
 export function ShareView() {
   const t = useTranslations("share");
-  const url = SHARE_URL;
+  const url = QR_URL;
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
 
@@ -43,7 +44,7 @@ export function ShareView() {
 
   const share = async () => {
     try {
-      await navigator.share({ title: "MANAS 2026", text: t("invite"), url });
+      await navigator.share({ title: "MANAS 2026", text: t("invite"), url: SHARE_URL });
     } catch {
       /* user cancelled, or share unsupported for this payload */
     }
