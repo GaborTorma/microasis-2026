@@ -12,6 +12,9 @@ public enum SharedDefaults {
     public static let appGroupID = "group.ai.torma.manas.2026"
     public static let suite = UserDefaults(suiteName: appGroupID) ?? .standard
     public static let localeKey = "manas.locale"
+    /// QA debug clock, mirrored here so the watch widget (its own process) sees
+    /// the same overridden "now" as the app. nil/absent ⇒ real time.
+    public static let debugNowKey = "manas.debugNow"
 }
 
 /// Canonical outbound links. `share` is the universal hand-off URL the QR / share
@@ -45,8 +48,15 @@ public final class Settings: ObservableObject {
     /// the `manas.debugNow` defaults key with `Fmt.now`.
     @Published public var debugNow: Date? {
         didSet {
-            if let d = debugNow { defaults.set(ISO8601DateFormatter().string(from: d), forKey: Key.debugNow) }
-            else { defaults.removeObject(forKey: Key.debugNow) }
+            if let d = debugNow {
+                let iso = ISO8601DateFormatter().string(from: d)
+                defaults.set(iso, forKey: Key.debugNow)
+                // Mirror to the App Group so the watch widget shares the clock.
+                SharedDefaults.suite.set(iso, forKey: SharedDefaults.debugNowKey)
+            } else {
+                defaults.removeObject(forKey: Key.debugNow)
+                SharedDefaults.suite.removeObject(forKey: SharedDefaults.debugNowKey)
+            }
         }
     }
     /// QA-only override for the device coordinate ("lat,lng"); nil = real
@@ -71,12 +81,22 @@ public final class Settings: ObservableObject {
         debugNow = defaults.string(forKey: Key.debugNow).flatMap(Fmt.parseDateTime)
         debugCoord = defaults.string(forKey: Key.debugCoord)
         syncSharedLocale()
+        syncSharedDebugNow()   // didSet doesn't fire on the init assignment above
     }
 
     /// Mirror the resolved locale into the shared App Group so the watch widget
     /// follows the same language as the app (explicit toggle or device default).
     private func syncSharedLocale() {
         SharedDefaults.suite.set(locale.rawValue, forKey: Key.locale)
+    }
+
+    /// Mirror the QA debug clock into the App Group so the watch widget shares it.
+    private func syncSharedDebugNow() {
+        if let d = debugNow {
+            SharedDefaults.suite.set(ISO8601DateFormatter().string(from: d), forKey: SharedDefaults.debugNowKey)
+        } else {
+            SharedDefaults.suite.removeObject(forKey: SharedDefaults.debugNowKey)
+        }
     }
 
     /// Font scale for the chosen text size: 1…5 → 0.9…1.7 (step 0.2).

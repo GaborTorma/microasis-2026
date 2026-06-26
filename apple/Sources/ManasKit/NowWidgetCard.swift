@@ -89,13 +89,14 @@ public struct NowWidgetContent: View {
                     .foregroundStyle(accent)
                     .lineLimit(1).minimumScaleFactor(0.7)
                     .widgetAccentable()
+                // Live dot sits beside the stage name.
+                if entry.isLive {
+                    Circle().fill(Theme.now).frame(width: 6, height: 6)
+                }
                 Spacer(minLength: 2)
                 if let event = entry.event {
-                    if entry.isLive {
-                        Circle().fill(Theme.now).frame(width: 6, height: 6)
-                    }
                     Text(Fmt.range(event.startsAt, event.endsAt))
-                        .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
                         .foregroundStyle(Theme.cream)
                         .lineLimit(1).minimumScaleFactor(0.6)
                 }
@@ -107,6 +108,15 @@ public struct NowWidgetContent: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        // Language chip (EN / HU / EN+HU) for workshops, matching the watch card.
+        .overlay(alignment: .bottomTrailing) {
+            if let event = entry.event, event.kind == EventKind.workshop {
+                let chip = Theme.chip(event.langAvailability)
+                Text(chip.label).font(.system(size: 9, weight: .bold))
+                    .padding(.horizontal, 5).padding(.vertical, 2)
+                    .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
+            }
+        }
     }
 
     private var actText: String {
@@ -128,6 +138,15 @@ public func nowWidgetBackground(_ entry: NowEntry) -> some View {
         Theme.ink
         LinearGradient(colors: [tint.opacity(0.75), tint.opacity(0.35)],
                        startPoint: .topLeading, endPoint: .bottomTrailing)
+        // Kind icon (loud speaker / sparkles) as a faint bottom-left watermark —
+        // it lives behind the content, so the act text may overlap it.
+        if let event = entry.event {
+            Image(systemName: kindSymbol(event.kind))
+                .font(.system(size: 46))
+                .foregroundStyle(Theme.cream.opacity(0.14))
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                .padding(.leading, 2).padding(.bottom, 1)
+        }
     }
 }
 
