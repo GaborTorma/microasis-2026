@@ -52,8 +52,10 @@ Rules a future edit must respect:
 ## Cross-platform invariants (keep both sides in sync)
 
 - **Hungarian is the default language.** First visit follows the browser/device:
-  declared language starts with `hu` → HU, anything else → EN; no header/locale → HU.
-  A user's explicit toggle persists and always wins. Implemented independently in
+  any declared Hungarian preference anywhere in `Accept-Language` → HU, otherwise
+  EN; no header/locale → HU. (Web checks the *whole* list, not just the first tag —
+  iOS Safari often lists English ahead of Hungarian on a Hungarian device, so
+  first-tag-only wrongly served EN.) A user's explicit toggle persists and always wins. Implemented independently in
   web (`pwa/i18n/request.ts`, `i18n/config.ts` `DEFAULT_LOCALE='hu'`) and apple
   (`ManasKit/AppState.swift` device default). The **watch widget** reads the watch
   app's chosen language through an **App Group** (`group.ai.torma.manas.2026`,
