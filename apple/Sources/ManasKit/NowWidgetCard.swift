@@ -82,6 +82,23 @@ public struct NowWidgetContent: View {
     private var accent: Color { entry.stage.map { Color(hex: $0.accent) } ?? Theme.sun }
 
     public var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            // Kind icon watermark — kept in the CONTENT layer, not the container
+            // background: the system desaturates a widget's background on tinted
+            // watch faces, which all but erased a faint background icon. Here it
+            // survives, picks up the accent tint, and the act text overlaps it.
+            if let event = entry.event {
+                Image(systemName: kindSymbol(event.kind))
+                    .font(.system(size: 40, weight: .semibold))
+                    .foregroundStyle(accent.opacity(0.28))
+                    .widgetAccentable()
+                    .offset(x: -1, y: 3)
+            }
+            content
+        }
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 4) {
                 Text(entry.stage?.name.uppercased() ?? "MANAS")
@@ -89,9 +106,12 @@ public struct NowWidgetContent: View {
                     .foregroundStyle(accent)
                     .lineLimit(1).minimumScaleFactor(0.7)
                     .widgetAccentable()
-                // Live dot sits beside the stage name.
+                // Live dot sits beside the stage name; pulses while on air.
                 if entry.isLive {
-                    Circle().fill(Theme.now).frame(width: 6, height: 6)
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 6))
+                        .foregroundStyle(Theme.now)
+                        .symbolEffect(.pulse, options: .repeating, isActive: true)
                 }
                 Spacer(minLength: 2)
                 if let event = entry.event {
@@ -131,6 +151,8 @@ public struct NowWidgetContent: View {
 
 /// The widget's dark base + stage tint, like the watch card. The system
 /// desaturates this on tinted watch faces; cream text stays readable either way.
+/// (The kind-icon watermark lives in the content layer, not here — see
+/// `NowWidgetContent`, where it survives the background desaturation.)
 @ViewBuilder
 public func nowWidgetBackground(_ entry: NowEntry) -> some View {
     let tint = entry.stage.map { Color(hex: $0.color) } ?? Theme.ink3
@@ -138,15 +160,6 @@ public func nowWidgetBackground(_ entry: NowEntry) -> some View {
         Theme.ink
         LinearGradient(colors: [tint.opacity(0.75), tint.opacity(0.35)],
                        startPoint: .topLeading, endPoint: .bottomTrailing)
-        // Kind icon (loud speaker / sparkles) as a faint bottom-left watermark —
-        // it lives behind the content, so the act text may overlap it.
-        if let event = entry.event {
-            Image(systemName: kindSymbol(event.kind))
-                .font(.system(size: 46))
-                .foregroundStyle(Theme.cream.opacity(0.14))
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                .padding(.leading, 2).padding(.bottom, 1)
-        }
     }
 }
 
