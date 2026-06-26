@@ -26,7 +26,7 @@ import { Reveal } from "./Reveal";
 const FEATURES = [
   { key: "timetable", shot: "timetableFri", flip: false, rotate: "md:-rotate-[8deg]", bodyClass: "md:-mt-[200px]", floatAmp: "-12px", floatDur: "7s", floatDelay: "0s" },
   { key: "now", shot: "now", flip: true, rotate: "md:rotate-[4deg]", bodyClass: "", floatAmp: "-9px", floatDur: "7.6s", floatDelay: "-1.6s" },
-  { key: "settings", shot: "settings", flip: false, rotate: "md:-rotate-[9deg]", bodyClass: "", floatAmp: "-11px", floatDur: "6.6s", floatDelay: "-3.1s" },
+  { key: "settings", shot: "settings", flip: false, rotate: "", bodyClass: "", floatAmp: "-11px", floatDur: "6.6s", floatDelay: "-3.1s" },
 ] as const;
 
 // The /app showcase: a restrained, Apple-indie presentation of the native iOS +
@@ -93,9 +93,10 @@ export function AppShowcase() {
               className="absolute left-1/2 top-1/2 -z-10 h-[78%] w-[110%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
               style={{ background: "var(--color-sun)", opacity: 0.15 }}
             />
-            {/* Desktop tilt on a wrapper so it composes with float-soft (which
-                animates transform on the Framed element itself). */}
-            <div className="md:rotate-[5deg]">
+            {/* Desktop tilt + inward nudge on a wrapper. Tailwind v4 maps these to
+                the standalone `rotate`/`translate` properties, so they compose with
+                each other and with float-soft's transform on the Framed element. */}
+            <div className="md:-translate-x-[50px] md:rotate-[10deg]">
               <Framed
                 kind="hero"
                 src={framedHero(locale)}
