@@ -53,7 +53,8 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   Settings persist to `UserDefaults` with the `manas.` key prefix. **Devices stay
   independent — no iCloud, no iOS↔watch pairing.** The only shared store is an App
   Group (`SharedDefaults`, `group.ai.torma.manas.2026`) the **watch app + its widget**
-  use so the widget follows the app's language — same-device only, locale only.
+  use so the widget follows the app's language (and the QA `manas.debugNow` clock,
+  DEBUG/TestFlight only) — same-device only.
 - **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.1.0`) bumped per
   release; `CURRENT_PROJECT_VERSION` (integer, currently `9`) bumped per TestFlight
   upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
@@ -113,9 +114,11 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   sheet), `manas.hideTestUI` (hide the in-app Testing section),
   `manas.startWidgetPreview` (watch: render a stage's widget card full-screen).
   The widget shot reuses the real `NowWidgetView` (moved to `ManasKit/NowWidgetCard.swift`
-  so the app + the WidgetKit extension share it); the extension itself still
-  renders with `Date()`, so only this in-app preview honours `manas.debugNow`. See
-  `screenshots/README.md`.
+  so the app + the WidgetKit extension share it). The extension honours the QA
+  debug clock too: the watch app mirrors `manas.debugNow` into the App Group
+  (`SharedDefaults.debugNowKey`) and `WidgetSchedule.now` reads it (DEBUG/TestFlight
+  only); when set, the provider pins one entry at the frozen time instead of the
+  real-clock act-boundary timeline. See `screenshots/README.md`.
 - **`isLive`** is `startsAt <= now < (endsAt ?? startsAt)` — open-ended events count as
   live only at their exact start instant. Breaks (`kind == "break"`) are filtered out
   of stores and widget timelines everywhere.

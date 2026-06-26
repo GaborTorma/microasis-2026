@@ -14,6 +14,18 @@ enum WidgetSchedule {
         return api.cachedSchedule()
     }
 
+    /// The QA debug clock the app shares via the App Group, or nil for real
+    /// time. Gated to DEBUG/TestFlight, like `Fmt.now` in the app.
+    static var debugNow: Date? {
+        guard AppEnv.debugToolsEnabled,
+              let s = SharedDefaults.suite.string(forKey: SharedDefaults.debugNowKey)
+        else { return nil }
+        return Fmt.parseDateTime(s)
+    }
+
+    /// "Now" for the widget — the shared debug clock when set, else the real time.
+    static var now: Date { debugNow ?? Date() }
+
     /// Widget language follows the watch app's setting, shared via the App Group.
     /// If the app hasn't written one yet, fall back to the device language (which
     /// is exactly the app's own device default). Hungarian ⇒ HU, else EN.

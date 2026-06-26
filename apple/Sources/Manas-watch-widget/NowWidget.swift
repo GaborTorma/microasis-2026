@@ -12,7 +12,7 @@ struct NowProvider: AppIntentTimelineProvider {
 
     func snapshot(for configuration: StageSelectionIntent, in context: Context) async -> NowEntry {
         let data = await WidgetSchedule.load()
-        return NowWidgetBuilder.makeEntry(at: Date(), data: data, slug: configuration.stage?.id,
+        return NowWidgetBuilder.makeEntry(at: WidgetSchedule.now, data: data, slug: configuration.stage?.id,
                                           locale: WidgetSchedule.locale)
     }
 
@@ -30,13 +30,24 @@ struct NowProvider: AppIntentTimelineProvider {
     }
 
     func timeline(for configuration: StageSelectionIntent, in context: Context) async -> Timeline<NowEntry> {
-        let now = Date()
+        let now = WidgetSchedule.now
         let data = await WidgetSchedule.load()
         guard let data, let stage = NowWidgetBuilder.resolveStage(data, slug: configuration.stage?.id) else {
             // No data yet (first run, offline, never opened): retry in an hour.
             let entry = NowWidgetBuilder.makeEntry(at: now, data: data, slug: configuration.stage?.id,
                                                    locale: WidgetSchedule.locale)
-            return Timeline(entries: [entry], policy: .after(now.addingTimeInterval(3600)))
+            return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
+        }
+        // QA debug clock: the *content* reflects the frozen debug time, but the
+        // entry must be dated to the real wall clock — otherwise the complication
+        // has no entry at or before "now" and just renders its empty placeholder.
+        // (A debug-dated entry sits in the festival future, so the face skips it.)
+        if WidgetSchedule.debugNow != nil {
+            let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
+            let p = NowWidgetBuilder.pick(at: now, events: events)
+            let entry = NowEntry(date: Date(), stage: stage, event: p.event, isLive: p.live,
+                                 locale: WidgetSchedule.locale)
+            return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
         }
         let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
         let entries = NowWidgetBuilder.entries(now: now, stage: stage, events: events, locale: WidgetSchedule.locale)
