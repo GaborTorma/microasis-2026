@@ -121,3 +121,25 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.watchkitapp.widget
         PRODUCT_NAME: ManasWatchWidget
+
+# Shared schemes, declared so `xcodegen generate` emits them deterministically —
+# XcodeGen does not create schemes on its own, and the previously-present ones were
+# an Xcode-created artifact that didn't survive a clean regenerate. Without these,
+# headless `xcodebuild -scheme …` and the screenshot harness have nothing to build.
+schemes:
+  Manas:
+    build:
+      targets:
+        Manas: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  ManasWatch:
+    build:
+      targets:
+        ManasWatch: all
+    run:
+      config: Debug
+    archive:
+      config: Release
