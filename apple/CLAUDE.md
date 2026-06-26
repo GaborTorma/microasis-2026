@@ -55,7 +55,7 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   Group (`SharedDefaults`, `group.ai.torma.manas.2026`) the **watch app + its widget**
   use so the widget follows the app's language — same-device only, locale only.
 - **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.1.0`) bumped per
-  release; `CURRENT_PROJECT_VERSION` (integer, currently `7`) bumped per TestFlight
+  release; `CURRENT_PROJECT_VERSION` (integer, currently `8`) bumped per TestFlight
   upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
   plist or the bump won't reach the binary.
 - **Bundle IDs:** `ai.torma.manas.2026` (iOS) · `.watchkitapp` (watch) ·
