@@ -56,7 +56,7 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   use so the widget follows the app's language (and the QA `manas.debugNow` clock,
   DEBUG/TestFlight only) — same-device only.
 - **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.1.0`) bumped per
-  release; `CURRENT_PROJECT_VERSION` (integer, currently `9`) bumped per TestFlight
+  release; `CURRENT_PROJECT_VERSION` (integer, currently `10`) bumped per TestFlight
   upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
   plist or the bump won't reach the binary.
 - **Bundle IDs:** `ai.torma.manas.2026` (iOS) · `.watchkitapp` (watch) ·
