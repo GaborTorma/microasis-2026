@@ -81,6 +81,17 @@ shots:
     device: iphone
     view: share                   # the "Add tovább" QR / share tab (static content)
 
+  - name: "07-now-camp"
+    device: iphone
+    view: now
+    time: "2026-07-08 15:00"      # opening day: gates open, camp going up, Bowl already playing
+    location: bowl                # "you are here" at the Bowl
+
+  - name: "08-now-grounding"
+    device: iphone
+    view: now
+    time: "2026-07-13 10:00"      # post-festival GROUNDING Days link screen
+
   - name: "01-now-portal"
     device: watch
     time: "2026-07-09 02:30"

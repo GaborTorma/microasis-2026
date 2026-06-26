@@ -27,14 +27,21 @@ struct RootView: View {
                         Divider().overlay(Theme.line)
                     }
 
+                    // Gradient only below the header: each tab page gets it as a
+                    // background (the TabView's own content layer is opaque, so a
+                    // single layer behind it wouldn't show through). The header
+                    // keeps its flat band above the divider.
                     TabView(selection: $tab) {
                         TimetableView(isLandscape: landscape, compactHeader: $compactHeader)
+                            .background(AppBackground())
                             .tabItem { Label(L.t("nav.timetable", settings.locale), systemImage: "calendar") }
                             .tag(0)
                         NowView()
+                            .background(AppBackground())
                             .tabItem { Label(L.t("nav.now", settings.locale), systemImage: "dot.radiowaves.left.and.right") }
                             .tag(1)
                         ShareView()
+                            .background(AppBackground())
                             .tabItem { Label(L.t("nav.share", settings.locale), systemImage: "qrcode") }
                             .tag(2)
                     }
@@ -232,5 +239,25 @@ private extension View {
         padding(2)
             .background(Theme.ink2.opacity(0.7), in: Capsule())
             .overlay(Capsule().stroke(Theme.line))
+    }
+}
+
+/// Flat ink base with soft green/teal corner glows — mirrors the PWA's body
+/// radial-gradients (`pwa/app/globals.css`). Fills the whole window behind the
+/// tabs (the PWA's are `background-attachment: fixed`, i.e. viewport-anchored).
+struct AppBackground: View {
+    var body: some View {
+        Theme.ink
+            .overlay(glow("#2e6b4a", 0.24, .init(x: 0.16, y: 0.05), 0.78))  // top-left green
+            .overlay(glow("#46b3a3", 0.16, .init(x: 0.92, y: 0.10), 0.68))  // top-right teal
+            .overlay(glow("#1e523c", 0.30, .init(x: 0.50, y: 1.04), 0.95))  // bottom green
+            .overlay(glow("#5ec98a", 0.09, .init(x: 0.90, y: 0.82), 0.55))  // bottom-right sun
+            .ignoresSafeArea(edges: .bottom)
+    }
+
+    private func glow(_ hex: String, _ opacity: Double,
+                      _ center: UnitPoint, _ radius: CGFloat) -> some View {
+        EllipticalGradient(colors: [Color(hex: hex).opacity(opacity), .clear],
+                           center: center, endRadiusFraction: radius)
     }
 }

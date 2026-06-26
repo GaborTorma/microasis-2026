@@ -34,6 +34,10 @@ public extension ScheduleData {
 /// frame it's given, so iOS (220×150) and the watch reuse the same drawing.
 public struct TentArt: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    // Render motionless for Reduce Motion — and for marketing captures: the
+    // screenshot harness sets `manas.hideTestUI`, so the tent shows fully
+    // pitched instead of a random animation frame.
+    private var still: Bool { reduceMotion || AppEnv.hideTestUI }
 
     public init() {}
 
@@ -67,7 +71,7 @@ public struct TentArt: View {
                 GrassTufts()
                     .stroke(Theme.leaf, style: StrokeStyle(lineWidth: 2, lineCap: .round))
                     .opacity(0.7)
-                if reduceMotion {
+                if still {
                     tentGroup
                 } else {
                     PhaseAnimator(TentPhase.allCases) { phase in
@@ -91,9 +95,9 @@ private enum TentPhase: CaseIterable {
     var animation: Animation {
         switch self {
         case .seed: return .linear(duration: 0.01)   // invisible reset
-        case .up:   return .easeOut(duration: 1.1)    // pitch up
-        case .hold: return .linear(duration: 1.8)     // hold
-        case .gone: return .easeIn(duration: 0.7)     // fade out
+        case .up:   return .easeOut(duration: 2.0)    // pitch up
+        case .hold: return .linear(duration: 2.3)     // hold
+        case .gone: return .easeIn(duration: 0.9)     // fade out
         }
     }
 }
@@ -164,15 +168,16 @@ private struct GrassTufts: Shape {
 private struct TentFlag: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var furled = false
+    private var still: Bool { reduceMotion || AppEnv.hideTestUI }
 
     var body: some View {
         Tri(pts: [.init(x: 0.5, y: 0.16), .init(x: 0.6, y: 0.2), .init(x: 0.5, y: 0.24)])
             .fill(Color(hex: "#e0913f"))
-            .scaleEffect(x: (!reduceMotion && furled) ? 0.5 : 1, y: 1,
+            .scaleEffect(x: (!still && furled) ? 0.5 : 1, y: 1,
                          anchor: UnitPoint(x: 0.5, y: 0.2))
-            .animation(reduceMotion ? nil
-                       : .easeInOut(duration: 0.85).repeatForever(autoreverses: true),
+            .animation(still ? nil
+                       : .easeInOut(duration: 1.1).repeatForever(autoreverses: true),
                        value: furled)
-            .onAppear { if !reduceMotion { furled = true } }
+            .onAppear { if !still { furled = true } }
     }
 }

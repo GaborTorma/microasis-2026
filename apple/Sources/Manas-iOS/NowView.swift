@@ -174,7 +174,7 @@ private struct OpeningStageCard: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(Theme.cream.opacity(0.9))
                     .shadow(color: near ? Theme.cream : .clear, radius: near ? 4 : 0)
-                    .symbolEffect(.pulse, options: .repeating, isActive: near)
+                    .symbolEffect(.pulse, options: .repeating, isActive: near && !AppEnv.hideTestUI)
             }
             .padding(.horizontal, 14).padding(.vertical, 9)
             .background(LinearGradient(colors: [color, color.opacity(0.73)],
@@ -316,13 +316,14 @@ private struct LiveDot: View {
     let locale: AppLocale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var on = false
+    private var still: Bool { reduceMotion || AppEnv.hideTestUI }
 
     var body: some View {
         Circle().fill(Theme.now).frame(width: 9, height: 9)
-            .opacity(reduceMotion ? 1 : (on ? 0.45 : 1))
-            .scaleEffect(reduceMotion ? 1 : (on ? 0.8 : 1))
-            .animation(reduceMotion ? nil : .easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: on)
-            .onAppear { if !reduceMotion { on = true } }
+            .opacity(still ? 1 : (on ? 0.45 : 1))
+            .scaleEffect(still ? 1 : (on ? 0.8 : 1))
+            .animation(still ? nil : .easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: on)
+            .onAppear { if !still { on = true } }
             .accessibilityLabel(L.t("now.playingNow", locale))
     }
 }
@@ -359,7 +360,7 @@ private struct StageNowCard: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Theme.cream.opacity(0.9))
                         .shadow(color: near ? Theme.cream : .clear, radius: near ? 4 : 0)
-                        .symbolEffect(.pulse, options: .repeating, isActive: near)
+                        .symbolEffect(.pulse, options: .repeating, isActive: near && !AppEnv.hideTestUI)
                 }
             }
             .padding(.horizontal, 14).padding(.vertical, 9)
