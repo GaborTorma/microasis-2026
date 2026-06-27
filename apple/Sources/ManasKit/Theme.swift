@@ -29,6 +29,17 @@ public func kindSymbol(_ kind: String) -> String {
     kind == EventKind.workshop ? "sparkles" : "speaker.wave.2.fill"
 }
 
+/// "Made by <name>" credit where only the maker's name is a tappable link to
+/// `AppLinks.maker`. Shared by the iOS and watch settings "About" sections.
+public func madeByCredit(_ locale: AppLocale) -> AttributedString {
+    let prefix = AttributedString(L.t("about.madeprefix", locale) + " ")
+    var name = AttributedString(L.t("about.makername", locale))
+    name.link = AppLinks.maker
+    name.foregroundColor = .secondary
+    name.underlineStyle = .single
+    return prefix + name
+}
+
 /// Manas green palette, mirroring the web app's CSS tokens.
 public enum Theme {
     public static let ink = Color(hex: "#0c1611")

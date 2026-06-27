@@ -13,7 +13,7 @@ import { useSchedule } from "@/lib/useSchedule";
 import { useNow, currentNow } from "@/lib/useNow";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { useNearestStage } from "@/lib/useNearestStage";
-import { hhmm, mmdd, tx, weekdayLong } from "@/lib/format";
+import { FESTIVAL_TZ, hhmm, mmdd, tx, weekdayLong } from "@/lib/format";
 import {
   effectiveColumns,
   orderedVisibleStages,
@@ -27,7 +27,7 @@ const HOUR = 3_600_000;
 const GUTTER = 64; // px, fixed time axis (hour labels + 2-line day marker)
 const MIN_COL = 100; // px, min stage-column width (non-paged layout)
 const SNAP = 12; // px, day-detection tolerance (compensates scroll padding)
-const dayFmt = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Budapest" });
+const dayFmt = new Intl.DateTimeFormat("en-CA", { timeZone: FESTIVAL_TZ });
 const festivalDay = (d: Date) => dayFmt.format(d);
 const floorHour = (ms: number) => Math.floor(ms / HOUR) * HOUR;
 const ceilHour = (ms: number) => Math.ceil(ms / HOUR) * HOUR;

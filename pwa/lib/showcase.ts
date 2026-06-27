@@ -51,14 +51,12 @@ export function framedHero(locale: Locale): string {
   return `/landing/framed/${locale}/hero.webp?v=${LANDING_IMG_V}`;
 }
 
-// The five stages in festival sort order, with the exact DB accent colors from
-// scripts/seed.ts — used for the faint per-stage glow on the watch widget cards.
-export type Stage = { slug: string; accent: string };
-
-export const STAGES: readonly Stage[] = [
-  { slug: "portal", accent: "#e8a04c" },
-  { slug: "field", accent: "#4fb3a6" },
-  { slug: "bowl", accent: "#d98c3a" },
-  { slug: "terrace", accent: "#93c06a" },
-  { slug: "mandala", accent: "#b79be0" },
-] as const;
+// Stage slug → the exact DB accent color from scripts/seed.ts — used for the
+// faint per-stage glow on the watch widget cards.
+export const STAGE_ACCENTS: Record<string, string> = {
+  portal: "#e8a04c",
+  field: "#4fb3a6",
+  bowl: "#d98c3a",
+  terrace: "#93c06a",
+  mandala: "#b79be0",
+};

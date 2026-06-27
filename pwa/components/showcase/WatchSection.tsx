@@ -2,13 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/config";
-import { STAGES, framedWatch } from "@/lib/showcase";
+import { STAGE_ACCENTS, framedWatch } from "@/lib/showcase";
 import { SectionHeading } from "./SectionHeading";
 import { Framed } from "./Framed";
 import { Reveal } from "./Reveal";
 
-const portal = STAGES.find((s) => s.slug === "portal")!.accent;
-const field = STAGES.find((s) => s.slug === "field")!.accent;
+const portal = STAGE_ACCENTS.portal;
+const field = STAGE_ACCENTS.field;
 
 // The Apple Watch chapter. Band-less watches (no strap), no background band.
 // Swipe row = a 3-watch fan; widget row = two overlapping Smart Stack cards.

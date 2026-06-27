@@ -20,27 +20,6 @@ export function hhmm(iso: string, locale: string): string {
   });
 }
 
-/** "YYYY-MM-DD" festival day → short weekday + date, e.g. "Thu 9 Jul". */
-export function dayLabel(day: string, locale: string): string {
-  return new Date(`${day}T12:00:00+02:00`).toLocaleDateString(
-    intlLocale(locale),
-    { weekday: "short", day: "numeric", month: "short", timeZone: FESTIVAL_TZ },
-  );
-}
-
-/** Very short day pill, e.g. "Thu". */
-export function weekday(day: string, locale: string): string {
-  return new Date(`${day}T12:00:00+02:00`).toLocaleDateString(
-    intlLocale(locale),
-    { weekday: "short", timeZone: FESTIVAL_TZ },
-  );
-}
-
-/** Day-of-month number for the day pill. */
-export function dayNum(day: string): string {
-  return String(Number(day.slice(8, 10)));
-}
-
 /** "YYYY-MM-DD" → "MM.DD" (e.g. "07.08"). */
 export function mmdd(day: string): string {
   return `${day.slice(5, 7)}.${day.slice(8, 10)}`;

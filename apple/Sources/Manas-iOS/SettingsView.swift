@@ -40,16 +40,6 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
-    /// "Készítette: <name>" where only the name is a white, tappable link.
-    private var madeByCredit: AttributedString {
-        let prefix = AttributedString(L.t("about.madeprefix", settings.locale) + " ")
-        var name = AttributedString(L.t("about.makername", settings.locale))
-        name.link = URL(string: "https://torma.ai")
-        name.foregroundColor = .secondary
-        name.underlineStyle = .single
-        return prefix + name
-    }
-
     var body: some View {
         NavigationStack {
             List {
@@ -114,14 +104,12 @@ struct SettingsView: View {
                 Section(L.t("settings.about", settings.locale)) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(L.t("about.disclaimer", settings.locale))
-                        Text(madeByCredit)
+                        Text(madeByCredit(settings.locale))
                     }
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                    Link(L.t("settings.privacy", settings.locale),
-                         destination: URL(string: "https://manas.torma.ai/privacy")!)
-                    Link(L.t("settings.support", settings.locale),
-                         destination: URL(string: "https://manas.torma.ai/support")!)
+                    Link(L.t("settings.privacy", settings.locale), destination: AppLinks.privacy)
+                    Link(L.t("settings.support", settings.locale), destination: AppLinks.support)
                 }
             }
             .navigationTitle(L.t("settings.title", settings.locale))

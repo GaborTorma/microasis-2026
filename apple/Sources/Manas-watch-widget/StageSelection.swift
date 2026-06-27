@@ -34,10 +34,8 @@ enum WidgetSchedule {
            let chosen = AppLocale(rawValue: raw) {
             return chosen
         }
-        let code = Locale.current.language.languageCode?.identifier
-            ?? Locale.preferredLanguages.first.map { String($0.prefix(2)) }
-            ?? "en"
-        return code.hasPrefix("hu") ? .hu : .en
+        // Same device-default rule the app uses, so the two never drift.
+        return Settings.deviceDefaultLocale
     }
 }
 

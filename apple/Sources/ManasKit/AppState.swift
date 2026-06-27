@@ -26,6 +26,10 @@ public enum AppLinks {
     // Baked into the watch share asset (Sources/Manas-watch/Assets.xcassets/ShareQR…)
     // since watchOS has no CoreImage. Change this → re-run apple/scripts/build_share_qr.py.
     public static let qr = URL(string: "https://manas.torma.ai/get")!
+    public static let privacy = URL(string: "https://manas.torma.ai/privacy")!
+    public static let support = URL(string: "https://manas.torma.ai/support")!
+    /// The app maker's site, linked from the "Made by" credit in settings.
+    public static let maker = URL(string: "https://torma.ai")!
 }
 
 /// Post-festival GROUNDING Days window + link. Web-only NowView parity (mirrors
@@ -62,7 +66,7 @@ public final class Settings: ObservableObject {
     @Published public var debugNow: Date? {
         didSet {
             if let d = debugNow {
-                let iso = ISO8601DateFormatter().string(from: d)
+                let iso = Self.isoOut.string(from: d)
                 defaults.set(iso, forKey: Key.debugNow)
                 // Mirror to the App Group so the watch widget shares the clock.
                 SharedDefaults.suite.set(iso, forKey: SharedDefaults.debugNowKey)
@@ -106,11 +110,14 @@ public final class Settings: ObservableObject {
     /// Mirror the QA debug clock into the App Group so the watch widget shares it.
     private func syncSharedDebugNow() {
         if let d = debugNow {
-            SharedDefaults.suite.set(ISO8601DateFormatter().string(from: d), forKey: SharedDefaults.debugNowKey)
+            SharedDefaults.suite.set(Self.isoOut.string(from: d), forKey: SharedDefaults.debugNowKey)
         } else {
             SharedDefaults.suite.removeObject(forKey: SharedDefaults.debugNowKey)
         }
     }
+
+    /// Reused formatter for writing the QA debug clock to defaults / the App Group.
+    private static let isoOut = ISO8601DateFormatter()
 
     /// Font scale for the chosen text size: 1…5 → 0.9…1.7 (step 0.2).
     public var fontScale: CGFloat { 0.7 + CGFloat(min(max(fontSize, 1), 5)) * 0.2 }
@@ -120,7 +127,9 @@ public final class Settings: ObservableObject {
     }
 
     /// Default language follows the device: Hungarian device ⇒ HU, else EN.
-    public static var deviceDefaultLocale: AppLocale {
+    /// `nonisolated` so the watch widget (a separate, non-MainActor process) can
+    /// reuse the exact same rule instead of re-deriving it.
+    public nonisolated static var deviceDefaultLocale: AppLocale {
         let code = Locale.current.language.languageCode?.identifier
             ?? Locale.preferredLanguages.first.map { String($0.prefix(2)) }
             ?? "en"
@@ -168,7 +177,6 @@ public final class ScheduleStore: ObservableObject {
     @Published public private(set) var data: ScheduleData?
     @Published public private(set) var isLoading = false
     @Published public private(set) var offline = false
-    @Published public private(set) var failed = false
 
     private let api = APIClient()
 
@@ -181,14 +189,12 @@ public final class ScheduleStore: ObservableObject {
             offline = true
         }
         isLoading = true
-        failed = false
         do {
             let fresh = try await api.fetchSchedule()
             data = fresh
             offline = false
         } catch {
             offline = data != nil
-            failed = data == nil
         }
         isLoading = false
     }

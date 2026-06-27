@@ -248,16 +248,16 @@ private extension View {
 struct AppBackground: View {
     var body: some View {
         Theme.ink
-            .overlay(glow("#2e6b4a", 0.24, .init(x: 0.16, y: 0.05), 0.78))  // top-left green
-            .overlay(glow("#46b3a3", 0.16, .init(x: 0.92, y: 0.10), 0.68))  // top-right teal
-            .overlay(glow("#1e523c", 0.30, .init(x: 0.50, y: 1.04), 0.95))  // bottom green
-            .overlay(glow("#5ec98a", 0.09, .init(x: 0.90, y: 0.82), 0.55))  // bottom-right sun
+            .overlay(glow(Color(hex: "#2e6b4a"), 0.24, .init(x: 0.16, y: 0.05), 0.78))  // top-left green
+            .overlay(glow(Theme.teal, 0.16, .init(x: 0.92, y: 0.10), 0.68))             // top-right teal
+            .overlay(glow(Color(hex: "#1e523c"), 0.30, .init(x: 0.50, y: 1.04), 0.95))  // bottom green
+            .overlay(glow(Theme.sun, 0.09, .init(x: 0.90, y: 0.82), 0.55))              // bottom-right sun
             .ignoresSafeArea(edges: .bottom)
     }
 
-    private func glow(_ hex: String, _ opacity: Double,
+    private func glow(_ color: Color, _ opacity: Double,
                       _ center: UnitPoint, _ radius: CGFloat) -> some View {
-        EllipticalGradient(colors: [Color(hex: hex).opacity(opacity), .clear],
+        EllipticalGradient(colors: [color.opacity(opacity), .clear],
                            center: center, endRadiusFraction: radius)
     }
 }
