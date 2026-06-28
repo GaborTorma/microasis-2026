@@ -216,28 +216,31 @@ struct WatchRootView: View {
                             .frame(width: 24, height: 20)
                     }
                     .frame(height: 20)
-                    // ── Artist row — always reserved (rendered empty when absent)
-                    //    so the watermark below sits at the same height with or
-                    //    without an artist. ──
-                    Text(event.artist ?? " ")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(Theme.creamDim)
-                        .lineLimit(1).minimumScaleFactor(0.6)
-                        .opacity(event.artist == nil ? 0 : 1)
-                    // ── Act name: 2 lines, reserving a 2-line-tall box. The kind
-                    //    watermark sits behind it, its BOTTOM aligned to the bottom
-                    //    of the 2-line title. >30-min events only; faint. ──
-                    Text(event.title.text(settings.locale))
-                        .font(.system(size: 21, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .lineLimit(2).minimumScaleFactor(0.5)
-                        .frame(maxWidth: .infinity, minHeight: 50, alignment: .topLeading)
-                        .background(alignment: .bottomLeading) {
-                            if (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
-                                KindIcon(event.kind, size: 52, color: Color(hex: stage.accent))
-                                    .opacity(0.10).padding(.leading, 2)
-                            }
+                    // ── Artist + title, kept tight together. The group reserves the
+                    //    with-artist height (minHeight) so the kind watermark, anchored
+                    //    to its bottom, stays low even without an artist; when there's
+                    //    no artist the title simply moves up into the artist's place.
+                    //    Watermark only on >30-min events; faint. ──
+                    VStack(alignment: .leading, spacing: 0) {
+                        if let artist = event.artist {
+                            Text(artist)
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .foregroundStyle(Theme.creamDim)
+                                .lineLimit(1).minimumScaleFactor(0.6)
                         }
+                        Text(event.title.text(settings.locale))
+                            .font(.system(size: 21, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .lineLimit(2).minimumScaleFactor(0.5)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 67, alignment: .topLeading)
+                    .background(alignment: .bottomLeading) {
+                        if (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
+                            KindIcon(event.kind, size: 52, color: Color(hex: stage.accent))
+                                .opacity(0.10).padding(.leading, 2)
+                        }
+                    }
                 }
                 Spacer(minLength: 0)
             } else {
