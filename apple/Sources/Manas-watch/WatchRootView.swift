@@ -216,13 +216,14 @@ struct WatchRootView: View {
                             .frame(width: 24, height: 20)
                     }
                     .frame(height: 20)
-                    // ── Artist (when present), above the act name. ──
-                    if let artist = event.artist {
-                        Text(artist)
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(Theme.creamDim)
-                            .lineLimit(1).minimumScaleFactor(0.6)
-                    }
+                    // ── Artist row — always reserved (rendered empty when absent)
+                    //    so the watermark below sits at the same height with or
+                    //    without an artist. ──
+                    Text(event.artist ?? " ")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(Theme.creamDim)
+                        .lineLimit(1).minimumScaleFactor(0.6)
+                        .opacity(event.artist == nil ? 0 : 1)
                     // ── Act name: 2 lines, reserving a 2-line-tall box. The kind
                     //    watermark sits behind it, its BOTTOM aligned to the bottom
                     //    of the 2-line title. >30-min events only; faint. ──

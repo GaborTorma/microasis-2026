@@ -24,24 +24,21 @@ export function SingingBowl({ size = 24, color = "currentColor", className, styl
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
-      viewBox="0 0 354 297"
+      viewBox="0 0 298 266"
       fill="none"
       stroke={color}
-      strokeWidth={22}
+      strokeWidth={16}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
       style={style}
       {...rest}
     >
-      <path d="M58 143 C71 120 106 118 176 119 C247 118 281 120 296 143 C313 169 312 202 289 227 C264 253 224 268 177 270 C130 269 89 252 65 227 C42 202 42 169 58 143 Z" />
-      <path d="M58 143 C72 165 116 178 176 178 C236 178 281 164 296 143" />
-      <path d="M76 133 C99 120 131 119 176 119 C222 119 263 120 279 133 C261 146 223 151 177 151 C132 151 95 146 76 133 Z" />
-      <path d="M78 230 C103 239 137 243 177 243 C217 243 251 239 276 230" />
-      <path d="M202 146 L257 40 L281 54 L226 148 Z" />
-      <path d="M108 110 L91 73" />
-      <path d="M151 103 L151 62" />
-      <path d="M193 105 L204 67" />
+      <path d="M30 121 C43 98 78 96 148 97 C219 96 253 98 268 121 C285 147 284 180 261 205 C236 231 196 246 149 248 C102 247 61 230 37 205 C14 180 14 147 30 121 Z" />
+      <path d="M30 121 C44 143 88 156 148 156 C208 156 253 142 268 121" />
+      <path d="M48 111 C71 98 103 97 148 97 C194 97 235 98 251 111 C233 124 195 129 149 129 C104 129 67 124 48 111 Z" />
+      <path d="M50 208 C75 217 109 221 149 221 C189 221 223 217 248 208" />
+      <path d="M174 124 L229 18 L253 32 L198 126 Z" />
     </svg>
   );
 }
@@ -82,24 +79,24 @@ export function Handpan({ size = 24, color = "currentColor", className, style, .
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
-      viewBox="0 0 512 512"
+      viewBox="0 0 530 530"
       fill="none"
       stroke={color}
-      strokeWidth={32}
+      strokeWidth={26}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
       style={style}
       {...rest}
     >
-      <circle cx="256" cy="256" r="238" />
-      <circle cx="256" cy="115" r="56" />
-      <circle cx="133" cy="185" r="56" />
-      <circle cx="379" cy="185" r="56" />
-      <circle cx="256" cy="257" r="56" />
-      <circle cx="133" cy="328" r="56" />
-      <circle cx="379" cy="328" r="56" />
-      <circle cx="256" cy="398" r="56" />
+      <circle cx="265" cy="265" r="242" />
+      <path d="M404 108 C361 70 314 55 264 55 C140 55 49 149 49 270 C49 390 144 485 264 485 C383 485 480 389 480 270 C480 219 462 171 428 131" />
+      <circle cx="265" cy="145" r="28" />
+      <circle cx="144" cy="232" r="28" />
+      <circle cx="385" cy="232" r="28" />
+      <circle cx="265" cy="271" r="38" />
+      <circle cx="340" cy="374" r="28" />
+      <path d="M194 401 C181.99 403.01 170.06 397.03 164.49 386.20 C158.92 375.38 160.98 362.19 169.58 353.58 C178.19 344.98 191.38 342.92 202.20 348.49 C213.03 354.06 219.01 365.99 217 378" />
     </svg>
   );
 }

@@ -78,46 +78,42 @@ public struct KindIcon: View {
     }
 }
 
-/// Singing bowl ("hangtál") with mallet + sound lines, matching the PWA SVG
-/// (354×297 design space fit into the frame).
+/// Singing bowl ("hangtál") with mallet, matching the PWA SVG (298×266 design
+/// space fit into the frame).
 struct SingingBowlShape: Shape {
     func path(in r: CGRect) -> Path {
-        let s = min(r.width / 354, r.height / 297)
-        let ox = r.minX + (r.width - 354 * s) / 2
-        let oy = r.minY + (r.height - 297 * s) / 2
+        let s = min(r.width / 298, r.height / 266)
+        let ox = r.minX + (r.width - 298 * s) / 2
+        let oy = r.minY + (r.height - 266 * s) / 2
         func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: ox + x * s, y: oy + y * s) }
         var path = Path()
         // Bowl outer contour
-        path.move(to: p(58, 143))
-        path.addCurve(to: p(176, 119), control1: p(71, 120), control2: p(106, 118))
-        path.addCurve(to: p(296, 143), control1: p(247, 118), control2: p(281, 120))
-        path.addCurve(to: p(289, 227), control1: p(313, 169), control2: p(312, 202))
-        path.addCurve(to: p(177, 270), control1: p(264, 253), control2: p(224, 268))
-        path.addCurve(to: p(65, 227), control1: p(130, 269), control2: p(89, 252))
-        path.addCurve(to: p(58, 143), control1: p(42, 202), control2: p(42, 169))
+        path.move(to: p(30, 121))
+        path.addCurve(to: p(148, 97), control1: p(43, 98), control2: p(78, 96))
+        path.addCurve(to: p(268, 121), control1: p(219, 96), control2: p(253, 98))
+        path.addCurve(to: p(261, 205), control1: p(285, 147), control2: p(284, 180))
+        path.addCurve(to: p(149, 248), control1: p(236, 231), control2: p(196, 246))
+        path.addCurve(to: p(37, 205), control1: p(102, 247), control2: p(61, 230))
+        path.addCurve(to: p(30, 121), control1: p(14, 180), control2: p(14, 147))
         path.closeSubpath()
         // Top rim
-        path.move(to: p(58, 143))
-        path.addCurve(to: p(176, 178), control1: p(72, 165), control2: p(116, 178))
-        path.addCurve(to: p(296, 143), control1: p(236, 178), control2: p(281, 164))
+        path.move(to: p(30, 121))
+        path.addCurve(to: p(148, 156), control1: p(44, 143), control2: p(88, 156))
+        path.addCurve(to: p(268, 121), control1: p(208, 156), control2: p(253, 142))
         // Inner rim ellipse
-        path.move(to: p(76, 133))
-        path.addCurve(to: p(176, 119), control1: p(99, 120), control2: p(131, 119))
-        path.addCurve(to: p(279, 133), control1: p(222, 119), control2: p(263, 120))
-        path.addCurve(to: p(177, 151), control1: p(261, 146), control2: p(223, 151))
-        path.addCurve(to: p(76, 133), control1: p(132, 151), control2: p(95, 146))
+        path.move(to: p(48, 111))
+        path.addCurve(to: p(148, 97), control1: p(71, 98), control2: p(103, 97))
+        path.addCurve(to: p(251, 111), control1: p(194, 97), control2: p(235, 98))
+        path.addCurve(to: p(149, 129), control1: p(233, 124), control2: p(195, 129))
+        path.addCurve(to: p(48, 111), control1: p(104, 129), control2: p(67, 124))
         path.closeSubpath()
         // Bottom decorative arc
-        path.move(to: p(78, 230))
-        path.addCurve(to: p(177, 243), control1: p(103, 239), control2: p(137, 243))
-        path.addCurve(to: p(276, 230), control1: p(217, 243), control2: p(251, 239))
+        path.move(to: p(50, 208))
+        path.addCurve(to: p(149, 221), control1: p(75, 217), control2: p(109, 221))
+        path.addCurve(to: p(248, 208), control1: p(189, 221), control2: p(223, 217))
         // Mallet (chopstick)
-        path.move(to: p(202, 146)); path.addLine(to: p(257, 40))
-        path.addLine(to: p(281, 54)); path.addLine(to: p(226, 148)); path.closeSubpath()
-        // Sound / steam lines
-        path.move(to: p(108, 110)); path.addLine(to: p(91, 73))
-        path.move(to: p(151, 103)); path.addLine(to: p(151, 62))
-        path.move(to: p(193, 105)); path.addLine(to: p(204, 67))
+        path.move(to: p(174, 124)); path.addLine(to: p(229, 18))
+        path.addLine(to: p(253, 32)); path.addLine(to: p(198, 126)); path.closeSubpath()
         return path
     }
 }
@@ -161,21 +157,38 @@ struct MeditationShape: Shape {
     }
 }
 
-/// Handpan seen from above — rim + seven tone fields (512-unit design space).
+/// Handpan seen from above — rim, profile arc + tone fields, matching the PWA
+/// SVG (530-unit design space).
 struct HandpanShape: Shape {
     func path(in r: CGRect) -> Path {
-        let s = min(r.width, r.height) / 512
-        let ox = r.minX + (r.width - 512 * s) / 2
-        let oy = r.minY + (r.height - 512 * s) / 2
+        let s = min(r.width, r.height) / 530
+        let ox = r.minX + (r.width - 530 * s) / 2
+        let oy = r.minY + (r.height - 530 * s) / 2
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: ox + x * s, y: oy + y * s) }
         func circle(_ cx: CGFloat, _ cy: CGFloat, _ rad: CGFloat) -> CGRect {
             CGRect(x: ox + (cx - rad) * s, y: oy + (cy - rad) * s, width: 2 * rad * s, height: 2 * rad * s)
         }
         var path = Path()
-        path.addEllipse(in: circle(256, 256, 238))   // rim
-        let fields: [(CGFloat, CGFloat)] = [
-            (256, 115), (133, 185), (379, 185), (256, 257), (133, 328), (379, 328), (256, 398),
-        ]
-        for f in fields { path.addEllipse(in: circle(f.0, f.1, 56)) }
+        path.addEllipse(in: circle(265, 265, 242))   // rim
+        // Inner profile arc (open at the top)
+        path.move(to: p(404, 108))
+        path.addCurve(to: p(264, 55), control1: p(361, 70), control2: p(314, 55))
+        path.addCurve(to: p(49, 270), control1: p(140, 55), control2: p(49, 149))
+        path.addCurve(to: p(264, 485), control1: p(49, 390), control2: p(144, 485))
+        path.addCurve(to: p(480, 270), control1: p(383, 485), control2: p(480, 389))
+        path.addCurve(to: p(428, 131), control1: p(480, 219), control2: p(462, 171))
+        // Tone fields
+        path.addEllipse(in: circle(265, 145, 28))
+        path.addEllipse(in: circle(144, 232, 28))
+        path.addEllipse(in: circle(385, 232, 28))
+        path.addEllipse(in: circle(265, 271, 38))
+        path.addEllipse(in: circle(340, 374, 28))
+        // Open tone field (lower-left)
+        path.move(to: p(194, 401))
+        path.addCurve(to: p(164.49, 386.20), control1: p(181.99, 403.01), control2: p(170.06, 397.03))
+        path.addCurve(to: p(169.58, 353.58), control1: p(158.92, 375.38), control2: p(160.98, 362.19))
+        path.addCurve(to: p(202.20, 348.49), control1: p(178.19, 344.98), control2: p(191.38, 342.92))
+        path.addCurve(to: p(217, 378), control1: p(213.03, 354.06), control2: p(219.01, 365.99))
         return path
     }
 }
