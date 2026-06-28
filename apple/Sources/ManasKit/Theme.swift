@@ -23,10 +23,90 @@ public extension Color {
     }
 }
 
-/// SF Symbol shown on an event's time row: sparkles for workshops, a loud
-/// speaker for everything else (music / ceremony). Mirrors the PWA.
+/// SF Symbol name per kind. `sound-bath` & `drum` have no native SF glyph —
+/// they're drawn by `KindIcon`'s custom shapes; the names here are only a
+/// fallback. Mirrors the PWA's lucide kind→icon map.
 public func kindSymbol(_ kind: String) -> String {
-    kind == EventKind.workshop ? "sparkles" : "speaker.wave.2.fill"
+    switch kind {
+    case EventKind.voice: return "mic.fill"
+    case EventKind.yoga: return "figure.stand"
+    case EventKind.wind: return "wind"
+    case EventKind.dance: return "shoeprints.fill"
+    case EventKind.drama: return "theatermasks.fill"
+    case EventKind.mind: return "brain.head.profile"
+    case EventKind.build: return "hammer.fill"
+    case EventKind.handpan: return "opticaldisc"
+    case EventKind.breakGap: return "cup.and.saucer.fill"
+    case EventKind.ceremony, EventKind.workshop: return "sparkles"
+    case EventKind.soundBath: return "waveform" // fallback only
+    case EventKind.drum: return "metronome.fill" // fallback only
+    default: return "speaker.wave.2.fill" // music + anything unknown
+    }
+}
+
+/// Per-category event icon, mirroring the PWA's lucide set. `sound-bath` (singing
+/// bowl) and `drum` are drawn as custom vector shapes (no SF Symbol exists);
+/// everything else uses its SF Symbol. Sized by `size`, tinted by `color`.
+public struct KindIcon: View {
+    public let kind: String
+    public let size: CGFloat
+    public let color: Color
+    public init(_ kind: String, size: CGFloat, color: Color) {
+        self.kind = kind
+        self.size = size
+        self.color = color
+    }
+    private var stroke: StrokeStyle {
+        StrokeStyle(lineWidth: max(1, size / 12), lineCap: .round, lineJoin: .round)
+    }
+    public var body: some View {
+        switch kind {
+        case EventKind.soundBath:
+            SingingBowlShape().stroke(color, style: stroke).frame(width: size, height: size)
+        case EventKind.drum:
+            DrumShape().stroke(color, style: stroke).frame(width: size, height: size)
+        default:
+            Image(systemName: kindSymbol(kind))
+                .font(.system(size: size * 0.82))
+                .foregroundStyle(color)
+                .frame(width: size, height: size)
+        }
+    }
+}
+
+/// lucide-style singing bowl ("hangtál"), matching the PWA custom SVG (24-unit
+/// design space scaled to the frame).
+struct SingingBowlShape: Shape {
+    func path(in r: CGRect) -> Path {
+        let s = min(r.width, r.height) / 24
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: r.minX + x * s, y: r.minY + y * s) }
+        var path = Path()
+        path.move(to: p(4, 11)); path.addLine(to: p(20, 11))                       // rim
+        path.move(to: p(6, 11)); path.addQuadCurve(to: p(18, 11), control: p(12, 21)) // bowl body
+        path.move(to: p(16, 3)); path.addLine(to: p(13, 10))                        // mallet stick
+        path.addEllipse(in: CGRect(x: p(16.6, 2.6).x - 1.2 * s, y: p(16.6, 2.6).y - 1.2 * s,
+                                   width: 2.4 * s, height: 2.4 * s))                // mallet head
+        return path
+    }
+}
+
+/// lucide-style drum, matching the PWA drum glyph.
+struct DrumShape: Shape {
+    func path(in r: CGRect) -> Path {
+        let s = min(r.width, r.height) / 24
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: r.minX + x * s, y: r.minY + y * s) }
+        var path = Path()
+        path.move(to: p(2, 2)); path.addLine(to: p(10, 10))                         // left stick
+        path.move(to: p(22, 2)); path.addLine(to: p(14, 10))                        // right stick
+        path.addEllipse(in: CGRect(x: p(2, 4).x, y: p(2, 4).y, width: 20 * s, height: 10 * s)) // top rim
+        path.move(to: p(7, 13.4)); path.addLine(to: p(7, 21.3))                     // tension lines
+        path.move(to: p(12, 14)); path.addLine(to: p(12, 22))
+        path.move(to: p(17, 13.4)); path.addLine(to: p(17, 21.3))
+        path.move(to: p(2, 9)); path.addLine(to: p(2, 17))                          // body left wall
+        path.addQuadCurve(to: p(22, 17), control: p(12, 27))                        // body bottom
+        path.addLine(to: p(22, 9))                                                  // body right wall
+        return path
+    }
 }
 
 /// "Made by <name>" credit where only the maker's name is a tappable link to

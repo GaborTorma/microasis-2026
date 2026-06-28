@@ -202,23 +202,21 @@ struct WatchRootView: View {
                                 .padding(.leading, 4)   // ~2× the gap from the time
                         }
                         Spacer(minLength: 2)
-                        // Kind icon keeps its own colour; pulses only when you're at
-                        // this stage AND its act is on now (right place + right time).
-                        let pulsing = live && location.nearestSlug == stage.slug
-                        Image(systemName: kindSymbol(event.kind))
-                            .font(.system(size: 17))
-                            .foregroundStyle(Color(hex: stage.accent))
-                            .symbolEffect(.pulse, options: .repeating, isActive: pulsing)
-                            .frame(width: 24, height: 20)   // fixed box → icon size never shifts the row
                     }
                     .frame(height: 20)
+                    // ── Artist (when present), above the act name. ──
+                    if let artist = event.artist {
+                        Text(artist)
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.creamDim)
+                            .lineLimit(1).minimumScaleFactor(0.6)
+                    }
                 }
-                // ── Act name: fills the remaining space and shrinks to fit it,
-                //    so it never pushes the block above. ──
+                // ── Act name: fills the remaining space, capped at 2 lines. ──
                 Text(event.title.text(settings.locale))
                     .font(.system(size: 21, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
-                    .lineLimit(6).minimumScaleFactor(0.35)
+                    .lineLimit(2).minimumScaleFactor(0.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else {
                 Text(L.t("watch.noEvents", settings.locale))
@@ -229,17 +227,28 @@ struct WatchRootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(.horizontal, 4)
-        .padding(.top, 12)
+        .padding(.top, 2)        // ~6% higher than before (was 12)
         .padding(.bottom, -14)   // let the dots drop close to the bottom toolbar
-        .overlay(alignment: .bottomTrailing) {
-            if let event = displayedEvent, event.kind == EventKind.workshop {
+        .background(alignment: .bottomLeading) {
+            // Large faint kind-icon watermark, bottom-left, behind the text
+            // (>30-min events only). Mirrors the PWA / widget.
+            if let event = displayedEvent,
+               (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
+                KindIcon(event.kind, size: 66, color: Color(hex: stage.accent))
+                    .opacity(0.12).padding(.leading, 6).padding(.bottom, 26)
+            }
+        }
+        .overlay(alignment: .bottomLeading) {
+            // Language chip, moved bottom-left and faint; only when set.
+            if let event = displayedEvent, event.langAvailability != nil {
                 let chip = Theme.chip(event.langAvailability)
                 Text(chip.label).font(.system(size: 11, weight: .bold))
                     .padding(.horizontal, 7).padding(.vertical, 3)
                     .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
+                    .opacity(0.5)
                     // +14 compensates the card's negative bottom padding so the chip
-                    // stays clear of the bottom toolbar's share button.
-                    .padding(.trailing, 2).padding(.bottom, 30)
+                    // stays clear of the bottom toolbar.
+                    .padding(.leading, 2).padding(.bottom, 30)
             }
         }
     }

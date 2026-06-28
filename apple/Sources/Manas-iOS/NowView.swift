@@ -170,11 +170,8 @@ private struct OpeningStageCard: View {
                         .font(.system(size: 13, weight: .bold)).foregroundStyle(Theme.cream)
                 }
                 Spacer()
-                Image(systemName: kindSymbol(headerKind))
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Theme.cream.opacity(0.9))
+                KindIcon(headerKind, size: 18, color: Theme.cream.opacity(0.9))
                     .shadow(color: near ? Theme.cream : .clear, radius: near ? 4 : 0)
-                    .symbolEffect(.pulse, options: .repeating, isActive: near && !AppEnv.hideTestUI)
             }
             .padding(.horizontal, 14).padding(.vertical, 9)
             .background(LinearGradient(colors: [color, color.opacity(0.73)],
@@ -206,6 +203,10 @@ private struct OpeningRowView: View {
                     Text(L.t("now.upNext", locale).uppercased())
                         .font(.system(size: 9, weight: .semibold)).tracking(2)
                         .foregroundStyle(Theme.creamFaint)
+                }
+                if let artist = e.artist {
+                    Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
+                        .lineLimit(1).minimumScaleFactor(0.7)
                 }
                 Text(e.title.text(locale)).font(.headline).foregroundStyle(Theme.cream)
                     .lineLimit(2).minimumScaleFactor(0.7)
@@ -356,11 +357,8 @@ private struct StageNowCard: View {
                 }
                 Spacer()
                 if let live {
-                    Image(systemName: kindSymbol(live.kind))
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(Theme.cream.opacity(0.9))
+                    KindIcon(live.kind, size: 18, color: Theme.cream.opacity(0.9))
                         .shadow(color: near ? Theme.cream : .clear, radius: near ? 4 : 0)
-                        .symbolEffect(.pulse, options: .repeating, isActive: near && !AppEnv.hideTestUI)
                 }
             }
             .padding(.horizontal, 14).padding(.vertical, 9)
@@ -370,8 +368,14 @@ private struct StageNowCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 if let live {
                     HStack(alignment: .top, spacing: 8) {
-                        Text(live.title.text(locale)).font(.title2.bold()).foregroundStyle(Theme.cream)
-                            .lineLimit(2).minimumScaleFactor(0.6)
+                        VStack(alignment: .leading, spacing: 2) {
+                            if let artist = live.artist {
+                                Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
+                                    .lineLimit(1).minimumScaleFactor(0.7)
+                            }
+                            Text(live.title.text(locale)).font(.title2.bold()).foregroundStyle(Theme.cream)
+                                .lineLimit(2).minimumScaleFactor(0.6)
+                        }
                         Spacer(minLength: 8)
                         if let end = live.endsAt {
                             VStack(alignment: .trailing, spacing: 2) {
@@ -394,6 +398,10 @@ private struct StageNowCard: View {
                             Text(L.t("now.upNext", locale).uppercased())
                                 .font(.system(size: 9, weight: .semibold)).tracking(2)
                                 .foregroundStyle(Theme.creamFaint)
+                            if let artist = next.artist {
+                                Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamFaint)
+                                    .lineLimit(1).minimumScaleFactor(0.7)
+                            }
                             Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim)
                                 .lineLimit(2).minimumScaleFactor(0.7)
                         }
@@ -402,8 +410,7 @@ private struct StageNowCard: View {
                             Text(Fmt.hhmm(next.startsAt))
                                 .font(.system(.subheadline, design: .monospaced).weight(.semibold))
                                 .foregroundStyle(accent)
-                            Image(systemName: kindSymbol(next.kind))
-                                .font(.system(size: 12)).foregroundStyle(accent)
+                            KindIcon(next.kind, size: 14, color: accent)
                         }
                     }
                 }

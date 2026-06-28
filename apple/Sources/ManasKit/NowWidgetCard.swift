@@ -88,9 +88,8 @@ public struct NowWidgetContent: View {
             // watch faces, which all but erased a faint background icon. Here it
             // survives, picks up the accent tint, and the act text overlaps it.
             if let event = entry.event {
-                Image(systemName: kindSymbol(event.kind))
-                    .font(.system(size: 40, weight: .semibold))
-                    .foregroundStyle(accent.opacity(0.28))
+                KindIcon(event.kind, size: 40, color: accent)
+                    .opacity(0.28)
                     .widgetAccentable()
                     .offset(x: -1, y: 3)
             }
@@ -121,6 +120,12 @@ public struct NowWidgetContent: View {
                         .lineLimit(1).minimumScaleFactor(0.6)
                 }
             }
+            if let event = entry.event, let artist = event.artist {
+                Text(artist)
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(Theme.creamDim)
+                    .lineLimit(1).minimumScaleFactor(0.6)
+            }
             Text(actText)
                 .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
@@ -128,9 +133,9 @@ public struct NowWidgetContent: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        // Language chip (EN / HU / EN+HU) for workshops, matching the watch card.
+        // Language chip (EN / HU / EN+HU), shown whenever a language is set.
         .overlay(alignment: .bottomTrailing) {
-            if let event = entry.event, event.kind == EventKind.workshop {
+            if let event = entry.event, event.langAvailability != nil {
                 let chip = Theme.chip(event.langAvailability)
                 Text(chip.label).font(.system(size: 9, weight: .bold))
                     .padding(.horizontal, 5).padding(.vertical, 2)

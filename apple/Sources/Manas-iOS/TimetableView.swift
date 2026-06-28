@@ -410,14 +410,18 @@ private struct EventBlock: View {
         let past = end <= now
         let color = Color(hex: stage.color)
         let accent = Color(hex: stage.accent)
-        let isWorkshop = event.kind == EventKind.workshop
+        let hasLang = event.langAvailability != nil
+        let hasArtist = event.artist != nil
+        // Kind-icon watermark only on events longer than 30 min (matches the PWA).
+        let longEnough = end.timeIntervalSince(start) > 30 * 60
         // Tall enough for a time row plus a title line? Otherwise it's a single
         // line: just the act name, no from–to time.
         let showTime = height >= 27 * scale + 8
         // Fit as many title lines as the block holds. The language chip is a
-        // faint watermark over the text now, so it reserves no space.
+        // faint watermark over the text (reserves no space); the artist line does.
         let titleLineH = 12 * scale * 1.22
-        let reserved = (showTime ? 9 * scale * 1.3 + 3 : 0) + 5
+        let reserved = (showTime ? 9 * scale * 1.3 + 3 : 0)
+            + (showTime && hasArtist ? 9 * scale * 1.22 : 0) + 5
         let titleLines = max(1, Int((height - reserved) / titleLineH))
 
         if event.isBreak {
@@ -441,6 +445,12 @@ private struct EventBlock: View {
                         kindIcon(accent, hot: hot)
                     }
                 }
+                if showTime, let artist = event.artist {
+                    Text(artist)
+                        .font(.system(size: 9 * scale, weight: .medium, design: .rounded))
+                        .foregroundStyle(Theme.creamFaint)
+                        .lineLimit(1).truncationMode(.tail)
+                }
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
                     Text(event.title.text(locale))
                         .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
@@ -457,12 +467,20 @@ private struct EventBlock: View {
             }
             .padding(.horizontal, 5).padding(.vertical, showTime ? 2 : 1)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(alignment: .bottomLeading) {
+                // Large faint kind-icon watermark (>30-min events), in front of the
+                // colour fill but behind the text. Mirrors the PWA.
+                if longEnough {
+                    KindIcon(event.kind, size: 34 * scale, color: accent)
+                        .opacity(0.1).padding(.leading, 3).padding(.bottom, 2)
+                }
+            }
             .background(color.opacity(live ? 0.85 : 0.28), in: RoundedRectangle(cornerRadius: 6))
             .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 2) }
             .overlay(alignment: .bottomTrailing) {
-                // Faint language watermark over the text bottom-right; it's
-                // translucent, so overlapping the title is fine (reserves no space).
-                if isWorkshop {
+                // Faint language watermark bottom-right; translucent so overlapping
+                // the title is fine. Shown only when a language is set.
+                if hasLang {
                     langChip().opacity(0.5).padding(.trailing, 3).padding(.bottom, 2)
                 }
             }
@@ -490,17 +508,14 @@ private struct EventBlock: View {
     /// (on now AND standing at this stage) it pulses and softly glows in that
     /// same colour — never turning red.
     private func kindIcon(_ accent: Color, hot: Bool) -> some View {
-        Image(systemName: kindSymbol(event.kind))
-            .font(.system(size: 9 * scale))
-            .foregroundStyle(accent)
+        KindIcon(event.kind, size: 11 * scale, color: accent)
             .shadow(color: hot ? accent : .clear, radius: hot ? 3 : 0)
-            .symbolEffect(.pulse, options: .repeating, isActive: hot)
     }
 
     @ViewBuilder
     private func langChip() -> some View {
         let chip = Theme.chip(event.langAvailability)
-        Text(chip.label).font(.system(size: 8, weight: .bold))
+        Text(chip.label).font(.system(size: 8 * scale, weight: .bold))
             .padding(.horizontal, 4).padding(.vertical, 1)
             .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
     }
