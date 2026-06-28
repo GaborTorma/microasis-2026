@@ -475,15 +475,15 @@ private struct EventBlock: View {
                         .opacity(0.1).padding(.leading, 3).padding(.bottom, 2)
                 }
             }
-            .background(color.opacity(live ? 0.85 : 0.28), in: RoundedRectangle(cornerRadius: 6))
-            .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 2) }
-            .overlay(alignment: .bottomTrailing) {
-                // Faint language watermark bottom-right; translucent so overlapping
-                // the title is fine. Shown only when a language is set.
+            .background(alignment: .bottomTrailing) {
+                // Language chip behind the text (z-index:-1 equivalent), faint at 50%;
+                // its font scales with the text size. Only when a language is set.
                 if hasLang {
                     langChip().opacity(0.5).padding(.trailing, 3).padding(.bottom, 2)
                 }
             }
+            .background(color.opacity(live ? 0.85 : 0.28), in: RoundedRectangle(cornerRadius: 6))
+            .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 2) }
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .opacity(past ? 0.45 : 1)
         }

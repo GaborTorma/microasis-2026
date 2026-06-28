@@ -31,8 +31,13 @@ Requires Xcode 16+ (developed against 26.x). `Manas.xcodeproj` and all `Info.pli
 files are **git-ignored and regenerated** — edit `project.yml`, never the `.xcodeproj`.
 There is **no `.xcworkspace`** (use `-project`, not `-workspace`).
 
+**`xcode-select` points at the CLT, so EVERY `xcodebuild`/`xcrun simctl` needs
+`DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` exported (per shell
+call) — without it `simctl list` shows no runtimes/devices and builds use CLT.**
+
 ```bash
 cd apple
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 xcodegen generate                         # after ANY project.yml change OR adding/removing a source file
 open Manas.xcodeproj                       # Manas (iOS) or ManasWatch scheme
 
@@ -43,6 +48,31 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   -destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)' \
   build CODE_SIGNING_ALLOWED=NO
 ```
+
+### Verify UI in a simulator (screenshot a real render)
+
+Simulators **are** available (e.g. iPhone 17 / Apple Watch Ultra 3 — `simctl list
+devices available`). Recipe — note the **`-derivedDataPath` pin**: `find … Manas.app
+| head -1` often grabs a STALE build from another DerivedData dir and you screenshot
+old code (the #1 "my change isn't showing" trap here).
+
+```bash
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+UDID=<booted-sim-udid>; DD=/tmp/dd            # known derived-data path
+xcodebuild -project Manas.xcodeproj -scheme Manas -destination "id=$UDID" \
+  -derivedDataPath "$DD" build CODE_SIGNING_ALLOWED=NO
+xcrun simctl install "$UDID" "$DD/Build/Products/Debug-iphonesimulator/Manas.app"
+# Inject QA state via launch args (NSArgumentDomain), DEBUG/TestFlight only:
+xcrun simctl launch "$UDID" ai.torma.manas.2026 \
+  -manas.disclaimerSeen 1 -manas.locale hu -manas.startView timetable \
+  -manas.debugNow '2026-07-10T10:30:00+02:00' -manas.debugCoord '46.67379,17.65908'
+xcrun simctl io "$UDID" screenshot /tmp/shot.png
+```
+
+Bundle ids: iOS `ai.torma.manas.2026`, watch `ai.torma.manas.2026.watchkitapp`
+(watch `.app` is `Debug-watchsimulator/ManasWatch.app`). `-manas.debugCoord` sets the
+geofence so the watch jumps to the nearest stage (here Mandala). Skip the first-run
+disclaimer with `-manas.disclaimerSeen 1`.
 
 ## Conventions
 

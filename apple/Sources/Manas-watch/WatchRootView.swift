@@ -202,6 +202,10 @@ struct WatchRootView: View {
                                 .padding(.leading, 4)   // ~2× the gap from the time
                         }
                         Spacer(minLength: 2)
+                        // Inline kind icon keeps its normal place (top-right of the
+                        // time row); the bottom-left watermark is the faint backdrop.
+                        KindIcon(event.kind, size: 17, color: Color(hex: stage.accent))
+                            .frame(width: 24, height: 20)
                     }
                     .frame(height: 20)
                     // ── Artist (when present), above the act name. ──
@@ -211,13 +215,16 @@ struct WatchRootView: View {
                             .foregroundStyle(Theme.creamDim)
                             .lineLimit(1).minimumScaleFactor(0.6)
                     }
+                    // ── Act name: 2 lines, natural height. ──
+                    Text(event.title.text(settings.locale))
+                        .font(.system(size: 21, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineLimit(2).minimumScaleFactor(0.5)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                // ── Act name: fills the remaining space, capped at 2 lines. ──
-                Text(event.title.text(settings.locale))
-                    .font(.system(size: 21, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .lineLimit(2).minimumScaleFactor(0.5)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                // Spacer opens the lower area so the watermark sits at the bottom,
+                // below the artist + 2-line title, rather than over the text.
+                Spacer(minLength: 0)
             } else {
                 Text(L.t("watch.noEvents", settings.locale))
                     .font(.footnote).foregroundStyle(Theme.creamDim)
@@ -230,16 +237,16 @@ struct WatchRootView: View {
         .padding(.top, 2)        // ~6% higher than before (was 12)
         .padding(.bottom, -14)   // let the dots drop close to the bottom toolbar
         .background(alignment: .bottomLeading) {
-            // Large faint kind-icon watermark, bottom-left, behind the text
+            // Large faint kind-icon watermark in the lower-left, behind the text
             // (>30-min events only). Mirrors the PWA / widget.
             if let event = displayedEvent,
                (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
-                KindIcon(event.kind, size: 66, color: Color(hex: stage.accent))
-                    .opacity(0.12).padding(.leading, 6).padding(.bottom, 26)
+                KindIcon(event.kind, size: 58, color: Color(hex: stage.accent))
+                    .opacity(0.13).padding(.leading, 4).padding(.bottom, 20)
             }
         }
-        .overlay(alignment: .bottomLeading) {
-            // Language chip, moved bottom-left and faint; only when set.
+        .overlay(alignment: .bottomTrailing) {
+            // Language chip bottom-right and faint; only when a language is set.
             if let event = displayedEvent, event.langAvailability != nil {
                 let chip = Theme.chip(event.langAvailability)
                 Text(chip.label).font(.system(size: 11, weight: .bold))
@@ -248,7 +255,7 @@ struct WatchRootView: View {
                     .opacity(0.5)
                     // +14 compensates the card's negative bottom padding so the chip
                     // stays clear of the bottom toolbar.
-                    .padding(.leading, 2).padding(.bottom, 30)
+                    .padding(.trailing, 2).padding(.bottom, 30)
             }
         }
     }
