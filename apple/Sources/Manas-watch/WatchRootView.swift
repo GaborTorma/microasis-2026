@@ -156,6 +156,14 @@ struct WatchRootView: View {
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(Color(hex: stage.accent))
                     }
+                    Spacer(minLength: 4)
+                    // Language chip, top-right on the stage-name line (solid).
+                    if let event = displayedEvent, event.langAvailability != nil {
+                        let chip = Theme.chip(event.langAvailability)
+                        Text(chip.label).font(.system(size: 11, weight: .bold))
+                            .padding(.horizontal, 6).padding(.vertical, 2)
+                            .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
+                    }
                 }
             }
 
@@ -215,16 +223,25 @@ struct WatchRootView: View {
                             .foregroundStyle(Theme.creamDim)
                             .lineLimit(1).minimumScaleFactor(0.6)
                     }
-                    // ── Act name: 2 lines, natural height. ──
+                    // ── Act name: 2 lines, reserving a 2-line-tall box so the
+                    //    watermark below always starts at the same place. ──
                     Text(event.title.text(settings.locale))
                         .font(.system(size: 21, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .lineLimit(2).minimumScaleFactor(0.5)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity, minHeight: 50, alignment: .topLeading)
                 }
-                // Spacer opens the lower area so the watermark sits at the bottom,
-                // below the artist + 2-line title, rather than over the text.
-                Spacer(minLength: 0)
+                // Kind-icon watermark begins right at the bottom of the 2-line title
+                // (icon pinned to the top of the remaining space), filling down so the
+                // dots stay at the bottom. >30-min events only; faint.
+                if (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
+                    KindIcon(event.kind, size: 52, color: Color(hex: stage.accent))
+                        .opacity(0.10)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .padding(.leading, 2)
+                } else {
+                    Spacer(minLength: 0)
+                }
             } else {
                 Text(L.t("watch.noEvents", settings.locale))
                     .font(.footnote).foregroundStyle(Theme.creamDim)
@@ -236,28 +253,6 @@ struct WatchRootView: View {
         .padding(.horizontal, 4)
         .padding(.top, 2)        // ~6% higher than before (was 12)
         .padding(.bottom, -14)   // let the dots drop close to the bottom toolbar
-        .background(alignment: .bottomLeading) {
-            // Large faint kind-icon watermark in the lower-left, behind the text
-            // (>30-min events only). Mirrors the PWA / widget.
-            if let event = displayedEvent,
-               (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
-                KindIcon(event.kind, size: 58, color: Color(hex: stage.accent))
-                    .opacity(0.13).padding(.leading, 4).padding(.bottom, 20)
-            }
-        }
-        .overlay(alignment: .bottomTrailing) {
-            // Language chip bottom-right and faint; only when a language is set.
-            if let event = displayedEvent, event.langAvailability != nil {
-                let chip = Theme.chip(event.langAvailability)
-                Text(chip.label).font(.system(size: 11, weight: .bold))
-                    .padding(.horizontal, 7).padding(.vertical, 3)
-                    .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
-                    .opacity(0.5)
-                    // +14 compensates the card's negative bottom padding so the chip
-                    // stays clear of the bottom toolbar.
-                    .padding(.trailing, 2).padding(.bottom, 30)
-            }
-        }
     }
 
     private var stageDots: some View {

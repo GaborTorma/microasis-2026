@@ -601,7 +601,7 @@ function EventBlock({
         <KindIcon
           size={Math.round(40 * scale)}
           className="pointer-events-none absolute bottom-0.5 left-1"
-          style={{ color: stage.accent, zIndex: -1, opacity: 0.1 }}
+          style={{ color: stage.accent, zIndex: -1, opacity: 0.08 }}
         />
       )}
       {/* Language chip as a faint watermark behind the block (z-index: -1, shows

@@ -472,7 +472,7 @@ private struct EventBlock: View {
                 // colour fill but behind the text. Mirrors the PWA.
                 if longEnough {
                     KindIcon(event.kind, size: 34 * scale, color: accent)
-                        .opacity(0.1).padding(.leading, 3).padding(.bottom, 2)
+                        .opacity(0.08).padding(.leading, 3).padding(.bottom, 2)
                 }
             }
             .background(alignment: .bottomTrailing) {

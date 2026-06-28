@@ -373,7 +373,7 @@ private struct StageNowCard: View {
                                 Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
-                            Text(live.title.text(locale)).font(.title2.bold()).foregroundStyle(Theme.cream)
+                            Text(live.title.text(locale)).font(.title3.bold()).foregroundStyle(Theme.cream)
                                 .lineLimit(2).minimumScaleFactor(0.6)
                         }
                         Spacer(minLength: 8)
