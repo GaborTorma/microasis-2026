@@ -316,7 +316,7 @@ function StageNowCard({
                 )}
                 <FitText
                   text={tx(live.title, locale)}
-                  className="font-display text-lg font-bold leading-tight text-cream"
+                  className="font-display text-xl font-bold leading-tight text-cream"
                 />
               </div>
               {live.endsAt && (

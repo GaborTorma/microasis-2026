@@ -223,25 +223,22 @@ struct WatchRootView: View {
                             .foregroundStyle(Theme.creamDim)
                             .lineLimit(1).minimumScaleFactor(0.6)
                     }
-                    // ── Act name: 2 lines, reserving a 2-line-tall box so the
-                    //    watermark below always starts at the same place. ──
+                    // ── Act name: 2 lines, reserving a 2-line-tall box. The kind
+                    //    watermark sits behind it, its BOTTOM aligned to the bottom
+                    //    of the 2-line title. >30-min events only; faint. ──
                     Text(event.title.text(settings.locale))
                         .font(.system(size: 21, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .lineLimit(2).minimumScaleFactor(0.5)
                         .frame(maxWidth: .infinity, minHeight: 50, alignment: .topLeading)
+                        .background(alignment: .bottomLeading) {
+                            if (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
+                                KindIcon(event.kind, size: 52, color: Color(hex: stage.accent))
+                                    .opacity(0.10).padding(.leading, 2)
+                            }
+                        }
                 }
-                // Kind-icon watermark begins right at the bottom of the 2-line title
-                // (icon pinned to the top of the remaining space), filling down so the
-                // dots stay at the bottom. >30-min events only; faint.
-                if (event.endsAt ?? event.startsAt).timeIntervalSince(event.startsAt) > 30 * 60 {
-                    KindIcon(event.kind, size: 52, color: Color(hex: stage.accent))
-                        .opacity(0.10)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .padding(.leading, 2)
-                } else {
-                    Spacer(minLength: 0)
-                }
+                Spacer(minLength: 0)
             } else {
                 Text(L.t("watch.noEvents", settings.locale))
                     .font(.footnote).foregroundStyle(Theme.creamDim)
