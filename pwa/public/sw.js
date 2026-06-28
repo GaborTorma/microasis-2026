@@ -3,7 +3,7 @@
    - navigations   : network-first, fall back to cached page (or "/")
    - static assets : cache-first
 */
-const VERSION = "manas-v13";
+const VERSION = "manas-v14";
 const SHELL = `${VERSION}-shell`;
 const API = `${VERSION}-api`;
 
