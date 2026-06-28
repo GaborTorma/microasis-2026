@@ -26,8 +26,9 @@ Rules a future edit must respect:
 
 1. **Field parity is manual.** Add/rename/retype a field in `types.ts` → mirror it in
    `Models.swift` (and vice-versa) in the same change. They are in sync today
-   (incl. `radiusM: number|null` ↔ `Int?`). A mismatch silently breaks decoding on
-   device — the web app keeps working, so it's easy to miss.
+   (incl. `radiusM: number|null` ↔ `Int?`, event `artist: string|null` ↔ `String?`).
+   A mismatch silently breaks decoding on device — the web app keeps working, so
+   it's easy to miss.
 2. **The date wire format is a strict dual-shape contract — the most fragile edit in
    the repo.** `pwa/lib/queries.ts` emits event `startsAt`/`endsAt` via
    `.toISOString()` → `2026-07-08T15:30:00.000Z` (UTC, fractional seconds, `Z`),

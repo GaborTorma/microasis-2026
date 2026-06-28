@@ -8,7 +8,8 @@ import {
   useState,
 } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Coffee, MapPin, Sparkles, Volume2 } from "lucide-react";
+import { Coffee, MapPin } from "lucide-react";
+import { EVENT_ICONS, eventIconKey } from "@/lib/eventIcon";
 import { useSchedule } from "@/lib/useSchedule";
 import { useNow, currentNow } from "@/lib/useNow";
 import { useMediaQuery } from "@/lib/useMediaQuery";
@@ -33,13 +34,12 @@ const floorHour = (ms: number) => Math.floor(ms / HOUR) * HOUR;
 const ceilHour = (ms: number) => Math.ceil(ms / HOUR) * HOUR;
 
 // Language coding, matching the printed poster's legend colours:
-// both = yellow (EN+HU), English only = purple, Hungarian only = turquoise,
-// Ø = grey (language-neutral). Only workshop slots carry a chip.
+// both = yellow (EN+HU), English only = purple, Hungarian only = turquoise.
+// Shown only when a language is set (no neutral Ø badge).
 const LANG_CHIPS: Record<string, { labels: string[]; bg: string; fg: string }> = {
   both: { labels: ["EN+HU"], bg: "#e0b93a", fg: "#160c08" },
   en: { labels: ["EN"], bg: "#9d6fc4", fg: "#ffffff" },
   hu: { labels: ["HU"], bg: "#46b3a3", fg: "#0c1611" },
-  none: { labels: ["Ø"], bg: "#5e6b63", fg: "#e9efe9" },
 };
 
 const startMs = (e: EventDTO) => new Date(e.startsAt).getTime();
@@ -525,8 +525,8 @@ function EventBlock({
   const past = end <= nowMs;
   // When the block is too short, drop the time row but always keep the act name.
   const tight = height < 32 * scale;
-  // Only workshops carry a language chip; Ø (grey) marks language-neutral ones.
-  const chip = event.kind === "workshop" ? LANG_CHIPS[event.langAvailability ?? "none"] : null;
+  // Language chip shows wherever a language is set (any kind); no neutral Ø.
+  const chip = event.langAvailability ? LANG_CHIPS[event.langAvailability] : null;
 
   if (event.kind === "break") {
     return (
@@ -543,8 +543,10 @@ function EventBlock({
     );
   }
 
-  // Workshops show sparkles; everything else (music / ceremony) a loud speaker.
-  const KindIcon = event.kind === "workshop" ? Sparkles : Volume2;
+  // Per-category icon (sound bath, yoga, drum…): shown both inline in the time
+  // row AND as a large faint bottom-left background watermark. music / ceremony
+  // keep speaker / sparkles. See lib/eventIcon.
+  const KindIcon = EVENT_ICONS[eventIconKey(event)];
   const iconPx = Math.round(11 * scale);
 
   return (
@@ -575,25 +577,45 @@ function EventBlock({
           <KindIcon size={iconPx} className="ml-auto shrink-0" style={{ color: stage.accent }} />
         </div>
       )}
+      {!tight && event.artist && (
+        <span
+          className="truncate font-display font-medium text-cream-faint"
+          style={{ fontSize: `${0.56 * scale}rem` }}
+        >
+          {event.artist}
+        </span>
+      )}
       <div className="flex items-start gap-1 leading-[1.05]">
         {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-now" />}
         <span
-          className={`font-display font-semibold ${
-            tight || event.kind === "music" ? "text-cream" : "text-cream-dim"
-          }`}
-          style={{ fontSize: `${(tight ? 0.62 : event.kind === "music" ? 0.8 : 0.72) * scale}rem` }}
+          className={`font-display font-semibold ${tight ? "text-cream" : "text-cream-dim"}`}
+          style={{ fontSize: `${(tight ? 0.62 : 0.74) * scale}rem` }}
         >
           {tx(event.title, locale)}
         </span>
       </div>
-      {/* Language chip as a faint watermark — overlaid, reserves no height. */}
+      {/* Kind icon as a large faint bottom-left background watermark (z-index:-1,
+          shows through the translucent block bg), with a small margin. Only on
+          events longer than 30 min so short slots stay uncluttered. */}
+      {end - start > 30 * 60_000 && (
+        <KindIcon
+          size={Math.round(40 * scale)}
+          className="pointer-events-none absolute bottom-0.5 left-1"
+          style={{ color: stage.accent, zIndex: -1, opacity: 0.1 }}
+        />
+      )}
+      {/* Language chip as a faint watermark behind the block (z-index: -1, shows
+          through the translucent block bg); its text scales with the text size. */}
       {chip && (
-        <div className="pointer-events-none absolute bottom-0.5 right-0.5 flex gap-0.5 opacity-50">
+        <div
+          className="pointer-events-none absolute bottom-1 right-1 flex gap-0.5 opacity-50"
+          style={{ zIndex: -1 }}
+        >
           {chip.labels.map((l) => (
             <span
               key={l}
-              className="rounded px-1 text-[0.5rem] font-bold leading-tight"
-              style={{ background: chip.bg, color: chip.fg }}
+              className="rounded px-1 font-bold leading-tight"
+              style={{ background: chip.bg, color: chip.fg, fontSize: `${0.5 * scale}rem` }}
             >
               {l}
             </span>

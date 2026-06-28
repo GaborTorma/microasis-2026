@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, MapPin, Sparkles, Sunset, Volume2, Waves } from "lucide-react";
+import { ArrowUpRight, MapPin, Sunset, Waves } from "lucide-react";
+import { EVENT_ICONS, eventIconKey } from "@/lib/eventIcon";
 import { useSchedule } from "@/lib/useSchedule";
 import { useNow } from "@/lib/useNow";
 import { useNearestStage } from "@/lib/useNearestStage";
@@ -265,13 +266,9 @@ function StageNowCard({
     next && new Date(next.startsAt).getTime() - nowMs <= 6 * 3_600_000
       ? next
       : null;
-  // Workshops show sparkles; music / ceremony a loud speaker (mirrors the grid).
-  const LiveKind = live ? (live.kind === "workshop" ? Sparkles : Volume2) : null;
-  const NextKind = soonNext
-    ? soonNext.kind === "workshop"
-      ? Sparkles
-      : Volume2
-    : null;
+  // Per-category workshop icon (mirrors the grid); music / ceremony → speaker.
+  const LiveKind = live ? EVENT_ICONS[eventIconKey(live)] : null;
+  const NextKind = soonNext ? EVENT_ICONS[eventIconKey(soonNext)] : null;
 
   return (
     <article
@@ -311,10 +308,17 @@ function StageNowCard({
         {live ? (
           <>
             <div className="flex items-start justify-between gap-3">
-              <FitText
-                text={tx(live.title, locale)}
-                className="min-w-0 flex-1 font-display text-xl font-bold leading-tight text-cream"
-              />
+              <div className="min-w-0 flex-1">
+                {live.artist && (
+                  <p className="truncate font-display text-sm font-medium text-cream-dim">
+                    {live.artist}
+                  </p>
+                )}
+                <FitText
+                  text={tx(live.title, locale)}
+                  className="font-display text-xl font-bold leading-tight text-cream"
+                />
+              </div>
               {live.endsAt && (
                 <div className="shrink-0 text-right">
                   <p className="font-mono text-base font-semibold tabular-nums text-sun">
@@ -337,6 +341,11 @@ function StageNowCard({
               <p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-cream-faint">
                 {t("now.upNext")}
               </p>
+              {soonNext.artist && (
+                <p className="truncate font-display text-xs font-medium text-cream-faint">
+                  {soonNext.artist}
+                </p>
+              )}
               <p className="font-display text-base font-semibold text-cream-dim">
                 {tx(soonNext.title, locale)}
               </p>
@@ -451,7 +460,7 @@ function OpeningStageCard({
   const t = useTranslations("now");
   const tCommon = useTranslations("common");
   const { stage, rows } = card;
-  const HeaderIcon = rows[0]?.event.kind === "workshop" ? Sparkles : Volume2;
+  const HeaderIcon = EVENT_ICONS[rows[0] ? eventIconKey(rows[0].event) : "speaker"];
   const hasLive = rows.some((r) => r.live);
   return (
     <article className="card mt-4 w-full max-w-sm overflow-hidden rounded-2xl text-left">
@@ -493,9 +502,16 @@ function OpeningStageCard({
                 </p>
               )}
               <div className={`flex items-start justify-between gap-3 ${live ? "" : "mt-0.5"}`}>
-                <p className="font-display text-base font-semibold leading-tight text-cream">
-                  {tx(event.title, locale)}
-                </p>
+                <div className="min-w-0">
+                  {event.artist && (
+                    <p className="truncate font-display text-xs font-medium text-cream-dim">
+                      {event.artist}
+                    </p>
+                  )}
+                  <p className="font-display text-base font-semibold leading-tight text-cream">
+                    {tx(event.title, locale)}
+                  </p>
+                </div>
                 <div className="shrink-0 text-right">
                   {live && event.endsAt ? (
                     <>

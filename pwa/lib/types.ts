@@ -14,7 +14,21 @@ export type StageDTO = {
   radiusM: number | null;
 };
 
-export type EventKind = "music" | "ceremony" | "break" | "workshop";
+export type EventKind =
+  | "music"
+  | "ceremony"
+  | "break"
+  | "workshop"
+  | "sound-bath"
+  | "voice"
+  | "drum"
+  | "yoga"
+  | "wind"
+  | "dance"
+  | "drama"
+  | "mind"
+  | "build"
+  | "handpan";
 export type LangAvailability = "both" | "en" | "hu" | null;
 
 export type EventDTO = {
@@ -22,6 +36,7 @@ export type EventDTO = {
   stageId: number;
   stageSlug: string;
   title: I18nText;
+  artist: string | null;
   startsAt: string;
   endsAt: string | null;
   kind: EventKind;

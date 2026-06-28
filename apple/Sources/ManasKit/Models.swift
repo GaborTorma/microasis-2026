@@ -34,6 +34,8 @@ public struct EventDTO: Codable, Identifiable, Hashable, Sendable {
     public let stageId: Int
     public let stageSlug: String
     public let title: I18nText
+    /// Performer / facilitator; nil where the act name is the title or none exists.
+    public let artist: String?
     public let startsAt: Date
     public let endsAt: Date?
     public let kind: String

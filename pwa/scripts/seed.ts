@@ -39,12 +39,57 @@ type Entry = {
   e?: string; // explicit end HH:mm (else = next entry's start)
   ed?: string; // explicit end date (for cross-midnight ends)
   title: I18nText;
+  a?: string; // performer / facilitator (null where the act name is the title)
   kind?: EventKind;
   lang?: LangAvailability;
 };
 
+/**
+ * Refine a workshop into its fine category (the value stored in `kind`, which
+ * drives the per-cell icon on every client). Keyword-matched from the bilingual
+ * title, most-specific first; unmatched → "workshop" (generic). This is the ONE
+ * place the title→category mapping lives; clients only ever map kind→icon.
+ */
+function categoryOf(title: I18nText): EventKind {
+  const s = `${title.en} ${title.hu}`.toLowerCase();
+  const has = (...kw: string[]) => kw.some((k) => s.includes(k));
+  if (has("ceremony", "szertartás", "dissolution", "elmúlás")) return "ceremony";
+  if (has("handpan")) return "handpan";
+  if (has("sound sculpture", "hangszobor")) return "build";
+  if (has("drum", "dobkör", "sámándob")) return "drum";
+  if (has("chi kung", "tai chi", "breath", "légzés")) return "wind";
+  if (has("yoga", "jóga")) return "yoga";
+  if (has("theatre", "theater", "színház")) return "drama";
+  if (
+    has(
+      "dance", "tánc", "flamenco", "compás", "compas", "gesture",
+      "nyomhagyás", "rewilding", "ösztön", "somatic", "szomatikus",
+    )
+  )
+    return "dance";
+  if (
+    has(
+      "singing circle", "énekkör", "mantra", "kirtan", "ősének",
+      "om healing", "om gyógyító", "taizé", "music of the soul", "lélek zené",
+    )
+  )
+    return "voice";
+  if (
+    has(
+      "sound bath", "hangfürdő", "sound journey", "hangutazás", "gong",
+      "sound healing", "wizard", "varázsl", "temple of sound", "star music",
+      "csillagzene", "astral piano", "asztrális zongora", "vibrating", "rezgő erőtér",
+    )
+  )
+    return "sound-bath";
+  if (has("meditation", "meditáció", "presence", "jelen", "conscious", "tudatos"))
+    return "mind";
+  return "workshop";
+}
+
 /** Turn an ordered entry list into insert rows. Uses explicit end if given,
- *  otherwise endsAt = next entry's start. */
+ *  otherwise endsAt = next entry's start. A `kind: "workshop"` entry is refined
+ *  to its fine category via categoryOf(); other kinds pass through (music default). */
 function withEnds(stageId: number, list: Entry[], lastMinutes = 90) {
   const sorted = [...list].sort(
     (a, b) => bp(a.d, a.s).getTime() - bp(b.d, b.s).getTime(),
@@ -60,9 +105,13 @@ function withEnds(stageId: number, list: Entry[], lastMinutes = 90) {
     return {
       stageId,
       title: ev.title,
+      artist: ev.a ?? null,
       startsAt,
       endsAt,
-      kind: ev.kind ?? ("music" as EventKind),
+      kind:
+        ev.kind === "workshop"
+          ? categoryOf(ev.title)
+          : ev.kind ?? ("music" as EventKind),
       langAvailability: ev.lang ?? null,
     };
   });
@@ -118,11 +167,13 @@ const PORTAL: Entry[] = [
   { d: "2026-07-12", s: "10:00", title: t("Fullip vs Progtamin") },
   { d: "2026-07-12", s: "12:00", title: t("Inner Sphere") },
   { d: "2026-07-12", s: "14:00", title: t("Oleg") },
-  { d: "2026-07-12", s: "16:00", e: "18:00", title: t("Dekel") },
+  { d: "2026-07-12", s: "16:00", e: "19:00", title: t("Dekel") },
 ];
 
 // ──────────────────────────────────────────────────────────── FIELD ──
-// "Leader Name: HU title / EN title" workshops -> both languages present.
+// Workshops carry the leader/instructor in `a` (artist); the title holds just
+// the activity. Music/live acts have no separate artist (the act is the title),
+// matching Portal/Bowl.
 const w = (en: string, hu: string): I18nText => ({ en, hu });
 const FIELD: Entry[] = [
   // Wed
@@ -135,10 +186,10 @@ const FIELD: Entry[] = [
   { d: "2026-07-09", s: "03:00", title: t("Buddhasmile") },
   { d: "2026-07-09", s: "04:30", title: t("Nautis") },
   { d: "2026-07-09", s: "06:00", title: t("Swanasa") },
-  { d: "2026-07-09", s: "08:00", title: w("Litauszky Lilla: Dynamic Pilates", "Litauszky Lilla: Dinamikus Pilates"), kind: "workshop", lang: "both" },
-  { d: "2026-07-09", s: "10:00", title: w("Mestre Tocha: Capoeira Escola", "Mestre Tocha: Capoeira Escola"), kind: "workshop", lang: "en" },
-  { d: "2026-07-09", s: "12:00", title: w("Gebri Bernadett: Singing Circle", "Gebri Bernadett: Énekkör"), kind: "workshop", lang: "both" },
-  { d: "2026-07-09", s: "13:00", title: w("Ethnosound: Drum Circle", "Ethnosound: Dobkör"), kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "08:00", title: w("Dynamic Pilates", "Dinamikus Pilates"), a: "Litauszky Lilla", kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "10:00", title: t("Capoeira Escola"), a: "Mestre Tocha", kind: "workshop", lang: "en" },
+  { d: "2026-07-09", s: "12:00", title: w("Singing Circle", "Énekkör"), a: "Gebri Bernadett", kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "13:00", title: w("Drum Circle", "Dobkör"), a: "Ethnosound", kind: "workshop", lang: "both" },
   { d: "2026-07-09", s: "14:00", title: t("Takkra") },
   { d: "2026-07-09", s: "15:00", title: t("Cord") },
   { d: "2026-07-09", s: "16:00", title: t("Fodor Réka x Novan") },
@@ -153,14 +204,14 @@ const FIELD: Entry[] = [
   { d: "2026-07-10", s: "03:00", title: t("The Amygdala") },
   { d: "2026-07-10", s: "04:30", title: t("Fraser x Bellegance") },
   { d: "2026-07-10", s: "06:00", title: t("SABW") },
-  { d: "2026-07-10", s: "08:00", title: w("Sipos László: Hatha Yoga accompanied by philosophy", "Sipos László: Hatha Jóga filozófiai kísérővel"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-10", s: "10:00", title: w("Grecsó Zoltán: The Art of Touch", "Grecsó Zoltán: Az érintés művészete"), kind: "workshop", lang: "en" },
-  { d: "2026-07-10", s: "12:00", title: w("Fodor Réka: Singing Circle", "Fodor Réka: Énekkör"), kind: "workshop", lang: "both" },
-  { d: "2026-07-10", s: "13:00", title: w("Ethnosound: Drum Circle", "Ethnosound: Dobkör"), kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "08:00", title: w("Hatha Yoga accompanied by philosophy", "Hatha Jóga filozófiai kísérővel"), a: "Sipos László", kind: "workshop", lang: "hu" },
+  { d: "2026-07-10", s: "10:00", title: w("The Art of Touch", "Az érintés művészete"), a: "Grecsó Zoltán", kind: "workshop", lang: "en" },
+  { d: "2026-07-10", s: "12:00", title: w("Singing Circle", "Énekkör"), a: "Fodor Réka", kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "13:00", title: w("Drum Circle", "Dobkör"), a: "Ethnosound", kind: "workshop", lang: "both" },
   { d: "2026-07-10", s: "14:00", title: t("Arulei") },
   { d: "2026-07-10", s: "15:30", title: t("Dizna") },
   { d: "2026-07-10", s: "16:30", title: t("Angorang") },
-  { d: "2026-07-10", s: "18:00", title: w("Musica Veneris: Dance House", "Musica Veneris Táncház"), kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "18:00", title: w("Dance House", "Táncház"), a: "Musica Veneris", kind: "workshop", lang: "both" },
   { d: "2026-07-10", s: "20:00", title: t("BeshoDrom") },
   { d: "2026-07-10", s: "22:00", title: t("Obadu") },
   { d: "2026-07-10", s: "23:00", title: t("Csángálló") },
@@ -170,16 +221,17 @@ const FIELD: Entry[] = [
   { d: "2026-07-11", s: "03:30", title: t("Kalumet") },
   { d: "2026-07-11", s: "05:00", title: t("Infest") },
   { d: "2026-07-11", s: "06:00", title: t("Peter Van Minden (Siblicity)") },
-  { d: "2026-07-11", s: "08:00", title: w("Lukács Gabi: Meditation", "Lukács Gabi: Meditáció"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-11", s: "10:00", title: w("Fáy Viki, Generál Péter: Breath'n Body", "Fáy Viki, Generál Péter: Breath'n Body"), kind: "workshop", lang: "both" },
-  { d: "2026-07-11", s: "12:00", title: w("Oláh Annamári: Singing Circle / Ethnosound: Drum Circle", "Oláh Annamári: Énekkör / Ethnosound: Dobkör"), kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "08:00", title: w("Meditation", "Meditáció"), a: "Lukács Gabi", kind: "workshop", lang: "hu" },
+  { d: "2026-07-11", s: "10:00", title: t("Breath'n Body"), a: "Fáy Viki, Generál Péter", kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "12:00", title: w("Singing Circle", "Énekkör"), a: "Oláh Annamári", kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "13:00", title: w("Drum Circle", "Dobkör"), a: "Ethnosound", kind: "workshop", lang: "both" },
   { d: "2026-07-11", s: "14:00", title: t("Further") },
   { d: "2026-07-11", s: "15:30", title: t("Gelka") },
   { d: "2026-07-11", s: "16:30", title: t("Zsuja") },
   { d: "2026-07-11", s: "17:30", title: t("Napfonat") },
-  { d: "2026-07-11", s: "18:30", title: t("Eff-Ek aka Zakhorov x Fluidum") },
+  { d: "2026-07-11", s: "18:30", title: t("Eff:Ek aka Zakhorov x Fluidum") },
   { d: "2026-07-11", s: "20:00", title: t("Ölvedi Gábor") },
-  { d: "2026-07-11", s: "21:30", title: t("Oláh Annamari") },
+  { d: "2026-07-11", s: "22:00", title: t("Oláh Annamari") },
   { d: "2026-07-11", s: "23:00", title: t("Korai Electric") },
   // Sun
   { d: "2026-07-12", s: "00:30", title: t("Hybrid Drummer") },
@@ -188,11 +240,11 @@ const FIELD: Entry[] = [
   { d: "2026-07-12", s: "04:30", title: t("Ikoza") },
   { d: "2026-07-12", s: "06:00", title: t("Papa x Alagi") },
   { d: "2026-07-12", s: "07:00", title: t("Kezo") },
-  { d: "2026-07-12", s: "08:00", title: w("Nagy Györgyi: Dance Meditation", "Nagy Györgyi: Táncmeditáció"), kind: "workshop", lang: "both" },
-  { d: "2026-07-12", s: "10:00", title: w("Litauszky Lilla: Dynamic Pilates", "Litauszky Lilla: Dinamikus Pilates"), kind: "workshop", lang: "both" },
-  { d: "2026-07-12", s: "12:00", title: w("Gauranga Das, Meszberger Antal: Trance Breathing", "Gauranga Das, Meszberger Antal: Transzlégzés"), kind: "workshop", lang: "both" },
-  { d: "2026-07-12", s: "14:00", title: w("Bajnay Beáta: Compás in space (Flamenco)", "Bajnay Beáta: Compás a térben (Flamenco)"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-12", s: "16:00", title: w("Grecsó Zoltán: Contemporary Dance Show", "Grecsó Zoltán: Kortárs tánc-showcase"), kind: "workshop", lang: "en" },
+  { d: "2026-07-12", s: "08:00", title: w("Dance Meditation", "Táncmeditáció"), a: "Nagy Györgyi", kind: "workshop", lang: "both" },
+  { d: "2026-07-12", s: "10:00", title: w("Dynamic Pilates", "Dinamikus Pilates"), a: "Litauszky Lilla", kind: "workshop", lang: "both" },
+  { d: "2026-07-12", s: "12:00", title: w("Trance Breathing", "Transzlégzés"), a: "Gauranga Das, Heszberger Antal", kind: "workshop", lang: "both" },
+  { d: "2026-07-12", s: "14:00", title: w("Compás in space (Flamenco)", "Compás a térben (Flamenco)"), a: "Bajnay Beáta", kind: "workshop", lang: "hu" },
+  { d: "2026-07-12", s: "16:00", title: w("Contemporary Dance Show", "Modern táncelőadás"), a: "Grecsó Zoltán", kind: "workshop" },
 ];
 
 // ───────────────────────────────────────────────────────────── BOWL ──
@@ -258,44 +310,50 @@ const FEEL_TRILOGY = w(
   "Feel. Let go. Live. – Somatic emotion-releasing trilogy",
   "Érezd. Engedd. Éld. – Szomatikus érzelemfelszabadító trilógia",
 );
-const PRESENT = w("Present in Yourself", "Jelen önmagadban");
+const PRESENT = w("Presence Within Yourself", "Jelen önmagadban");
 const BODY_SPEAKS = w(
   "The Body Speaks – theatre & movement therapy",
   "A test beszél – színház- és mozgásterápia",
 );
 const PSY_FLOW = t("Psy Flow Yoga");
 const TRANCE_RELAX = t("Trance & Relax");
+const SHADOW_YOGA = w("Shadow Yoga", "Shadow jóga");
 
+// Full grid transcribed from the printed YOGA TERRACE poster + the bilingual
+// programme cards (title, instructor, language badge). 90-min slots unless noted.
 const TERRACE: Entry[] = [
   // Wed
-  { d: "2026-07-08", s: "20:00", e: "22:00", title: TRANCE_RELAX, kind: "workshop", lang: "both" },
+  { d: "2026-07-08", s: "20:00", e: "22:00", title: TRANCE_RELAX, a: "Lipták Boglárka", kind: "workshop", lang: "both" },
   // Thu
-  { d: "2026-07-09", s: "10:00", e: "11:30", title: w("Five Animals Chi Kung – energy, vibration, inner balance", "Öt állat chi kung – energia, rezgés, belső egyensúly"), kind: "workshop", lang: "both" },
-  { d: "2026-07-09", s: "14:00", e: "15:30", title: FEEL_TRILOGY, kind: "workshop" },
-  { d: "2026-07-09", s: "18:00", e: "19:30", title: PRESENT, kind: "workshop", lang: "en" },
-  { d: "2026-07-09", s: "20:00", e: "21:30", title: w("Shadow Yoga", "Shadow jóga"), kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "08:00", e: "09:30", title: t("Yoga – All in One"), a: "Diószegi Ádám", kind: "workshop", lang: "hu" },
+  { d: "2026-07-09", s: "10:00", e: "11:30", title: w("Five Animal Chi Kung", "Öt állat chi kung"), a: "Lukács Gabi", kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "12:00", e: "13:30", title: w("OM Healing Circle", "OM gyógyító kör"), a: "Astar Luca", kind: "workshop", lang: "en" },
+  { d: "2026-07-09", s: "14:00", e: "15:30", title: FEEL_TRILOGY, a: "Németh Kitti", kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "18:00", e: "19:30", title: PRESENT, a: "Grecsó Zoltán", kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "20:00", e: "21:30", title: SHADOW_YOGA, a: "Fáy Zsolt", kind: "workshop", lang: "both" },
   // Fri
-  { d: "2026-07-10", s: "08:00", e: "09:30", title: w("Tantra Yoga", "Tantra jóga"), kind: "workshop", lang: "both" },
-  { d: "2026-07-10", s: "10:00", e: "11:30", title: w("Tai Chi, or the Power of Intention", "Tai chi, avagy a szándék ereje"), kind: "workshop", lang: "both" },
-  { d: "2026-07-10", s: "14:00", e: "15:30", title: FEEL_TRILOGY, kind: "workshop" },
-  { d: "2026-07-10", s: "16:00", e: "17:30", title: BODY_SPEAKS, kind: "workshop", lang: "en" },
-  { d: "2026-07-10", s: "18:00", e: "19:30", title: w("Instinct Play", "Ösztön játék"), kind: "workshop" },
-  { d: "2026-07-10", s: "20:00", e: "21:30", title: w("Unity – yoga with two instructors", "Egység – jóga két oktatóval"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-10", s: "22:00", e: "00:00", ed: "2026-07-11", title: TRANCE_RELAX, kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "08:00", e: "09:30", title: w("Embodied Gesture", "Nyomhagyás"), a: "Pakosz Anna", kind: "workshop" },
+  { d: "2026-07-10", s: "10:00", e: "11:30", title: w("Tai Chi, or the Power of Intention", "Tai chi, avagy a szándék ereje"), a: "Lukács Gabi", kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "12:00", e: "13:30", title: w("Mantra Singing Circle Workshop", "Mantraéneklő kör workshop"), a: "Efi Love Light", kind: "workshop", lang: "en" },
+  { d: "2026-07-10", s: "14:00", e: "15:30", title: FEEL_TRILOGY, a: "Németh Kitti", kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "16:00", e: "17:30", title: BODY_SPEAKS, a: "Boglár Andrea", kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "18:00", e: "19:30", title: w("Rewilding the Self", "Ösztön játék"), a: "Rosselet Ati", kind: "workshop", lang: "both" },
+  { d: "2026-07-10", s: "20:00", e: "21:30", title: w("Unity – yoga with two instructors", "Egység – jóga két oktatóval"), a: "Nagy Norman", kind: "workshop", lang: "hu" },
+  { d: "2026-07-10", s: "22:00", e: "00:00", ed: "2026-07-11", title: TRANCE_RELAX, a: "Lipták Boglárka", kind: "workshop", lang: "both" },
   // Sat
-  { d: "2026-07-11", s: "10:00", e: "11:30", title: w("5 Elements Chi Kung", "5 elem chi kung"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-11", s: "12:00", e: "13:30", title: w("Laugh and Love", "Nevess és szeress"), kind: "workshop", lang: "both" },
-  { d: "2026-07-11", s: "14:00", e: "15:30", title: FEEL_TRILOGY, kind: "workshop" },
-  { d: "2026-07-11", s: "16:00", e: "17:30", title: BODY_SPEAKS, kind: "workshop" },
-  { d: "2026-07-11", s: "18:00", e: "19:30", title: w("Hatha Flow Yoga & guided meditation", "Hatha flow jóga és vezetett meditáció"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-11", s: "20:00", e: "21:30", title: PSY_FLOW, kind: "workshop" },
-  { d: "2026-07-11", s: "22:00", e: "01:00", ed: "2026-07-12", title: w("Lotusshakti Dance Meditation", "Lotusshakti táncmeditáció"), kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "08:00", e: "09:30", title: SHADOW_YOGA, a: "Fáy Zsolt", kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "10:00", e: "11:30", title: w("5 Elements Chi Kung", "5 elem chi kung"), a: "Bilibók András", kind: "workshop", lang: "hu" },
+  { d: "2026-07-11", s: "12:00", e: "13:30", title: w("Laugh and Love", "Nevess és szeress"), a: "Katona Bernadett", kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "14:00", e: "15:30", title: FEEL_TRILOGY, a: "Németh Kitti", kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "16:00", e: "17:30", title: BODY_SPEAKS, a: "Boglár Andrea", kind: "workshop", lang: "both" },
+  { d: "2026-07-11", s: "18:00", e: "19:30", title: w("Hatha Flow Yoga & guided meditation", "Hatha flow jóga és vezetett meditáció"), a: "Kovács Olívia", kind: "workshop", lang: "hu" },
+  { d: "2026-07-11", s: "20:00", e: "21:30", title: PSY_FLOW, a: "Üveges Csenge", kind: "workshop" },
   // Sun
-  { d: "2026-07-12", s: "08:00", e: "09:30", title: w("Hatha Yoga & Pranayama", "Hatha jóga és pránájáma"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-12", s: "10:00", e: "11:30", title: PRESENT, kind: "workshop", lang: "en" },
-  { d: "2026-07-12", s: "12:00", e: "13:30", title: w("Functional Movement Basics – fascia focus", "Funkcionális mozgásalapok – fascia fókusz"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-12", s: "14:00", e: "15:30", title: PSY_FLOW, kind: "workshop" },
-  { d: "2026-07-12", s: "16:00", e: "18:30", title: w("Conscious Presence", "Tudatos jelenlét"), kind: "workshop", lang: "both" },
+  { d: "2026-07-12", s: "08:00", e: "09:30", title: w("Hatha Yoga & Pranayama", "Hatha jóga és pránájáma"), a: "Pinke Roland", kind: "workshop", lang: "hu" },
+  { d: "2026-07-12", s: "10:00", e: "11:30", title: PRESENT, a: "Grecsó Zoltán", kind: "workshop", lang: "en" },
+  { d: "2026-07-12", s: "12:00", e: "13:30", title: w("Functional Movement Fundamentals – fascia focus", "Funkcionális mozgásalapok – fascia fókusz"), a: "Janka", kind: "workshop", lang: "hu" },
+  { d: "2026-07-12", s: "14:00", e: "15:30", title: PSY_FLOW, a: "Üveges Csenge", kind: "workshop" },
+  { d: "2026-07-12", s: "16:00", e: "18:30", title: w("Conscious Presence", "Tudatos jelenlét"), a: "Szabo Emma", kind: "workshop", lang: "both" },
 ];
 
 // ────────────────────────────────────────────────────────── MANDALA ──
@@ -306,37 +364,85 @@ const NIGHT_GONG = w("Nighttime Gong Sound Bath in the Mandala", "Éjszakai gong
 const VIBRATING_FIELD = w("Vibrating Force Field – cleansing sound journey", "Rezgő erőtér – tisztító hangutazás");
 const SOUND_SCULPTURE = w("Organic Sound Sculpture Building: Kardoslaci & friends", "Organikus hangszobor építés: Kardoslaci és barátai");
 const SOUND_WIZARDS = w("Sound Wizards – Tales of the Dragon and the Phoenix", "Hangvarázslók – Sárkány és Főnix meséi hangvarázslat");
+const SACRAL = w("Sacral Eclectic Hybrid Sound Bath", "Sacral Eklektik Hibrid Hangfürdő");
+const SOUND_JOURNEY = w("Sound Journey", "Hangutazás");
+const INTUITIVE = w("Intuitive Sound Journey", "Intuíciós hangutazás");
+const MEDITATIVE = w("Meditative Sound Journey", "Meditatív hangutazás");
+const MANTRA = w("Mantra Meditation", "Mantra meditáció");
+const KIRTAN = t("Kirtan Fest Hungary");
+const OSENEK = w("ŐsÉnek Concert – The Music of the Soul", "Ősének koncert – A lélek zenéje");
+const QUEEN_JAGUAR = t("Queen Jaguar Sound Journey – Echoes Between Worlds");
+const HANDPAN = w("Handpan Sound Journey", "Handpan hangutazás");
+const DEPTHS = w("Depths of Us – Sound Journey", "Depths of Us – Hangutazás");
+const STAR_MUSIC = w("Star Music", "Csillagzene");
+const TAIZE = w("Taizé Prayer", "Taizéi ima");
+const SZEDER_TRIBAL = t("Szeder x Novan x Bóta || Tribal Folk Jazz Sound Journey");
+const SZEDER_CONCERT = w("Szeder Sound Journey Concert – Szeder Songs and Sound Journey", "Szeder Hangutazás Koncert – Szeder Songs and Sound Journey");
+const NOVAN_PIANO = w("NovaN / Astral Piano Whisperer", "NovaN / Asztrális zongorasimogató");
+const TEMPLE = t("Temple of Sounds");
+const WORLD_TREE = w("Journey on the branches of the World Tree – shamanic drum soul journey", "Utazás a Világfa ágain – sámándobos lélekutazás felvezetéssel");
 
+// Full 5-day grid transcribed from the printed MANDALA poster + the bilingual
+// programme cards (title, performer, language badge). All slots are 90-min
+// workshop blocks. The Wed 17:30 sound bath + 18:30 opening ceremony are left
+// untouched (no performer) — they predate this transcription.
 const MANDALA: Entry[] = [
-  // Wed
-  { d: "2026-07-08", s: "17:30", e: "18:30", title: w("Sacral Eclectic Hybrid Sound Bath", "Sacral Eklektik Hibrid Hangfürdő"), kind: "workshop" },
+  // Wed (Jul 8) — opening block kept as-is
+  { d: "2026-07-08", s: "17:30", e: "18:30", title: SACRAL, kind: "workshop" },
   { d: "2026-07-08", s: "18:30", e: "19:00", title: w("Mandala sand-painting opening ceremony", "Mandala homokszórás nyitó szertartás"), kind: "workshop", lang: "both" },
-  { d: "2026-07-08", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, kind: "workshop" },
-  // Thu
-  { d: "2026-07-09", s: "12:00", e: "13:30", title: SOUND_BATH, kind: "workshop" },
-  { d: "2026-07-09", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, kind: "workshop" },
-  { d: "2026-07-09", s: "18:00", e: "19:30", title: SOUND_WIZARDS, kind: "workshop", lang: "hu" },
-  { d: "2026-07-09", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, kind: "workshop" },
-  // Fri
-  { d: "2026-07-10", s: "00:00", e: "01:30", title: NIGHT_GONG, kind: "workshop" },
-  { d: "2026-07-10", s: "04:00", e: "05:30", title: VIBRATING_FIELD, kind: "workshop" },
-  { d: "2026-07-10", s: "12:00", e: "13:30", title: SOUND_BATH, kind: "workshop" },
-  { d: "2026-07-10", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, kind: "workshop" },
-  { d: "2026-07-10", s: "18:00", e: "19:30", title: SOUND_WIZARDS, kind: "workshop", lang: "hu" },
-  { d: "2026-07-10", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, kind: "workshop" },
-  // Sat
-  { d: "2026-07-11", s: "00:00", e: "01:30", title: NIGHT_GONG, kind: "workshop" },
-  { d: "2026-07-11", s: "04:00", e: "05:30", title: VIBRATING_FIELD, kind: "workshop" },
-  { d: "2026-07-11", s: "12:00", e: "13:30", title: SOUND_BATH, kind: "workshop" },
-  { d: "2026-07-11", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, kind: "workshop" },
-  { d: "2026-07-11", s: "18:00", e: "19:30", title: w("Journey on the branches of the World Tree – shamanic drum soul journey", "Utazás a Világfa ágain – sámándobos lélekutazás felvezetéssel"), kind: "workshop", lang: "hu" },
-  { d: "2026-07-11", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, kind: "workshop" },
-  // Sun
-  { d: "2026-07-12", s: "00:00", e: "01:30", title: NIGHT_GONG, kind: "workshop" },
-  { d: "2026-07-12", s: "04:00", e: "05:30", title: VIBRATING_FIELD, kind: "workshop" },
-  { d: "2026-07-12", s: "12:00", e: "13:30", title: SOUND_BATH, kind: "workshop" },
-  { d: "2026-07-12", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, kind: "workshop" },
-  { d: "2026-07-12", s: "18:00", e: "19:00", title: w("Mandala sand-mandala dissolution ceremony", "Mandala homokmandala elmúlás szertartása"), kind: "workshop", lang: "both" },
+  { d: "2026-07-08", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "workshop" },
+  { d: "2026-07-08", s: "22:00", e: "23:30", title: DEPTHS, a: "Lengyel Borbála", kind: "workshop" },
+  // Thu (Jul 9)
+  { d: "2026-07-09", s: "00:00", e: "01:30", title: HANDPAN, a: "Kuritár Csaba", kind: "workshop" },
+  { d: "2026-07-09", s: "02:00", e: "03:30", title: MEDITATIVE, a: "Richard Bakay", kind: "workshop" },
+  { d: "2026-07-09", s: "04:00", e: "05:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "workshop" },
+  { d: "2026-07-09", s: "06:00", e: "07:30", title: QUEEN_JAGUAR, a: "Péterfi Kinga", kind: "workshop", lang: "both" },
+  { d: "2026-07-09", s: "08:00", e: "09:30", title: SOUND_JOURNEY, a: "Yogama Reni", kind: "workshop" },
+  { d: "2026-07-09", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "workshop", lang: "hu" },
+  { d: "2026-07-09", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "workshop" },
+  { d: "2026-07-09", s: "14:00", e: "15:30", title: MANTRA, a: "Jaitra Mantra Music", kind: "workshop" },
+  { d: "2026-07-09", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "workshop" },
+  { d: "2026-07-09", s: "18:00", e: "19:30", title: SOUND_WIZARDS, a: "Virág Emese", kind: "workshop", lang: "hu" },
+  { d: "2026-07-09", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "workshop" },
+  { d: "2026-07-09", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "workshop" },
+  // Fri (Jul 10)
+  { d: "2026-07-10", s: "00:00", e: "01:30", title: NIGHT_GONG, a: "Pinke Roland", kind: "workshop" },
+  { d: "2026-07-10", s: "02:00", e: "03:30", title: SOUND_JOURNEY, a: "Budai Benjámin", kind: "workshop" },
+  { d: "2026-07-10", s: "04:00", e: "05:30", title: VIBRATING_FIELD, a: "Kertész Tímea", kind: "workshop" },
+  { d: "2026-07-10", s: "06:00", e: "07:30", title: SOUND_JOURNEY, a: "Yogama Reni", kind: "workshop" },
+  { d: "2026-07-10", s: "08:00", e: "09:30", title: SACRAL, a: "Máté-Németh Szilvi", kind: "workshop" },
+  { d: "2026-07-10", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "workshop", lang: "hu" },
+  { d: "2026-07-10", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "workshop" },
+  { d: "2026-07-10", s: "14:00", e: "15:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "workshop" },
+  { d: "2026-07-10", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "workshop" },
+  { d: "2026-07-10", s: "18:00", e: "19:30", title: SOUND_WIZARDS, a: "Virág Emese", kind: "workshop", lang: "hu" },
+  { d: "2026-07-10", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "workshop" },
+  { d: "2026-07-10", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "workshop" },
+  // Sat (Jul 11)
+  { d: "2026-07-11", s: "00:00", e: "01:30", title: NIGHT_GONG, a: "Pinke Roland", kind: "workshop" },
+  { d: "2026-07-11", s: "02:00", e: "03:30", title: SZEDER_TRIBAL, a: "Erdősi-Bóta Bence", kind: "workshop" },
+  { d: "2026-07-11", s: "04:00", e: "05:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "workshop" },
+  { d: "2026-07-11", s: "06:00", e: "07:30", title: STAR_MUSIC, a: "Antal Éva", kind: "workshop" },
+  { d: "2026-07-11", s: "08:00", e: "09:30", title: TAIZE, a: "Kovács Orsolya", kind: "workshop" },
+  { d: "2026-07-11", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "workshop", lang: "hu" },
+  { d: "2026-07-11", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "workshop" },
+  { d: "2026-07-11", s: "14:00", e: "15:30", title: VIBRATING_FIELD, a: "Kertész Tímea", kind: "workshop" },
+  { d: "2026-07-11", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "workshop" },
+  { d: "2026-07-11", s: "18:00", e: "19:30", title: WORLD_TREE, a: "Paulinyi Tamás", kind: "workshop", lang: "hu" },
+  { d: "2026-07-11", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "workshop" },
+  { d: "2026-07-11", s: "22:00", e: "23:30", title: TEMPLE, a: "Erdősi-Bóta Bence", kind: "workshop" },
+  // Sun (Jul 12)
+  { d: "2026-07-12", s: "00:00", e: "01:30", title: NIGHT_GONG, a: "Pinke Roland", kind: "workshop" },
+  { d: "2026-07-12", s: "02:00", e: "03:30", title: MANTRA, a: "Jaitra Mantra Music", kind: "workshop" },
+  { d: "2026-07-12", s: "04:00", e: "05:30", title: VIBRATING_FIELD, a: "Kertész Tímea", kind: "workshop" },
+  { d: "2026-07-12", s: "06:00", e: "07:30", title: MEDITATIVE, a: "Richard Bakay", kind: "workshop" },
+  { d: "2026-07-12", s: "08:00", e: "09:30", title: SZEDER_CONCERT, a: "Szeder Sound Healing", kind: "workshop" },
+  { d: "2026-07-12", s: "10:00", e: "11:30", title: SOUND_JOURNEY, a: "Budai Benjámin", kind: "workshop" },
+  { d: "2026-07-12", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "workshop" },
+  { d: "2026-07-12", s: "14:00", e: "15:30", title: NOVAN_PIANO, a: "NovaN", kind: "workshop" },
+  { d: "2026-07-12", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "workshop" },
+  { d: "2026-07-12", s: "18:00", e: "19:00", title: SACRAL, a: "Máté-Németh Szilvi", kind: "workshop" },
+  { d: "2026-07-12", s: "19:00", e: "19:30", title: w("Mandala sand-mandala dissolution ceremony", "Mandala homokmandala elmúlás szertartása"), a: "Fáy Nóra", kind: "workshop", lang: "both" },
 ];
 
 // ───────────────────────────────────────────── MAP LOCATION CATEGORIES ──
