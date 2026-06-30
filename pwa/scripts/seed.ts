@@ -318,7 +318,7 @@ const SOUNDS_SPIRIT = w("Sounds & Spirit Sound Baths", "Sounds & Spirit Hangfür
 const SOUND_BATH = w("Sound Bath", "Hangfürdő");
 const NIGHT_GONG = w("Nighttime Gong Sound Bath in the Mandala", "Éjszakai gongos hangfürdő a Mandalában");
 const VIBRATING_FIELD = w("Vibrating Force Field – cleansing sound journey", "Rezgő erőtér – tisztító hangutazás");
-const SOUND_SCULPTURE = w("Organic Sound Sculpture Building: Kardoslaci & friends", "Organikus hangszobor építés: Kardoslaci és barátai");
+const SOUND_SCULPTURE = w("Organic Sound Sculpture Building", "Organikus hangszobor építés");
 const SOUND_WIZARDS = w("Sound Wizards – Tales of the Dragon and the Phoenix", "Hangvarázslók – Sárkány és Főnix meséi hangvarázslat");
 const SACRAL = w("Sacral Eclectic Hybrid Sound Bath", "Sacral Eklektik Hibrid Hangfürdő");
 const SOUND_JOURNEY = w("Sound Journey", "Hangutazás");
@@ -332,9 +332,9 @@ const HANDPAN = w("Handpan Sound Journey", "Handpan hangutazás");
 const DEPTHS = w("Depths of Us – Sound Journey", "Depths of Us – Hangutazás");
 const STAR_MUSIC = w("Star Music", "Csillagzene");
 const TAIZE = w("Taizé Prayer", "Taizéi ima");
-const SZEDER_TRIBAL = t("Szeder x Novan x Bóta || Tribal Folk Jazz Sound Journey");
-const SZEDER_CONCERT = w("Szeder Sound Journey Concert – Szeder Songs and Sound Journey", "Szeder Hangutazás Koncert – Szeder Songs and Sound Journey");
-const NOVAN_PIANO = w("NovaN / Astral Piano Whisperer", "NovaN / Asztrális zongorasimogató");
+const SZEDER_TRIBAL = t("Tribal Folk Jazz Sound Journey");
+const SZEDER_CONCERT = w("Szeder Songs and Sound Journey", "Szeder Hangutazás Koncert");
+const NOVAN_PIANO = w("Astral Piano Whisperer", "Asztrális zongorasimogató");
 const TEMPLE = t("Temple of Sounds");
 const WORLD_TREE = w("Journey on the branches of the World Tree – shamanic drum soul journey", "Utazás a Világfa ágain – sámándobos lélekutazás felvezetéssel");
 
@@ -357,7 +357,7 @@ const MANDALA: Entry[] = [
   { d: "2026-07-09", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-09", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
   { d: "2026-07-09", s: "14:00", e: "15:30", title: MANTRA, a: "Jaitra Mantra Music", kind: "voice" },
-  { d: "2026-07-09", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "build" },
+  { d: "2026-07-09", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
   { d: "2026-07-09", s: "18:00", e: "19:30", title: SOUND_WIZARDS, a: "Virág Emese", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-09", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
   { d: "2026-07-09", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "voice" },
@@ -370,20 +370,20 @@ const MANDALA: Entry[] = [
   { d: "2026-07-10", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-10", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
   { d: "2026-07-10", s: "14:00", e: "15:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
-  { d: "2026-07-10", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "build" },
+  { d: "2026-07-10", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
   { d: "2026-07-10", s: "18:00", e: "19:30", title: SOUND_WIZARDS, a: "Virág Emese", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-10", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
   { d: "2026-07-10", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "voice" },
   // Sat (Jul 11)
   { d: "2026-07-11", s: "00:00", e: "01:30", title: NIGHT_GONG, a: "Pinke Roland", kind: "sound-bath" },
-  { d: "2026-07-11", s: "02:00", e: "03:30", title: SZEDER_TRIBAL, a: "Erdősi-Bóta Bence", kind: "sound-bath" },
+  { d: "2026-07-11", s: "02:00", e: "03:30", title: SZEDER_TRIBAL, a: "Szeder x Novan x Bóta", kind: "sound-bath" },
   { d: "2026-07-11", s: "04:00", e: "05:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
   { d: "2026-07-11", s: "06:00", e: "07:30", title: STAR_MUSIC, a: "Antal Éva", kind: "sound-bath" },
   { d: "2026-07-11", s: "08:00", e: "09:30", title: TAIZE, a: "Kovács Orsolya", kind: "voice" },
   { d: "2026-07-11", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-11", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
   { d: "2026-07-11", s: "14:00", e: "15:30", title: VIBRATING_FIELD, a: "Kertész Tímea", kind: "sound-bath" },
-  { d: "2026-07-11", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "build" },
+  { d: "2026-07-11", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
   { d: "2026-07-11", s: "18:00", e: "19:30", title: WORLD_TREE, a: "Paulinyi Tamás", kind: "drum", lang: "hu" },
   { d: "2026-07-11", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
   { d: "2026-07-11", s: "22:00", e: "23:30", title: TEMPLE, a: "Erdősi-Bóta Bence", kind: "sound-bath" },
@@ -396,9 +396,9 @@ const MANDALA: Entry[] = [
   { d: "2026-07-12", s: "10:00", e: "11:30", title: SOUND_JOURNEY, a: "Budai Benjámin", kind: "sound-bath" },
   { d: "2026-07-12", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
   { d: "2026-07-12", s: "14:00", e: "15:30", title: NOVAN_PIANO, a: "NovaN", kind: "sound-bath" },
-  { d: "2026-07-12", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "build" },
+  { d: "2026-07-12", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
   { d: "2026-07-12", s: "18:00", e: "19:00", title: SACRAL, a: "Máté-Németh Szilvi", kind: "sound-bath" },
-  { d: "2026-07-12", s: "19:00", e: "19:30", title: w("Mandala sand-mandala dissolution ceremony", "Mandala homokmandala elmúlás szertartása"), a: "Fáy Nóra", kind: "ceremony", lang: "both" },
+  { d: "2026-07-12", s: "19:00", e: "19:30", title: w("Sand-mandala dissolution ceremony", "Homokmandala elmúlás szertartása"), a: "Fáy Nóra", kind: "ceremony", lang: "both" },
 ];
 
 // ───────────────────────────────────────────── MAP LOCATION CATEGORIES ──
