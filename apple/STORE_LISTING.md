@@ -43,7 +43,7 @@ Nem hivatalos, rajongói kalauz a Manas 2026 fesztiválhoz: teljes időrend, él
 
 ## Description (≤4000)
 
-### English (2643 chars)
+### English (2792 chars)
 
 This is an unofficial, fan-made guide. It is not affiliated with, endorsed by, or sponsored by the MANAS festival or its organizers.
 
@@ -52,6 +52,7 @@ Guide for MANAS 2026 is an independent companion app for visitors to the Manas 2
 THE WHOLE PROGRAMME
 - Browse the complete timetable across every stage: Portal, Field, Bowl, Terrace and Mandala.
 - A time-proportional grid on iPhone lays the day out to scale, so overlaps and gaps are easy to see at a glance.
+- Every act shows its performer and a type icon — live music, ceremonies, sound baths, drums, yoga, workshops and more — so the day is easy to read.
 - Scroll horizontally between stages and tap any act for the details.
 
 NOW VIEW
@@ -86,7 +87,7 @@ This app is made by an independent fan and is not the official festival app. "MA
 
 Questions or feedback? Email manas2026@torma.ai
 
-### Magyar (2885 chars)
+### Magyar (3047 chars)
 
 Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MANAS fesztivállal vagy annak szervezőivel, azok nem támogatják és nem szponzorálják.
 
@@ -95,6 +96,7 @@ A Guide for MANAS 2026 egy független kísérőalkalmazás a magyarországi Mana
 A TELJES PROGRAM
 - Böngészd a teljes időrendet minden színpadon: Portal, Field, Bowl, Terrace és Mandala.
 - iPhone-on idő-arányos rács mutatja a napot, így az átfedések és a szünetek egy pillantással átláthatók.
+- Minden programnál ott a fellépő neve és egy típus-ikon — élő zene, szertartások, hangfürdő, dobok, jóga, workshopok és még több —, így a nap könnyen olvasható.
 - Görgess vízszintesen a színpadok között, és koppints bármelyik fellépőre a részletekért.
 
 MOST NÉZET
@@ -129,7 +131,29 @@ Ezt az alkalmazást egy független rajongó készítette, és nem a hivatalos fe
 
 Kérdés vagy visszajelzés? Írj a manas2026@torma.ai címre.
 
-## What's New — v1.1 (current, ≤4000)
+## What's New — v1.2 (current, ≤4000)
+
+### English (579 chars)
+
+What's new in 1.2:
+
+- Artists, front and centre: each act now shows the performer's name alongside the title, so you can see who is playing at a glance.
+- A clearer programme: every type of happening has its own icon — live music, ceremonies, sound baths and singing bowls, drums and handpan, yoga, workshops, dance, theatre and talks.
+- A more refined Apple Watch layout: the now-playing card gives the artist and title more room, with a subtle festival watermark behind them.
+
+Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+
+### Magyar (593 chars)
+
+Újdonságok az 1.2-ben:
+
+- A fellépők a középpontban: minden program mostantól a cím mellett a fellépő nevét is mutatja, így egy pillantással látod, ki játszik.
+- Átláthatóbb program: minden programtípusnak saját ikonja van — élő zene, szertartások, hangfürdő és hangtálak, dobok és handpan, jóga, workshopok, tánc, színház és előadások.
+- Csiszoltabb Apple Watch elrendezés: az éppen játszó kártyán több hely jut a fellépőnek és a címnek, mögöttük finom fesztivál-vízjellel.
+
+Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+
+## What's New — v1.1 (history)
 
 ### English (567 chars)
 
@@ -183,7 +207,7 @@ Ez egy nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. V
 
 Unofficial, fan-made companion guide for the Manas 2026 music festival (Hungary, July 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MANAS 2026" is used referentially to indicate which festival this guide covers.
 
-New in this version (1.1): a Share feature. The iPhone app gains a Share tab and the Apple Watch app a share QR in its toolbar. The QR encodes a public link (https://manas.torma.ai/get) that simply routes whoever scans it — to the App Store on an iPhone, or to the web version on any other device; the system share sheet hands out https://manas.torma.ai/app. This only generates a QR image / opens the standard iOS share sheet — it collects and transmits no user data, so the privacy answers are unchanged. This version also adds opening-day and post-festival ("GROUNDING") states to the Now view.
+New in this version (1.2): performer names and per-type icons on the schedule, plus refinements to the Apple Watch layout. These are display-only and drawn from the same public schedule data — no new data is collected, and the App Privacy answers are unchanged. (The Share feature — a Share tab and an Apple Watch share QR encoding the public link https://manas.torma.ai/get, which only routes the scanner to the App Store or the web version — shipped in 1.1 and is unchanged.)
 
 No account or login required — no sign-up, no authentication of any kind. The app is free with no ads and no in-app purchases.
 
@@ -205,5 +229,5 @@ The submission includes an embedded watchOS app and watch widgets/complications 
   the build (HTTPS-only, exempt). No "Missing Compliance".
 - **Pricing:** Free.
 - **Availability:** your choice (all countries, or restrict to Hungary).
-- **Build:** attach build 11 to the 1.1 version (live is 1.0, build 5).
+- **Build:** attach build 11 to the 1.2 version (live is 1.1).
 - **Version release:** Manual (recommended) so you control go-live timing.
