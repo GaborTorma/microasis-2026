@@ -308,7 +308,7 @@ const TERRACE: Entry[] = [
   { d: "2026-07-12", s: "08:00", e: "09:30", title: w("Hatha Yoga & Pranayama", "Hatha jóga és pránájáma"), a: "Pinke Roland", kind: "yoga", lang: "hu" },
   { d: "2026-07-12", s: "10:00", e: "11:30", title: PRESENT, a: "Grecsó Zoltán", kind: "mind", lang: "en" },
   { d: "2026-07-12", s: "12:00", e: "13:30", title: w("Functional Movement Fundamentals – fascia focus", "Funkcionális mozgásalapok – fascia fókusz"), a: "Janka", kind: "workshop", lang: "hu" },
-  { d: "2026-07-12", s: "14:00", e: "15:30", title: PSY_FLOW, a: "Üveges Csenge", kind: "yoga" },
+  { d: "2026-07-12", s: "20:00", e: "21:30", title: PSY_FLOW, a: "Üveges Csenge", kind: "yoga" },
   { d: "2026-07-12", s: "16:00", e: "18:30", title: w("Conscious Presence", "Tudatos jelenlét"), a: "Szabo Emma", kind: "mind", lang: "both" },
 ];
 
@@ -316,10 +316,10 @@ const TERRACE: Entry[] = [
 // Sound baths & ceremonies. Most are language-neutral (Ø). Explicit ranges.
 const SOUNDS_SPIRIT = w("Sounds & Spirit Sound Baths", "Sounds & Spirit Hangfürdők");
 const SOUND_BATH = w("Sound Bath", "Hangfürdő");
-const NIGHT_GONG = w("Nighttime Gong Sound Bath in the Mandala", "Éjszakai gongos hangfürdő a Mandalában");
-const VIBRATING_FIELD = w("Vibrating Force Field – cleansing sound journey", "Rezgő erőtér – tisztító hangutazás");
+const GONG_BATH = w("Gong Sound Bath", "Gongos hangfürdő");
+const SACRAL_PULSE = w("Sacral Pulse", "Rezgő erőtér");
 const SOUND_SCULPTURE = w("Organic Sound Sculpture Building", "Organikus hangszobor építés");
-const SOUND_WIZARDS = w("Sound Wizards – Tales of the Dragon and the Phoenix", "Hangvarázslók – Sárkány és Főnix meséi hangvarázslat");
+const SOUND_WIZARDS = w("Sound Magicians – sound magic from the tales of the Dragon and the Phoenix", "Hangvarázslók – Sárkány és Főnix meséi hangvarázslat");
 const SACRAL = w("Sacral Eclectic Hybrid Sound Bath", "Sacral Eklektik Hibrid Hangfürdő");
 const SOUND_JOURNEY = w("Sound Journey", "Hangutazás");
 const INTUITIVE = w("Intuitive Sound Journey", "Intuíciós hangutazás");
@@ -336,7 +336,7 @@ const SZEDER_TRIBAL = t("Tribal Folk Jazz Sound Journey");
 const SZEDER_CONCERT = w("Szeder Songs and Sound Journey", "Szeder Hangutazás Koncert");
 const NOVAN_PIANO = w("Astral Piano Whisperer", "Asztrális zongorasimogató");
 const TEMPLE = t("Temple of Sounds");
-const WORLD_TREE = w("Journey on the branches of the World Tree – shamanic drum soul journey", "Utazás a Világfa ágain – sámándobos lélekutazás felvezetéssel");
+const SHAMANIC_JOURNEY = w("Guided Shamanic Journey", "Sámándobos Lélekutazás");
 
 // Full 5-day grid transcribed from the printed MANDALA poster + the bilingual
 // programme cards (title, performer, language badge). All slots are 90-min
@@ -356,15 +356,15 @@ const MANDALA: Entry[] = [
   { d: "2026-07-09", s: "08:00", e: "09:30", title: SOUND_JOURNEY, a: "Yogama Reni", kind: "sound-bath" },
   { d: "2026-07-09", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-09", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
-  { d: "2026-07-09", s: "14:00", e: "15:30", title: MANTRA, a: "Jaitra Mantra Music", kind: "voice" },
+  { d: "2026-07-09", s: "14:00", e: "15:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
   { d: "2026-07-09", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
   { d: "2026-07-09", s: "18:00", e: "19:30", title: SOUND_WIZARDS, a: "Virág Emese", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-09", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
   { d: "2026-07-09", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "voice" },
   // Fri (Jul 10)
-  { d: "2026-07-10", s: "00:00", e: "01:30", title: NIGHT_GONG, a: "Pinke Roland", kind: "sound-bath" },
+  { d: "2026-07-10", s: "00:00", e: "01:30", title: GONG_BATH, a: "Pinke Roland", kind: "sound-bath" },
   { d: "2026-07-10", s: "02:00", e: "03:30", title: SOUND_JOURNEY, a: "Budai Benjámin", kind: "sound-bath" },
-  { d: "2026-07-10", s: "04:00", e: "05:30", title: VIBRATING_FIELD, a: "Kertész Tímea", kind: "sound-bath" },
+  { d: "2026-07-10", s: "04:00", e: "05:30", title: SACRAL_PULSE, a: "Kertész Tímea", kind: "sound-bath" },
   { d: "2026-07-10", s: "06:00", e: "07:30", title: SOUND_JOURNEY, a: "Yogama Reni", kind: "sound-bath" },
   { d: "2026-07-10", s: "08:00", e: "09:30", title: SACRAL, a: "Máté-Németh Szilvi", kind: "sound-bath" },
   { d: "2026-07-10", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
@@ -375,22 +375,22 @@ const MANDALA: Entry[] = [
   { d: "2026-07-10", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
   { d: "2026-07-10", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "voice" },
   // Sat (Jul 11)
-  { d: "2026-07-11", s: "00:00", e: "01:30", title: NIGHT_GONG, a: "Pinke Roland", kind: "sound-bath" },
+  { d: "2026-07-11", s: "00:00", e: "01:30", title: GONG_BATH, a: "Pinke Roland", kind: "sound-bath" },
   { d: "2026-07-11", s: "02:00", e: "03:30", title: SZEDER_TRIBAL, a: "Szeder x Novan x Bóta", kind: "sound-bath" },
   { d: "2026-07-11", s: "04:00", e: "05:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
   { d: "2026-07-11", s: "06:00", e: "07:30", title: STAR_MUSIC, a: "Antal Éva", kind: "sound-bath" },
   { d: "2026-07-11", s: "08:00", e: "09:30", title: TAIZE, a: "Kovács Orsolya", kind: "voice" },
   { d: "2026-07-11", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
   { d: "2026-07-11", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
-  { d: "2026-07-11", s: "14:00", e: "15:30", title: VIBRATING_FIELD, a: "Kertész Tímea", kind: "sound-bath" },
+  { d: "2026-07-11", s: "14:00", e: "15:30", title: SACRAL_PULSE, a: "Kertész Tímea", kind: "sound-bath" },
   { d: "2026-07-11", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
-  { d: "2026-07-11", s: "18:00", e: "19:30", title: WORLD_TREE, a: "Paulinyi Tamás", kind: "drum", lang: "hu" },
+  { d: "2026-07-11", s: "18:00", e: "19:30", title: SHAMANIC_JOURNEY, a: "Paulinyi Tamás", kind: "drum", lang: "hu" },
   { d: "2026-07-11", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
   { d: "2026-07-11", s: "22:00", e: "23:30", title: TEMPLE, a: "Erdősi-Bóta Bence", kind: "sound-bath" },
   // Sun (Jul 12)
-  { d: "2026-07-12", s: "00:00", e: "01:30", title: NIGHT_GONG, a: "Pinke Roland", kind: "sound-bath" },
+  { d: "2026-07-12", s: "00:00", e: "01:30", title: GONG_BATH, a: "Pinke Roland", kind: "sound-bath" },
   { d: "2026-07-12", s: "02:00", e: "03:30", title: MANTRA, a: "Jaitra Mantra Music", kind: "voice" },
-  { d: "2026-07-12", s: "04:00", e: "05:30", title: VIBRATING_FIELD, a: "Kertész Tímea", kind: "sound-bath" },
+  { d: "2026-07-12", s: "04:00", e: "05:30", title: SACRAL_PULSE, a: "Kertész Tímea", kind: "sound-bath" },
   { d: "2026-07-12", s: "06:00", e: "07:30", title: MEDITATIVE, a: "Richard Bakay", kind: "sound-bath" },
   { d: "2026-07-12", s: "08:00", e: "09:30", title: SZEDER_CONCERT, a: "Szeder Sound Healing", kind: "sound-bath" },
   { d: "2026-07-12", s: "10:00", e: "11:30", title: SOUND_JOURNEY, a: "Budai Benjámin", kind: "sound-bath" },
