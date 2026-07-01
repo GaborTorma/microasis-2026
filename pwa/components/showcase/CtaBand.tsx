@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
+import { isApple } from "@/lib/platform";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
 import { AddToHomeButton } from "./AddToHomeButton";
@@ -30,7 +31,7 @@ export function CtaBand() {
         <p className="mt-3 max-w-lg text-base leading-relaxed text-cream-dim">{t("cta.body")}</p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <AppStoreButton height={50} />
-          {canInstall && <AddToHomeButton height={50} onClick={promptInstall} />}
+          {canInstall && !isApple() && <AddToHomeButton height={50} onClick={promptInstall} />}
         </div>
         <Link
           href="/"

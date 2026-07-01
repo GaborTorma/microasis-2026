@@ -1,6 +1,6 @@
 "use client";
 
-import { isIOS } from "@/lib/platform";
+import { isApple } from "@/lib/platform";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
 import { AddToHomeButton } from "./AddToHomeButton";
@@ -19,7 +19,7 @@ export function InstallCta({
   pulse?: boolean;
 }) {
   const { canInstall, promptInstall } = useInstallPrompt();
-  if (canInstall && !isIOS()) {
+  if (canInstall && !isApple()) {
     return (
       <AddToHomeButton height={height} className={className} pulse={pulse} onClick={promptInstall} />
     );

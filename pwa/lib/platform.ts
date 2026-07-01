@@ -30,6 +30,15 @@ export function isAndroid(): boolean {
   return /android/i.test(ua());
 }
 
+// Any Apple platform — iPhone/iPad/iPod (incl. iPadOS masquerade via isIOS) *and*
+// macOS. The /app showcase points every Apple device at the native App Store app;
+// only non-Apple installable devices get the PWA "Add to Home Screen" button. A
+// real Mac reports a "Macintosh" UA with 0 touch points, so isIOS() alone misses
+// it and Chrome-on-Mac (which fires beforeinstallprompt) wrongly got the PWA CTA.
+export function isApple(): boolean {
+  return isIOS() || /macintosh|mac os x/i.test(ua());
+}
+
 // Running as an installed PWA (home-screen), not in a browser tab.
 export function isStandalone(): boolean {
   if (typeof window === "undefined") return false;
