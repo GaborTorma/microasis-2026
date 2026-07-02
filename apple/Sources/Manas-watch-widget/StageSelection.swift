@@ -2,14 +2,23 @@ import Foundation
 import AppIntents
 import WidgetKit
 
-/// Schedule access for the widget extension. The extension has its own
-/// sandbox container, so this cache is populated by the widget's *own* fetches
-/// — independent of the app (we deliberately don't share an App Group).
+/// Schedule access for the widget extension. The widget shares the watch
+/// app's schedule cache through the App Group container: the app refreshes it
+/// on every launch/foreground and reloads the widget timelines, so a recent
+/// cache lets the widget skip the network entirely. Its own (ETag-revalidated)
+/// fetch covers long stretches when the app isn't opened.
 enum WidgetSchedule {
-    /// Fresh schedule from the API, falling back to the last cached copy when
-    /// offline. `APIClient` writes the cache as a side effect of `fetch`.
+    /// How recent the shared cache must be to be trusted without a fetch.
+    /// Half the `.atEnd` worst case (≤12 h), so schedule edits still reach a
+    /// never-opened app's widget within a timeline cycle or two.
+    private static let cacheMaxAge: TimeInterval = 6 * 3600
+
+    /// Recent shared cache if there is one; otherwise fetch (falling back to
+    /// the cache regardless of age when offline). `APIClient` writes the cache
+    /// as a side effect of `fetch`.
     static func load() async -> ScheduleData? {
         let api = APIClient()
+        if let recent = api.cachedSchedule(maxAge: cacheMaxAge) { return recent }
         if let fresh = try? await api.fetchSchedule() { return fresh }
         return api.cachedSchedule()
     }

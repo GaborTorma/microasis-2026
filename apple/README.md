@@ -80,9 +80,12 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   crown to page between them (the swipe-style navigation lives in the app; the
   Smart Stack scroll is the watch-widget equivalent).
 - **Launcher** (`.accessoryCircular` / `.inline` / `.corner`): a tap opens the app.
-- The extension fetches/caches the schedule itself (no App Group, no pairing)
-  and follows the device language. Each timeline entry sits on an act boundary,
-  so the widget rolls onto the next act on time without extra fetches.
+- The extension reads the schedule cache it shares with the watch app (App
+  Group `group.ai.torma.manas.2026`; a copy fresher than 6 h skips the network,
+  otherwise it does its own ETag-revalidated fetch) and follows the watch app's
+  language via the same App Group (device language until the app sets one).
+  Each timeline entry sits on an act boundary, so the widget rolls onto the
+  next act on time without extra fetches.
 
 Each device keeps its own settings (the apps are independent — no pairing
 required). Schedule is cached on disk for offline use.

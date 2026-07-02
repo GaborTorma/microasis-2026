@@ -12,7 +12,8 @@ project.yml              XcodeGen project definition — THE source of truth
 Sources/
   ManasKit/              shared, platform-agnostic Swift core (no separate module)
     Models.swift         Codable DTOs (must match pwa/lib/types.ts) + JSONDecoder.manas
-    APIClient.swift      fetch /api/schedule + offline disk cache (Application Support)
+    APIClient.swift      fetch /api/schedule (ETag/If-None-Match revalidation) +
+                         offline disk cache (App Group container where entitled)
     AppState.swift       Settings + ScheduleStore + LocationStore (@MainActor singletons)
     Localization.swift   AppLocale (HU default) + baked-in ~47-key string table
     Formatting.swift     Fmt — Europe/Budapest formatters, festivalDay, debug clock
@@ -84,7 +85,8 @@ disclaimer with `-manas.disclaimerSeen 1`.
   independent — no iCloud, no iOS↔watch pairing.** The only shared store is an App
   Group (`SharedDefaults`, `group.ai.torma.manas.2026`) the **watch app + its widget**
   use so the widget follows the app's language (and the QA `manas.debugNow` clock,
-  DEBUG/TestFlight only) — same-device only.
+  DEBUG/TestFlight only), and — same group container — so the two share **one
+  schedule disk cache** (the widget reuses the app's fetch) — same-device only.
 - **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.1.0`) bumped per
   release; `CURRENT_PROJECT_VERSION` (integer, currently `10`) bumped per TestFlight
   upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
@@ -115,9 +117,11 @@ disclaimer with `-manas.disclaimerSeen 1`.
 - **watch widgets:** `NowWidget` (`.accessoryRectangular`) is **per-stage
   configurable** via an `AppEntity`/`WidgetConfigurationIntent` — add one per stage to
   the Smart Stack and turn the crown to page. `LaunchWidget` is a circular/inline/corner
-  launcher. The extension **fetches and caches the schedule itself** (its own
-  container), follows the **watch app's language** via the `SharedDefaults` App Group
-  (device language until the app sets one), and places one timeline entry per act boundary.
+  launcher. The extension reads the **schedule cache it shares with the watch app**
+  (App Group container; a copy fresher than 6 h skips the network, otherwise it does
+  its own ETag-revalidated fetch), follows the **watch app's language** via the
+  `SharedDefaults` App Group (device language until the app sets one), and places one
+  timeline entry per act boundary.
 
 ## Gotchas
 
@@ -128,8 +132,13 @@ disclaimer with `-manas.disclaimerSeen 1`.
   `schedule`. There is no locations/map code here — don't add an apple `/api/locations`
   consumer without a deliberate reason.
 - **Offline cache lives in Application Support** (not Caches) so the OS won't purge it
-  under storage pressure — important for watch offline-after-first-load. Every fetch
-  rewrites the whole `manas-schedule.json`.
+  under storage pressure — important for watch offline-after-first-load. On targets
+  entitled to the App Group (watch app + widget) it sits in the **group container**
+  (`…/AppGroup/…/Library/Application Support/manas-schedule.json`, shared between the
+  two processes); iOS keeps its own container, and the old per-process location is
+  still read as a fallback after an update. A 200 rewrites `manas-schedule.json` +
+  its `.etag` sidecar; an ETag-matching refetch is a bodyless 304 that leaves the
+  cache untouched.
 - **No stages hidden by default** (`AppState.swift` `?? []`) — kept in sync with web,
   see `../CLAUDE.md`. Bowl was default-hidden until its poster shipped.
 - **Debug tooling is gated to DEBUG/TestFlight** (`AppEnv.debugToolsEnabled`, an
