@@ -81,67 +81,82 @@ public struct NowWidgetContent: View {
 
     private var accent: Color { entry.stage.map { Color(hex: $0.accent) } ?? Theme.sun }
 
+    /// Content width of the 49 mm preview card — the reference canvas: every
+    /// font, spacing, and ornament size below scales with `width / 162`, so the
+    /// card keeps the same proportions on every watch (and canvas) size.
+    private static let referenceWidth: CGFloat = 162
+
     public var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            // Kind icon watermark — kept in the CONTENT layer, not the container
-            // background: the system desaturates a widget's background on tinted
-            // watch faces, which all but erased a faint background icon. Here it
-            // survives, picks up the accent tint, and the act text overlaps it.
-            if let event = entry.event {
-                KindIcon(event.kind, size: 40, color: accent)
-                    .opacity(0.28)
-                    .widgetAccentable()
-                    .offset(x: -1, y: 3)
+        GeometryReader { geo in
+            let s = geo.size.width / Self.referenceWidth
+            ZStack(alignment: .bottomLeading) {
+                // Kind icon watermark — kept in the CONTENT layer, not the container
+                // background: the system desaturates a widget's background on tinted
+                // watch faces, which all but erased a faint background icon. Here it
+                // survives, picks up the accent tint, and the act text overlaps it.
+                if let event = entry.event {
+                    KindIcon(event.kind, size: 40 * s, color: accent)
+                        .opacity(0.28)
+                        .widgetAccentable()
+                        .offset(x: -1 * s, y: 3 * s)
+                }
+                // Language chip (EN / HU / EN+HU) — a translucent background
+                // ornament like the watermark, not a layout element: the act
+                // name may run over it and never shrinks to make room for it.
+                if let event = entry.event, event.langAvailability != nil {
+                    let chip = Theme.chip(event.langAvailability)
+                    Text(chip.label).font(.system(size: 9 * s, weight: .bold))
+                        .padding(.horizontal, 5 * s).padding(.vertical, 2 * s)
+                        .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
+                        .opacity(0.5)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity,
+                               alignment: .bottomTrailing)
+                }
+                content(s)
             }
-            content
         }
     }
 
-    private var content: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(spacing: 4) {
+    private func content(_ s: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 3 * s) {
+            HStack(spacing: 4 * s) {
                 Text(entry.stage?.name.uppercased() ?? "MANAS")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
+                    .font(.system(size: 13 * s, weight: .heavy, design: .rounded))
                     .foregroundStyle(accent)
                     .lineLimit(1).minimumScaleFactor(0.7)
                     .widgetAccentable()
                 // Live dot sits beside the stage name; pulses while on air.
+                // Size + glow match the watch app's now-line dot (WatchRootView).
                 if entry.isLive {
                     Image(systemName: "circle.fill")
-                        .font(.system(size: 6))
+                        .font(.system(size: 8 * s))
                         .foregroundStyle(Theme.now)
+                        .shadow(color: Theme.now, radius: 4 * s)
                         .symbolEffect(.pulse, options: .repeating, isActive: true)
                 }
-                Spacer(minLength: 2)
+                Spacer(minLength: 2 * s)
                 if let event = entry.event {
                     Text(Fmt.range(event.startsAt, event.endsAt))
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(.system(size: 12 * s, weight: .semibold, design: .rounded))
                         .foregroundStyle(Theme.cream)
                         .lineLimit(1).minimumScaleFactor(0.6)
                 }
             }
             if let event = entry.event, let artist = event.artist {
                 Text(artist)
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .font(.system(size: 12 * s, weight: .medium, design: .rounded))
                     .foregroundStyle(Theme.creamDim)
                     .lineLimit(1).minimumScaleFactor(0.6)
+                    // Sit tighter to the act name than to the header row.
+                    .padding(.bottom, -2 * s)
             }
             Text(actText)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .font(.system(size: 16 * s, weight: .bold, design: .rounded))
                 .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
                 .lineLimit(2).minimumScaleFactor(0.5)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        // Language chip (EN / HU / EN+HU), shown whenever a language is set.
-        .overlay(alignment: .bottomTrailing) {
-            if let event = entry.event, event.langAvailability != nil {
-                let chip = Theme.chip(event.langAvailability)
-                Text(chip.label).font(.system(size: 9, weight: .bold))
-                    .padding(.horizontal, 5).padding(.vertical, 2)
-                    .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
-            }
-        }
     }
 
     private var actText: String {
@@ -185,9 +200,14 @@ public struct NowWidgetCard: View {
     let entry: NowEntry
     public init(entry: NowEntry) { self.entry = entry }
     public var body: some View {
-        NowWidgetContent(entry: entry)
-            .padding(.horizontal, 11).padding(.vertical, 9)
-            .background(nowWidgetBackground(entry))
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        // Padding and corner radius scale with the card width, matching the
+        // proportional scaling inside NowWidgetContent (184 = 49 mm card width).
+        GeometryReader { geo in
+            let s = geo.size.width / 184
+            NowWidgetContent(entry: entry)
+                .padding(.horizontal, 11 * s).padding(.vertical, 9 * s)
+                .background(nowWidgetBackground(entry))
+                .clipShape(RoundedRectangle(cornerRadius: 18 * s, style: .continuous))
+        }
     }
 }

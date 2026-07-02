@@ -1,4 +1,5 @@
 import SwiftUI
+import WatchKit
 
 /// Watch parity of the iOS `ShareView` / web `/share`: a QR a friend points their
 /// phone at. The encoded link (`AppLinks.qr` → `/get`) routes the scanner — iPhone →
@@ -16,6 +17,11 @@ struct WatchShareView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showFullQR = false
 
+    /// Compact (40/41 mm) screens: shrink the QR and tighten the title gap so
+    /// the copy below still fits on screen without scrolling.
+    private var compact: Bool { WKInterfaceDevice.current().screenBounds.height < 210 }
+    private var qrWidth: CGFloat { compact ? 76 : 100 }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -28,17 +34,20 @@ struct WatchShareView: View {
                             .interpolation(.none)       // keep the modules crisp when scaled
                             .resizable()
                             .scaledToFit()
-                            .frame(maxWidth: 100)
+                            .frame(maxWidth: qrWidth)
                             .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                     .buttonStyle(.plain)
 
                     Text(L.t("share.title", settings.locale))
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
                         .foregroundStyle(Theme.cream)
-                        .padding(.top, 6)
-                    Text(L.t("share.body", settings.locale))
-                        .font(.system(size: 10))
+                        .padding(.top, compact ? 2 : 6)
+                    // The shared string bakes a 2-line break sized for iOS; at watch
+                    // width the bigger type reflows naturally to ~3 lines instead.
+                    Text(L.t("share.body", settings.locale).replacingOccurrences(of: "\n", with: " "))
+                        .font(.system(size: 12))
+                        .padding(.top, -3)      // sit tighter under the title
                         .foregroundStyle(Theme.cream.opacity(0.8))
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
