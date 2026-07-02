@@ -49,6 +49,11 @@ Rules a future edit must respect:
    apps hit **`/api/schedule` and nothing else** — there is no `LocationsData` in
    `Models.swift` and no map/locations code under `apple/Sources`. Don't assume an
    apple consumer when touching locations.
+6. **Both endpoints are conditional GETs.** The API sends an `ETag` (payload hash,
+   `pwa/lib/etag.ts`); the web hook (`pwa/lib/useSchedule.ts`) and `APIClient.swift`
+   send `If-None-Match` and treat a bodyless 304 as "serve the cached copy". Keep
+   304 handling intact on both clients when touching the fetch layer; clients that
+   never send the header (already-shipped app versions) still get full 200s.
 
 ## Cross-platform invariants (keep both sides in sync)
 

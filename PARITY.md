@@ -15,7 +15,7 @@
 | Színpad elrejtés / sorrend               | ✅  | ✅  | ✅      | Beállítás mindhárom kliensen; eszközönként független perzisztencia (nincs iCloud/pairing).                  |
 | Timetable zoom (oszlopszám + szövegméret) | ✅  | ✅  | ➖      | watch: nincs rács → nem értelmezett. iOS `effectiveColumns` + `fontScale`, web `columns`+`scale` tükrözi.   |
 | Legközelebbi színpad (geolokáció)        | ✅  | ✅  | ✅      | PWA `useNearestStage` (Timetable+Now), iOS/watch `LocationStore` 150 m-es geofence.                         |
-| Offline cache                            | ✅  | ✅  | ✅      | PWA service worker + localStorage; iOS/watch lemez-cache (Application Support); widget saját container.     |
+| Offline cache                            | ✅  | ✅  | ✅      | PWA SW + localStorage (ETag/304 revalidálás); iOS saját lemez-cache; watch app + widget közös App Group cache (<6 h friss → widget fetch nélkül).     |
 | PWA install / Add to Home                | ✅  | ➖  | ➖      | `InstallPrompt`/`AddToHomeButton`; natív appnál nem értelmezett.                                            |
 | Privacy / Support oldal                  | ✅  | ✅  | ❌      | PWA route-ok; iOS Settings linkel ki (`manas.torma.ai/privacy` `/support`); watch Settings nem linkel.     |
 | „Nem hivatalos” disclaimer               | ✅  | ✅  | ✅      | PWA `DisclaimerGate`, iOS/watch Settings „about” + disclaimer-sheet.                                        |
