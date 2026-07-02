@@ -1,8 +1,8 @@
+import { etagPayload, etagResponse } from "@/lib/etag";
 import { getLocations } from "@/lib/queries";
 
-export const revalidate = 60;
+const payload = etagPayload(getLocations);
 
-export async function GET() {
-  const data = await getLocations();
-  return Response.json(data);
+export async function GET(request: Request) {
+  return etagResponse(request, payload);
 }

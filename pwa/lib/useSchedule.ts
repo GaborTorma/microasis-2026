@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import type { LocationsData, ScheduleData } from "./types";
 
 type State<T> = {
@@ -10,76 +10,124 @@ type State<T> = {
   error: boolean;
 };
 
+type Resource<T> = {
+  subscribe: (listener: () => void) => () => void;
+  getSnapshot: () => State<T>;
+  getServerSnapshot: () => State<T>;
+};
+
 /**
- * Fetch JSON with a localStorage cache so the app keeps working with no
- * signal on-site. Hydrates instantly from cache, then revalidates; on a
- * failed network it falls back to whatever was cached.
+ * One shared fetch per endpoint no matter how many components subscribe —
+ * several views mount `useSchedule()` at once and must not fan out into
+ * parallel identical requests. Keeps the localStorage cache so the app works
+ * with no signal on-site: hydrates instantly from cache, then revalidates
+ * (If-None-Match, so an unchanged payload costs a bodyless 304); on a failed
+ * network it falls back to whatever was cached.
  */
-function useFetchCached<T>(url: string, key: string): State<T> {
-  const [state, setState] = useState<State<T>>({
-    data: null,
-    loading: true,
-    offline: false,
-    error: false,
-  });
+function createResource<T>(url: string, key: string): Resource<T> {
+  const etagKey = `${key}:etag`;
+  const initial: State<T> = { data: null, loading: true, offline: false, error: false };
+  let state = initial;
+  // The validator for the body currently in `state` — kept in memory, NOT
+  // re-read from localStorage per request: another tab may have persisted a
+  // newer body+etag pair there, and sending *that* etag while still holding
+  // the older body would turn the server's 304 into permanently stale data.
+  let etag: string | null = null;
+  const listeners = new Set<() => void>();
+  let started = false;
+  let inFlight = false;
 
-  useEffect(() => {
-    let alive = true;
+  const emit = (next: State<T>) => {
+    state = next;
+    listeners.forEach((l) => l());
+  };
 
+  const refetch = () => {
+    if (inFlight) return;
+    inFlight = true;
+    const headers: HeadersInit = {};
+    // Only revalidate when we still hold a body to serve on a 304.
+    if (etag && state.data) headers["If-None-Match"] = etag;
+    fetch(url, { cache: "no-store", headers })
+      .then(async (r) => {
+        if (r.status === 304) {
+          emit({ ...state, loading: false, offline: false, error: false });
+          return;
+        }
+        if (!r.ok) throw new Error(String(r.status));
+        const json = (await r.json()) as T;
+        etag = r.headers.get("etag");
+        try {
+          localStorage.setItem(key, JSON.stringify(json));
+          if (etag) localStorage.setItem(etagKey, etag);
+          else localStorage.removeItem(etagKey);
+        } catch {
+          /* storage full / private mode */
+        }
+        emit({ data: json, loading: false, offline: false, error: false });
+      })
+      .catch(() => {
+        emit({
+          data: state.data,
+          loading: false,
+          offline: Boolean(state.data),
+          error: !state.data,
+        });
+      })
+      .finally(() => {
+        inFlight = false;
+      });
+  };
+
+  const start = () => {
+    if (started) return;
+    started = true;
     try {
       const cached = localStorage.getItem(key);
       if (cached) {
-        setState((s) => ({ ...s, data: JSON.parse(cached) as T }));
+        state = { ...state, data: JSON.parse(cached) as T };
+        // Body and etag are persisted together, so the pair is consistent.
+        etag = localStorage.getItem(etagKey);
       }
     } catch {
       /* ignore corrupt cache */
     }
-
-    const refetch = () => {
-      fetch(url, { cache: "no-store" })
-        .then((r) => {
-          if (!r.ok) throw new Error(String(r.status));
-          return r.json() as Promise<T>;
-        })
-        .then((json) => {
-          if (!alive) return;
-          try {
-            localStorage.setItem(key, JSON.stringify(json));
-          } catch {
-            /* storage full / private mode */
-          }
-          setState({ data: json, loading: false, offline: false, error: false });
-        })
-        .catch(() => {
-          if (!alive) return;
-          setState((s) => ({
-            data: s.data,
-            loading: false,
-            offline: Boolean(s.data),
-            error: !s.data,
-          }));
-        });
-    };
-
+    // Re-fetch whenever the tab/PWA returns to the foreground. Registered
+    // once for the module's lifetime; a no-subscriber tab skips the work.
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && listeners.size > 0) refetch();
+    });
     refetch();
+  };
 
-    // Re-fetch whenever the tab/PWA returns to the foreground.
-    const onVisible = () => {
-      if (document.visibilityState === "visible") refetch();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-
-    return () => {
-      alive = false;
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [url, key]);
-
-  return state;
+  return {
+    subscribe(listener) {
+      listeners.add(listener);
+      if (!started) start();
+      // A consumer (re)mounting after a failure is the old per-mount retry
+      // moment — without this, an error/offline state would only ever recover
+      // on a visibilitychange.
+      else if (state.error || state.offline) refetch();
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    getSnapshot: () => state,
+    getServerSnapshot: () => initial,
+  };
 }
 
-export const useSchedule = () =>
-  useFetchCached<ScheduleData>("/api/schedule", "manas-schedule-v1");
+const scheduleResource = createResource<ScheduleData>("/api/schedule", "manas-schedule-v1");
+const locationsResource = createResource<LocationsData>("/api/locations", "manas-locations-v1");
 
-export const useLocations = () =>
-  useFetchCached<LocationsData>("/api/locations", "manas-locations-v1");
+function useResource<T>(resource: Resource<T>): State<T> {
+  return useSyncExternalStore(
+    resource.subscribe,
+    resource.getSnapshot,
+    resource.getServerSnapshot,
+  );
+}
+
+export const useSchedule = () => useResource(scheduleResource);
+
+export const useLocations = () => useResource(locationsResource);

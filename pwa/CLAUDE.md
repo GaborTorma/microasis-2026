@@ -20,13 +20,13 @@ app/
   page.tsx          /      → <Timetable/>
   now/page.tsx      /now   → <NowView/>
   map/page.tsx      /map   → <MapView/>  (live but unlinked from nav — intentional)
-  api/schedule/     GET, ISR revalidate=60, getSchedule()  (consumed by web + apple)
-  api/locations/    GET, ISR revalidate=60, getLocations() (web map only)
+  api/schedule/     GET, ETag/304 + 60s payload memo, getSchedule()  (web + apple)
+  api/locations/    GET, ETag/304 + 60s payload memo, getLocations() (web map only)
   actions/locale.ts setLocale() server action → sets manas-locale cookie
   manifest.ts       PWA manifest        globals.css  Tailwind v4 @theme + utilities
 components/         Timetable / NowView / MapView (+ map/, settings/), Header, BottomNav
 lib/                db/ (schema + client), queries, types, format, festival, geo,
-                    mapConfig, stageSettings, useSchedule, useNearestStage
+                    etag, mapConfig, stageSettings, useSchedule, useNearestStage
 i18n/               config (LOCALES, DEFAULT_LOCALE='hu') + request (locale detection)
 messages/           hu.json, en.json   (flat files — NOT messages/<locale>/*.json)
 public/             sw.js, icons/       scripts/  seed.ts, icons.ts
@@ -36,11 +36,16 @@ public/             sw.js, icons/       scripts/  seed.ts, icons.ts
 
 - **DB → API → client.** `lib/queries.ts` reads Drizzle/Neon and shapes rows into the
   DTOs in `lib/types.ts`. `/api/schedule` and `/api/locations` are GET-only, no params,
-  `export const revalidate = 60`.
+  dynamic conditional GETs via `lib/etag.ts`: the payload is serialized + hashed once
+  per 60s (in-memory memo per warm instance — this replaces the old ISR
+  `revalidate = 60`), sent with an `ETag`, and a matching `If-None-Match` gets a
+  bodyless 304.
 - **All views are `"use client"`** and fetch through `useSchedule()`/`useLocations()`
-  (`lib/useSchedule.ts`): hydrate from `localStorage` on mount, fetch, persist,
-  refetch on tab focus. `offline` is only set when the network fails *and* there is no
-  cache — a stale cache is shown silently.
+  (`lib/useSchedule.ts`): one module-level shared store per endpoint (any number of
+  subscribed components share a single request), hydrate from `localStorage`, fetch
+  with `If-None-Match` (304 → keep cache), persist body + etag, refetch on tab focus.
+  `offline` is only set when the network fails *and* there is no cache — a stale
+  cache is shown silently.
 - **Settings** (stage order/visibility, text scale, column count) live in React
   context + `localStorage`, never server-side.
 - **i18n is cookie-based, no middleware, no locale path segments.** There is no
@@ -74,16 +79,18 @@ pnpm icons               # regenerate PWA icons (mandala SVG → public/icons/*.
 ## Gotchas / footguns
 
 - **Service worker cache versioning is manual.** `public/sw.js` keys everything off
-  `VERSION = "manas-v2"`. **Bump it after any deploy that changes cached assets** or
+  `VERSION = "manas-vNN"` (currently v15). **Bump it after any deploy that changes cached assets** or
   returning PWA users get stale files — the #1 "my change isn't showing" trap.
 - **`pnpm db:seed` is destructive and idempotent:** it `db.delete()`s events,
   locations, stages, locationCategories, then re-inserts from the hardcoded arrays in
   `scripts/seed.ts` (transcribed from the printed posters). **Any data edited in the DB
   directly is lost on the next seed.** Seed is the source of truth for content.
 - **localStorage cache keys are hand-versioned:** `manas-schedule-v1`,
-  `manas-locations-v1`, `manas-settings-v1`, `manas-tent-v1`. Bump on DTO changes or
-  stale cache can feed malformed data.
-- **ISR = 60s:** DB edits take up to a minute (plus client cache) to appear. No realtime.
+  `manas-locations-v1`, `manas-settings-v1`, `manas-tent-v1` (+ `<key>:etag`
+  sidecars for the conditional refetch). Bump on DTO changes or stale cache can
+  feed malformed data.
+- **Payload memo = 60s:** DB edits take up to a minute (plus client cache) to appear.
+  No realtime.
 - **`/map` is intentionally unlinked** from `BottomNav` — don't "fix" the missing nav
   pill. The route works at `/map`.
 - **Map calibration is fragile and web-only:** `lib/mapConfig.ts` projects GPS↔SVG

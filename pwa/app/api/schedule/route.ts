@@ -1,9 +1,10 @@
+import { etagPayload, etagResponse } from "@/lib/etag";
 import { getSchedule } from "@/lib/queries";
 
-// Cache the response and refresh from Neon at most once per minute.
-export const revalidate = 60;
+// Conditional GET: unchanged data costs the clients a bodyless 304. The
+// payload memo inside refreshes from Neon at most once per minute.
+const payload = etagPayload(getSchedule);
 
-export async function GET() {
-  const data = await getSchedule();
-  return Response.json(data);
+export async function GET(request: Request) {
+  return etagResponse(request, payload);
 }

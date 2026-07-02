@@ -3,7 +3,7 @@
    - navigations   : network-first, fall back to cached page (or "/")
    - static assets : cache-first
 */
-const VERSION = "manas-v14";
+const VERSION = "manas-v15";
 const SHELL = `${VERSION}-shell`;
 const API = `${VERSION}-api`;
 
@@ -54,6 +54,17 @@ async function networkFirst(request, cacheName) {
   try {
     const resp = await fetch(request);
     if (resp && resp.ok) cache.put(request, resp.clone());
+    // The page revalidates /api/* with If-None-Match, so after a VERSION bump
+    // this fresh cache could see nothing but bodyless 304s and stay empty
+    // forever — no offline copy. Refill once per generation in the background
+    // (a bare-URL fetch drops the page's conditional header).
+    else if (resp && resp.status === 304 && !(await cache.match(request))) {
+      fetch(request.url, { cache: "no-store" })
+        .then((fresh) => {
+          if (fresh.ok) cache.put(request, fresh.clone());
+        })
+        .catch(() => {});
+    }
     return resp;
   } catch {
     const cached = await cache.match(request);
