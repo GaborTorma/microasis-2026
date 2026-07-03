@@ -27,8 +27,9 @@ into a clean band-less Apple-Watch body (Koubou only ships strapped watches and 
 watch screen-rect letterboxed the square UI). The OG, by contrast, shows the phone
 beside a strapped Ultra watch (Koubou). Run:
 
-    kou setup-frames                            # one-time: download Koubou frames
-    uv run pwa/scripts/build_landing_images.py  # rebuild everything
+    kou setup-frames                                 # one-time: download Koubou frames
+    uv run pwa/scripts/build_landing_images.py       # rebuild everything
+    uv run pwa/scripts/build_landing_images.py --og  # only the OG card (no Koubou needed)
 """
 from __future__ import annotations
 
@@ -256,6 +257,58 @@ def rasterize_badge(height: int) -> Image.Image:
     return Image.open(out).convert("RGBA")
 
 
+# The Android robot mark — same official silhouette as components/showcase/AndroidIcon.tsx.
+ANDROID_PATH = (
+    "M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 "
+    ".9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-"
+    ".9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-"
+    ".9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676."
+    "1521l-2.0223 3.503C15.5902 8.2439 13.8533 7.8508 12 7.8508s-3.5902.3931-5.1367 1.0989"
+    "L4.841 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2."
+    "6889 11.1867.3432 14.6589 0 18.761h24c-.3435-4.1021-2.6892-7.5743-6.1185-9.4396"
+)
+
+
+def rasterize_android_icon(size: int) -> Image.Image:
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black">'
+           f'<path d="{ANDROID_PATH}"/></svg>')
+    sp = Path(tempfile.gettempdir()) / "og-android.svg"
+    sp.write_text(svg)
+    op = Path(tempfile.gettempdir()) / "og-android.png"
+    js = (f"const s=require({str(SHARP)!r});"
+          f"s({str(sp)!r},{{density:600}}).resize({size},{size}).png().toFile({str(op)!r}).then(()=>{{}});")
+    subprocess.run(["node", "-e", js], check=True, cwd=str(PWA))
+    return Image.open(op).convert("RGBA")
+
+
+def android_badge(height: int) -> Image.Image:
+    """The site's "Telepítés Androidra" pill (AndroidInstallButton.tsx) redrawn in
+    Pillow: white rounded rect, black robot, small line over a bigger bold line.
+    Proportions mirror the component so badge and pill read as a matched pair."""
+    pad_l, pad_r = round(height * 0.20), round(height * 0.24)
+    gap, icon_sz = round(height * 0.16), round(height * 0.46)
+    s1, s2 = round(height * 0.21), round(height * 0.32)
+    line_gap = round(height * 0.06)
+    f1, f2 = font("Inter-Regular.ttf", s1), font("Inter-SemiBold.ttf", s2)
+    probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
+    text_w = round(max(probe.textlength("Telepítés", font=f1), probe.textlength("Androidra", font=f2)))
+    w = pad_l + icon_sz + gap + text_w + pad_r
+
+    SS = 4  # supersample the rounded rect so its edge stays as crisp as the badge's
+    pill = Image.new("RGBA", (w * SS, height * SS), (0, 0, 0, 0))
+    ImageDraw.Draw(pill).rounded_rectangle(
+        [0, 0, w * SS - 1, height * SS - 1], round(height * 0.17) * SS, fill=(255, 255, 255, 255))
+    pill = pill.resize((w, height), Image.LANCZOS)
+
+    pill.alpha_composite(rasterize_android_icon(icon_sz), (pad_l, (height - icon_sz) // 2))
+    d = ImageDraw.Draw(pill)
+    tx = pad_l + icon_sz + gap
+    ty = (height - (s1 + line_gap + s2)) // 2
+    d.text((tx, ty), "Telepítés", font=f1, fill=INK)
+    d.text((tx, ty + s1 + line_gap), "Androidra", font=f2, fill=INK)
+    return pill
+
+
 # lucide icon paths (24×24, stroke), matching the landing's TrustPills.
 LUCIDE = {
     "gift": '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/>'
@@ -346,7 +399,12 @@ def build_og() -> None:
         d.text((x, yy), line, font=sfont, fill=CREAM_DIM)
         yy += 29
 
-    base.alpha_composite(rasterize_badge(50), (x, BADGE_Y))
+    badge = rasterize_badge(50)
+    base.alpha_composite(badge, (x, BADGE_Y))
+    # 46px, vertically centred: the solid-white pill reads optically larger than
+    # the black badge (whose white border also loses ~2px to anti-aliasing), so
+    # equal geometry looked bigger — undersizing evens them out to the eye.
+    base.alpha_composite(android_badge(46), (x + badge.width + 14, BADGE_Y + 2))
     chips(base, x, CHIPS_BOTTOM,
           [("Ingyenes", "gift", "#5ec98a"),
            ("Regisztráció nélkül", "user-x", "#46b3a3"),
@@ -369,6 +427,14 @@ def write_version() -> None:
 
 
 def main() -> None:
+    # `--og` rebuilds only the OpenGraph card (+ version bump) from the already-
+    # framed webp files in the repo — no Koubou / raw screenshots needed.
+    if "--og" in sys.argv[1:]:
+        print("Composing OpenGraph card…")
+        build_og()
+        write_version()
+        print("\nDone.")
+        return
     if not Path(KOU).exists():
         sys.exit("`kou` not found. Install: `uv tool install koubou` then `kou setup-frames`.")
     print(f"Koubou: {KOU}\nFraming screenshots…")

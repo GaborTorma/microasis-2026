@@ -1,9 +1,16 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/platform";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Guide for MANAS 2026",
     short_name: "MANAS 2026",
+    // Lets navigator.getInstalledRelatedApps() report the installed WebAPK, so
+    // the install CTAs can flip to a "Telepítve" state across sessions. Note:
+    // no prefer_related_applications — this must NOT suppress the install prompt.
+    related_applications: [
+      { platform: "webapp", url: `${SITE_URL}/manifest.webmanifest` },
+    ],
     description:
       "Unofficial timetable, now-playing and map for the Manas 2026 gathering.",
     start_url: "/",

@@ -105,9 +105,18 @@
       "cta": "App Store"
     },
     "android": {
-      "title": "Tedd ki a kezdőképernyőre",
+      "title": "Telepítés Androidra",
       "body": "Telepítsd a MANAS 2026-ot — teljes képernyő, offline is működik.",
       "cta": "Telepítés"
+    },
+    "sheet": {
+      "title": "Telepítés Androidra",
+      "body": "Nyisd meg az oldalt Chrome-ban, és ott koppints a Telepítés gombra.",
+      "chrome": "Megnyitás Chrome-ban",
+      "manual": "Vagy a böngésző menüjéből: ⋮ → Hozzáadás a kezdőképernyőhöz.",
+      "manualInApp": "Vagy a menüből: ⋮ → Megnyitás külső böngészőben.",
+      "installed": "Ha már telepítetted, az appot a kezdőképernyődön találod.",
+      "dismiss": "Bezárás"
     },
     "dismiss": "Bezárás"
   },
@@ -142,9 +151,12 @@
       "noTracking": "Nyomkövetés nélkül"
     },
     "install": {
-      "addToHome1": "Hozzáadás a",
-      "addToHome2": "kezdőképernyőhöz",
-      "aria": "Hozzáadás a kezdőképernyőhöz"
+      "android1": "Telepítés",
+      "android2": "Androidra",
+      "aria": "Telepítés Androidra",
+      "installed1": "Androidra",
+      "installed2": "Telepítve",
+      "installedAria": "Az app már telepítve van"
     },
     "featuresHeading": "Minden, ami a helyszínen kell",
     "features": {

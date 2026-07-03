@@ -105,9 +105,18 @@
       "cta": "App Store"
     },
     "android": {
-      "title": "Add to Home Screen",
+      "title": "Install on Android",
       "body": "Install MANAS 2026 — full-screen and works offline.",
       "cta": "Install"
+    },
+    "sheet": {
+      "title": "Install on Android",
+      "body": "Open this page in Chrome, then tap the Install button there.",
+      "chrome": "Open in Chrome",
+      "manual": "Or from your browser menu: ⋮ → Add to Home screen.",
+      "manualInApp": "Or from the menu: ⋮ → Open in external browser.",
+      "installed": "Already installed? You'll find the app on your home screen.",
+      "dismiss": "Dismiss"
     },
     "dismiss": "Dismiss"
   },
@@ -142,9 +151,12 @@
       "noTracking": "No tracking"
     },
     "install": {
-      "addToHome1": "Add to",
-      "addToHome2": "Home Screen",
-      "aria": "Add to Home Screen"
+      "android1": "Install on",
+      "android2": "Android",
+      "aria": "Install on Android",
+      "installed1": "On Android",
+      "installed2": "Installed",
+      "installedAria": "The app is already installed"
     },
     "featuresHeading": "Everything you need on the ground",
     "features": {

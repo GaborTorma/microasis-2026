@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GetRedirect } from "@/components/GetRedirect";
+import { LANDING_IMG_V } from "@/lib/landing-version";
 
 // /get is the URL the share QR / share sheet hands around, so it carries the
 // richest metadata: the shared 1200×630 OpenGraph card (the /app showcase card,
@@ -8,7 +9,13 @@ import { GetRedirect } from "@/components/GetRedirect";
 const title = "Guide for MANAS 2026 — nem hivatalos fesztivál app";
 const description =
   "Teljes időrend, élő most-megy nézet a MANAS 2026-hoz. iPhone-on az App Store nyílik, minden máson a WebApp.";
-const ogImage = { url: "/landing/og.png", width: 1200, height: 630, alt: "Guide for MANAS 2026" };
+// ?v= busts scraper/browser caches whenever the card is regenerated (same as /app).
+const ogImage = {
+  url: `/landing/og.png?v=${LANDING_IMG_V}`,
+  width: 1200,
+  height: 630,
+  alt: "Guide for MANAS 2026",
+};
 
 export const metadata: Metadata = {
   title,

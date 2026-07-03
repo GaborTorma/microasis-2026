@@ -5,6 +5,7 @@ import { Header } from "./Header";
 import { BottomNav } from "./BottomNav";
 import { DisclaimerGate } from "./DisclaimerGate";
 import { InstallPrompt } from "./InstallPrompt";
+import { AndroidInstallSheet } from "./AndroidInstallSheet";
 import { isShowcasePath } from "@/lib/showcase";
 
 // Wraps the app's chrome (Header, the max-width container, BottomNav, the
@@ -21,7 +22,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   if (isShowcasePath(pathname)) {
-    return <>{children}</>;
+    // The showcase keeps its full-bleed canvas but still gets the Android install
+    // banner + help sheet (its hero already pitches the App Store, so the iOS
+    // banner stays off). No bottom nav here, so the banner hugs the bottom.
+    return (
+      <>
+        {children}
+        <InstallPrompt ios={false} aboveNav={false} />
+        <AndroidInstallSheet />
+      </>
+    );
   }
 
   return (
@@ -35,6 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <BottomNav />
       <DisclaimerGate />
       <InstallPrompt />
+      <AndroidInstallSheet />
     </>
   );
 }

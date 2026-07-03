@@ -1,19 +1,25 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
-import { isApple } from "@/lib/platform";
+import { isAndroid } from "@/lib/platform";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
-import { AddToHomeButton } from "./AddToHomeButton";
+import { AndroidInstallButton } from "./AndroidInstallButton";
+import { AndroidInstalledBadge } from "./AndroidInstalledBadge";
 import { Reveal } from "./Reveal";
 
-// Closing call-to-action band. The App Store badge is always present; on an
-// installable non-Apple device the "Add to Home Screen" button sits beside it.
+// Closing call-to-action band. The App Store badge is always present; on Android
+// (any browser — see InstallCta on why this is UA-based and Android-only) the
+// "Install on Android" button sits beside it.
 export function CtaBand() {
   const t = useTranslations("showcase");
-  const { canInstall, promptInstall } = useInstallPrompt();
+  const { installed, installAndroid } = useInstallPrompt();
+  // Same android/installed gating as InstallCta.
+  const [android, setAndroid] = useState(false);
+  useEffect(() => setAndroid(isAndroid()), []);
   return (
     <section className="relative overflow-hidden px-6 py-20 sm:py-28">
       <div
@@ -31,7 +37,12 @@ export function CtaBand() {
         <p className="mt-3 max-w-lg text-base leading-relaxed text-cream-dim">{t("cta.body")}</p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <AppStoreButton height={50} />
-          {canInstall && !isApple() && <AddToHomeButton height={50} onClick={promptInstall} />}
+          {android &&
+            (installed ? (
+              <AndroidInstalledBadge height={50} />
+            ) : (
+              <AndroidInstallButton height={50} onClick={() => void installAndroid()} />
+            ))}
         </div>
         <Link
           href="/"

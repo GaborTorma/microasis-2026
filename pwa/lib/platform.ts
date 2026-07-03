@@ -51,8 +51,22 @@ export function isStandalone(): boolean {
 
 // Common in-app browsers (Instagram / Facebook / Messenger / etc.) where Apple's
 // native Smart App Banner never shows — there we fall back to our own banner.
+// On Android these WebViews also never fire `beforeinstallprompt`, so the PWA
+// cannot install in-place; see chromeIntentUrl below for the escape hatch.
 export function isInAppBrowser(): boolean {
   return /fban|fbav|fb_iab|instagram|messenger|line\/|micromessenger|twitter|gsa\//i.test(ua());
+}
+
+// Android intent:// URL that reopens `path` (on our canonical host) in Chrome —
+// the escape hatch out of in-app WebViews where install is impossible. If Chrome
+// is missing, Android follows the embedded fallback URL instead of erroring; the
+// fallback carries ?install-help=1 (AndroidInstallSheet opens on it) because it
+// reloads the same page in the same browser — without the marker the user would
+// just loop with no guidance.
+export function chromeIntentUrl(path: string): string {
+  const { host } = new URL(SITE_URL);
+  const fallback = encodeURIComponent(`${SITE_URL}${path}?install-help=1`);
+  return `intent://${host}${path}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${fallback};end`;
 }
 
 // Real Safari on iOS — the only place the Smart App Banner appears. Chrome (CriOS),

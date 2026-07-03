@@ -1,14 +1,21 @@
 "use client";
 
-import { isApple } from "@/lib/platform";
+import { useEffect, useState } from "react";
+import { isAndroid } from "@/lib/platform";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
-import { AddToHomeButton } from "./AddToHomeButton";
+import { AndroidInstallButton } from "./AndroidInstallButton";
+import { AndroidInstalledBadge } from "./AndroidInstalledBadge";
 
 // The single primary CTA for the hero and top bar: Apple's App Store badge,
-// swapped for an "Add to Home Screen" button on non-Apple devices where the PWA
-// is installable. Until the install event fires (and on Apple / SSR) it's the
-// App Store badge, so there's no hydration flicker.
+// swapped for an "Install on Android" button on Android only (desktop Chrome
+// can technically install the PWA too, but an "Androidra" label would mislead
+// there — the button is deliberately Android-exclusive). Android is detected by
+// UA (post-hydration state, so SSR stays the badge with no mismatch), NOT by
+// `beforeinstallprompt` — in-app WebViews (Facebook & co.) never fire it, and
+// exactly there the App Store badge used to show to Android users. The tap
+// itself degrades gracefully via installAndroid(): native prompt → Chrome
+// intent escape → help sheet.
 export function InstallCta({
   height,
   className = "",
@@ -18,10 +25,23 @@ export function InstallCta({
   className?: string;
   pulse?: boolean;
 }) {
-  const { canInstall, promptInstall } = useInstallPrompt();
-  if (canInstall && !isApple()) {
-    return (
-      <AddToHomeButton height={height} className={className} pulse={pulse} onClick={promptInstall} />
+  const { installed, installAndroid } = useInstallPrompt();
+  const [android, setAndroid] = useState(false);
+  useEffect(() => setAndroid(isAndroid()), []);
+
+  // `installed` covers standalone (we're inside the installed app), a fresh
+  // appinstalled, and Chrome's getInstalledRelatedApps across sessions — the
+  // pill replaces the button instead of falling back to the App Store badge.
+  if (android) {
+    return installed ? (
+      <AndroidInstalledBadge height={height} className={className} />
+    ) : (
+      <AndroidInstallButton
+        height={height}
+        className={className}
+        pulse={pulse}
+        onClick={() => void installAndroid()}
+      />
     );
   }
   return <AppStoreButton height={height} className={className} pulse={pulse} />;
