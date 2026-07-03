@@ -131,7 +131,29 @@ Ezt az alkalmazást egy független rajongó készítette, és nem a hivatalos fe
 
 Kérdés vagy visszajelzés? Írj a manas2026@torma.ai címre.
 
-## What's New — v1.2 (current, ≤4000)
+## What's New — v1.3 (current, ≤4000)
+
+### English (558 chars)
+
+What's new in 1.3:
+
+- Faster, lighter updates: the app now checks for schedule changes instead of re-downloading everything, so refreshes are quicker and use less data — handy on festival Wi-Fi.
+- Apple Watch improvements: the watch app and its widgets now share one schedule, so widgets stay in step with the app and update more efficiently.
+- The share screen on the watch is easier to read, and the widget card scales more gracefully across watch sizes.
+
+Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+
+### Magyar (625 chars)
+
+Újdonságok az 1.3-ban:
+
+- Gyorsabb, könnyebb frissítés: az app mostantól csak a változásokat ellenőrzi a teljes program újratöltése helyett, így a frissítés gyorsabb és kevesebb adatot használ — jól jön a fesztiválos térerőnél.
+- Apple Watch fejlesztések: az óra-app és a widgetek mostantól közös programot használnak, így a widgetek együtt mozognak az appal és hatékonyabban frissülnek.
+- Az óra megosztás-képernyője könnyebben olvasható, a widget-kártya pedig szebben skálázódik a különböző óraméreteken.
+
+Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+
+## What's New — v1.2 (history)
 
 ### English (579 chars)
 
@@ -207,7 +229,7 @@ Ez egy nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. V
 
 Unofficial, fan-made companion guide for the Manas 2026 music festival (Hungary, July 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MANAS 2026" is used referentially to indicate which festival this guide covers.
 
-New in this version (1.2): performer names and per-type icons on the schedule, plus refinements to the Apple Watch layout. These are display-only and drawn from the same public schedule data — no new data is collected, and the App Privacy answers are unchanged. (The Share feature — a Share tab and an Apple Watch share QR encoding the public link https://manas.torma.ai/get, which only routes the scanner to the App Store or the web version — shipped in 1.1 and is unchanged.)
+New in this version (1.3): performance and reliability work only — the schedule fetch now uses standard HTTP conditional requests (ETag/If-None-Match against the same public endpoint), and on Apple Watch the app and its widgets share one local schedule cache. No new features, permissions or data collection; the App Privacy answers are unchanged.
 
 No account or login required — no sign-up, no authentication of any kind. The app is free with no ads and no in-app purchases.
 
@@ -229,5 +251,5 @@ The submission includes an embedded watchOS app and watch widgets/complications 
   the build (HTTPS-only, exempt). No "Missing Compliance".
 - **Pricing:** Free.
 - **Availability:** your choice (all countries, or restrict to Hungary).
-- **Build:** attach build 11 to the 1.2 version (live is 1.1).
+- **Build:** attach build 13 to the 1.3 version (live is 1.2).
 - **Version release:** Manual (recommended) so you control go-live timing.
