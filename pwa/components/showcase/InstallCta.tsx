@@ -1,14 +1,18 @@
 "use client";
 
-import { isApple } from "@/lib/platform";
+import { useEffect, useState } from "react";
+import { isAndroid, isApple, isStandalone } from "@/lib/platform";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
-import { AddToHomeButton } from "./AddToHomeButton";
+import { AndroidInstallButton } from "./AndroidInstallButton";
 
 // The single primary CTA for the hero and top bar: Apple's App Store badge,
-// swapped for an "Add to Home Screen" button on non-Apple devices where the PWA
-// is installable. Until the install event fires (and on Apple / SSR) it's the
-// App Store badge, so there's no hydration flicker.
+// swapped for an "Install on Android" button on Android and on other non-Apple
+// installable devices. Android is detected by UA (post-hydration state, so SSR
+// stays the badge with no mismatch), NOT by `beforeinstallprompt` — in-app
+// WebViews (Facebook & co.) never fire it, and exactly there the App Store
+// badge used to show to Android users. The tap itself degrades gracefully via
+// installAndroid(): native prompt → Chrome intent escape → help sheet.
 export function InstallCta({
   height,
   className = "",
@@ -18,10 +22,21 @@ export function InstallCta({
   className?: string;
   pulse?: boolean;
 }) {
-  const { canInstall, promptInstall } = useInstallPrompt();
-  if (canInstall && !isApple()) {
+  const { canInstall, justInstalled, installAndroid } = useInstallPrompt();
+  // Standalone = the user is inside the installed PWA (an installed WebAPK
+  // captures shared /app links), so offering "install" there would be absurd;
+  // justInstalled hides the button right after a successful native prompt.
+  const [android, setAndroid] = useState(false);
+  useEffect(() => setAndroid(isAndroid() && !isStandalone()), []);
+
+  if ((android && !justInstalled) || (canInstall && !isApple())) {
     return (
-      <AddToHomeButton height={height} className={className} pulse={pulse} onClick={promptInstall} />
+      <AndroidInstallButton
+        height={height}
+        className={className}
+        pulse={pulse}
+        onClick={() => void installAndroid()}
+      />
     );
   }
   return <AppStoreButton height={height} className={className} pulse={pulse} />;
