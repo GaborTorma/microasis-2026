@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
-import { isAndroid, isStandalone } from "@/lib/platform";
+import { isAndroid } from "@/lib/platform";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
 import { AndroidInstallButton } from "./AndroidInstallButton";
+import { AndroidInstalledBadge } from "./AndroidInstalledBadge";
 import { Reveal } from "./Reveal";
 
 // Closing call-to-action band. The App Store badge is always present; on Android
@@ -15,10 +16,10 @@ import { Reveal } from "./Reveal";
 // "Install on Android" button sits beside it.
 export function CtaBand() {
   const t = useTranslations("showcase");
-  const { justInstalled, installAndroid } = useInstallPrompt();
-  // Same standalone/just-installed gating as InstallCta.
+  const { installed, installAndroid } = useInstallPrompt();
+  // Same android/installed gating as InstallCta.
   const [android, setAndroid] = useState(false);
-  useEffect(() => setAndroid(isAndroid() && !isStandalone()), []);
+  useEffect(() => setAndroid(isAndroid()), []);
   return (
     <section className="relative overflow-hidden px-6 py-20 sm:py-28">
       <div
@@ -36,9 +37,12 @@ export function CtaBand() {
         <p className="mt-3 max-w-lg text-base leading-relaxed text-cream-dim">{t("cta.body")}</p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <AppStoreButton height={50} />
-          {android && !justInstalled && (
-            <AndroidInstallButton height={50} onClick={() => void installAndroid()} />
-          )}
+          {android &&
+            (installed ? (
+              <AndroidInstalledBadge height={50} />
+            ) : (
+              <AndroidInstallButton height={50} onClick={() => void installAndroid()} />
+            ))}
         </div>
         <Link
           href="/"

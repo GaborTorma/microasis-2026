@@ -153,7 +153,10 @@
     "install": {
       "android1": "Telepítés",
       "android2": "Androidra",
-      "aria": "Telepítés Androidra"
+      "aria": "Telepítés Androidra",
+      "installed1": "Androidra",
+      "installed2": "Telepítve",
+      "installedAria": "Az app már telepítve van"
     },
     "featuresHeading": "Minden, ami a helyszínen kell",
     "features": {

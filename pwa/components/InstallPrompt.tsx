@@ -28,7 +28,7 @@ export function InstallPrompt({
   aboveNav?: boolean;
 }) {
   const t = useTranslations("install");
-  const { installAndroid } = useInstallPrompt();
+  const { installed, installAndroid } = useInstallPrompt();
   const [mode, setMode] = useState<Mode>(null);
 
   useEffect(() => {
@@ -74,6 +74,9 @@ export function InstallPrompt({
   };
 
   if (!mode) return null;
+  // Detected as already installed (getInstalledRelatedApps / appinstalled /
+  // standalone) — an install banner would be noise.
+  if (mode === "android" && installed) return null;
   const iosMode = mode === "ios";
 
   return createPortal(

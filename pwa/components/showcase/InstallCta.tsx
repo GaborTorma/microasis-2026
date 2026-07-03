@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isAndroid, isStandalone } from "@/lib/platform";
+import { isAndroid } from "@/lib/platform";
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 import { AppStoreButton } from "./AppStoreButton";
 import { AndroidInstallButton } from "./AndroidInstallButton";
+import { AndroidInstalledBadge } from "./AndroidInstalledBadge";
 
 // The single primary CTA for the hero and top bar: Apple's App Store badge,
 // swapped for an "Install on Android" button on Android only (desktop Chrome
@@ -24,15 +25,17 @@ export function InstallCta({
   className?: string;
   pulse?: boolean;
 }) {
-  const { justInstalled, installAndroid } = useInstallPrompt();
-  // Standalone = the user is inside the installed PWA (an installed WebAPK
-  // captures shared /app links), so offering "install" there would be absurd;
-  // justInstalled hides the button right after a successful native prompt.
+  const { installed, installAndroid } = useInstallPrompt();
   const [android, setAndroid] = useState(false);
-  useEffect(() => setAndroid(isAndroid() && !isStandalone()), []);
+  useEffect(() => setAndroid(isAndroid()), []);
 
-  if (android && !justInstalled) {
-    return (
+  // `installed` covers standalone (we're inside the installed app), a fresh
+  // appinstalled, and Chrome's getInstalledRelatedApps across sessions — the
+  // pill replaces the button instead of falling back to the App Store badge.
+  if (android) {
+    return installed ? (
+      <AndroidInstalledBadge height={height} className={className} />
+    ) : (
       <AndroidInstallButton
         height={height}
         className={className}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { chromeIntentUrl, isInAppBrowser, isStandalone } from "./platform";
+import { chromeIntentUrl, isAndroid, isInAppBrowser, isStandalone } from "./platform";
 
 // Shared Android/PWA install state. A single module-level listener captures the
 // browser's `beforeinstallprompt` and preventDefault()s it, so the browser's own
@@ -35,10 +35,32 @@ let wired = false;
 function wire() {
   if (wired || typeof window === "undefined") return;
   wired = true;
+  // "Already installed" detection, best effort: standalone display-mode means we
+  // ARE the installed app; on Android Chrome getInstalledRelatedApps() reports
+  // the WebAPK across sessions (via manifest.related_applications). Elsewhere the
+  // only signal is a same-session `appinstalled` below.
+  if (isStandalone()) installed = true;
+  if (isAndroid()) {
+    const nav = navigator as Navigator & {
+      getInstalledRelatedApps?: () => Promise<{ platform: string }[]>;
+    };
+    nav
+      .getInstalledRelatedApps?.()
+      .then((apps) => {
+        if (apps.length > 0) {
+          installed = true;
+          notify();
+        }
+      })
+      .catch(() => {});
+  }
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferred = e as BeforeInstallPromptEvent;
     consumed = false;
+    // Chrome only fires this when the app is NOT installed — authoritative,
+    // overrides any stale "installed" conclusion (e.g. after an uninstall).
+    installed = false;
     notify();
   });
   window.addEventListener("appinstalled", () => {
@@ -95,7 +117,7 @@ function waitForDeferred(ms: number): Promise<boolean> {
 
 export function useInstallPrompt() {
   const ready = useSyncExternalStore(subscribe, installSnapshot, () => false);
-  const justInstalled = useSyncExternalStore(subscribe, installedSnapshot, () => false);
+  const installed = useSyncExternalStore(subscribe, installedSnapshot, () => false);
   const canInstall = ready && !isStandalone();
 
   async function promptInstall() {
@@ -133,7 +155,7 @@ export function useInstallPrompt() {
     return "help";
   }
 
-  return { canInstall, justInstalled, promptInstall, installAndroid };
+  return { canInstall, installed, promptInstall, installAndroid };
 }
 
 // The Android help sheet's open state — a module-level singleton so every

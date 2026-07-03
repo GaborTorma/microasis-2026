@@ -153,7 +153,10 @@
     "install": {
       "android1": "Install on",
       "android2": "Android",
-      "aria": "Install on Android"
+      "aria": "Install on Android",
+      "installed1": "On Android",
+      "installed2": "Installed",
+      "installedAria": "The app is already installed"
     },
     "featuresHeading": "Everything you need on the ground",
     "features": {
