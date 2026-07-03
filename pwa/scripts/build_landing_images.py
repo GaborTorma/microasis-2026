@@ -401,7 +401,10 @@ def build_og() -> None:
 
     badge = rasterize_badge(50)
     base.alpha_composite(badge, (x, BADGE_Y))
-    base.alpha_composite(android_badge(50), (x + badge.width + 14, BADGE_Y))
+    # 46px, vertically centred: the solid-white pill reads optically larger than
+    # the black badge (whose white border also loses ~2px to anti-aliasing), so
+    # equal geometry looked bigger — undersizing evens them out to the eye.
+    base.alpha_composite(android_badge(46), (x + badge.width + 14, BADGE_Y + 2))
     chips(base, x, CHIPS_BOTTOM,
           [("Ingyenes", "gift", "#5ec98a"),
            ("Regisztráció nélkül", "user-x", "#46b3a3"),
