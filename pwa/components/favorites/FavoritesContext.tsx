@@ -15,13 +15,23 @@ type Ctx = {
   favorites: Set<string>;
   isFavorite: (slug: string) => boolean;
   toggleFavorite: (slug: string) => void;
+  /** Transient favorites-only dim filter (never persisted — a filter that
+   *  survives a revisit would read as lost data). Auto-off when the last
+   *  favorite goes, so it can't resurface armed later (mirrors iOS). */
+  showOnlyFavorites: boolean;
+  toggleShowOnlyFavorites: () => void;
 };
 
 const FavoritesCtx = createContext<Ctx | null>(null);
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showOnly, setShowOnly] = useState(false);
   const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (favorites.size === 0) setShowOnly(false);
+  }, [favorites]);
 
   useEffect(() => {
     const parse = (raw: string | null): Set<string> | null => {
@@ -67,6 +77,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         else next.add(slug);
         return next;
       }),
+    showOnlyFavorites: showOnly,
+    toggleShowOnlyFavorites: () => setShowOnly((v) => !v),
   };
 
   return <FavoritesCtx.Provider value={value}>{children}</FavoritesCtx.Provider>;

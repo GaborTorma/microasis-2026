@@ -515,7 +515,7 @@ function EventBlock({
   nextStart: string | null;
 }) {
   const t = useTranslations();
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite, toggleFavorite, showOnlyFavorites } = useFavorites();
   const start = new Date(event.startsAt).getTime();
   const end = event.endsAt ? new Date(event.endsAt).getTime() : start + HOUR;
   const top = yFor(start);
@@ -530,10 +530,22 @@ function EventBlock({
   // Language chip shows wherever a language is set (any kind); no neutral Ø.
   const chip = event.langAvailability ? LANG_CHIPS[event.langAvailability] : null;
 
+  // Favoriting happens on a dedicated heart button only — a whole-cell tap
+  // target is too easy to hit by accident, and a focusable cell breaks the
+  // horizontal pager (focus scrolls the cell into view mid-swipe). Guard on
+  // the slug: a stale localStorage payload predating the field has none.
+  const canFav = Boolean(event.slug) && event.kind !== "break";
+  const fav = canFav && isFavorite(event.slug);
+  // Header filter: dim everything non-favorited (breaks included) — never
+  // remove cells, the grid is time-proportional.
+  const dimmed = showOnlyFavorites && !fav;
+
   if (event.kind === "break") {
     return (
       <div
-        className="absolute inset-x-0.5 flex items-center justify-center overflow-hidden rounded-md border border-dashed border-line/50 text-[0.6rem] uppercase tracking-wider text-cream-faint"
+        className={`absolute inset-x-0.5 flex items-center justify-center overflow-hidden rounded-md border border-dashed border-line/50 text-[0.6rem] uppercase tracking-wider text-cream-faint ${
+          dimmed ? "opacity-35" : ""
+        }`}
         style={{ top, height }}
       >
         {height >= 22 && (
@@ -551,13 +563,10 @@ function EventBlock({
   const KindIcon = EVENT_ICONS[eventIconKey(event)];
   const iconPx = Math.round(11 * scale);
 
-  // Favoriting happens on a dedicated heart button only — a whole-cell tap
-  // target is too easy to hit by accident, and a focusable cell breaks the
-  // horizontal pager (focus scrolls the cell into view mid-swipe). Guard on
-  // the slug: a stale localStorage payload predating the field has none.
-  const canFav = Boolean(event.slug);
-  const fav = canFav && isFavorite(event.slug);
-  const heartBtn = (size: number, extra = "") =>
+  // The heart floats right at the top of the text block — visually right under
+  // the kind icon — so only the line(s) beside it wrap short; everything below
+  // the button's height runs the full cell width again.
+  const heartBtn = (size: number) =>
     canFav ? (
       <button
         type="button"
@@ -566,9 +575,9 @@ function EventBlock({
         aria-label={t(fav ? "favorites.remove" : "favorites.add", {
           title: tx(event.title, locale),
         })}
-        className={`-m-1 shrink-0 rounded p-1 ${
+        className={`float-right -mr-0.5 -mt-0.5 mb-0.5 ml-1 rounded p-1 ${
           fav ? "text-red-400" : "text-cream-faint hover:text-red-400"
-        } ${extra}`}
+        }`}
       >
         <Heart size={size} fill={fav ? "currentColor" : "none"} />
       </button>
@@ -578,7 +587,9 @@ function EventBlock({
     <div
       className={`absolute inset-x-0.5 flex flex-col overflow-hidden rounded-md border-l-2 ${
         tight ? "px-1 py-0" : "px-1.5 py-0.5"
-      } ${live ? "ring-1 ring-offset-0" : ""} ${past ? "opacity-45" : ""}`}
+      } ${live ? "ring-1 ring-offset-0" : ""} ${
+        dimmed ? "opacity-35" : past ? "opacity-45" : ""
+      }`}
       style={{
         top,
         height,
@@ -599,25 +610,29 @@ function EventBlock({
             {!compact && event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
           </span>
           {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-now" />}
-          {heartBtn(iconPx, "ml-auto")}
           <KindIcon
             size={iconPx}
-            className={`${canFav ? "" : "ml-auto "}shrink-0`}
+            className="ml-auto shrink-0"
             style={{ color: stage.accent }}
           />
         </div>
       )}
-      {!tight && event.artist && (
-        <span
-          className="truncate font-display font-medium text-cream-faint"
-          style={{ fontSize: `${0.56 * scale}rem` }}
-        >
-          {event.artist}
-        </span>
-      )}
-      <div className="flex items-start gap-1 leading-[1.05]">
-        {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-now" />}
-        {tight && heartBtn(Math.round(9 * scale), "mt-0.5")}
+      {/* Block flow (not flex) so the floated heart under the kind icon only
+          shortens the line(s) beside it; lower lines reclaim the full width.
+          The truncating artist line is a BFC, so it narrows beside the float. */}
+      <div className="leading-[1.05]">
+        {heartBtn(tight ? Math.round(9 * scale) : iconPx)}
+        {tight && live && (
+          <span className="pulse-dot mr-1 inline-block h-1.5 w-1.5 rounded-full bg-now" />
+        )}
+        {!tight && event.artist && (
+          <div
+            className="truncate font-display font-medium text-cream-faint"
+            style={{ fontSize: `${0.56 * scale}rem` }}
+          >
+            {event.artist}
+          </div>
+        )}
         <span
           className={`font-display font-semibold ${tight ? "text-cream" : "text-cream-dim"}`}
           style={{ fontSize: `${(tight ? 0.62 : 0.74) * scale}rem` }}
