@@ -89,6 +89,17 @@ Rules a future edit must respect:
   (`ManasKit/Favorites.swift`, per-slug last-writer-wins); the watch widget reads
   the App Group mirror (`manas.favorites`). Breaks (`kind == "break"`) are never
   favoritable.
+- **A GPS fix is only trusted when accurate and fresh** (horizontal accuracy
+  ≤ 100 m, fix age ≤ 60 s — thresholds must match across
+  `pwa/lib/useNearestStage.ts` and `ManasKit/Location.swift`
+  `Geo.maxFixAccuracyM`/`maxFixAgeS`). A coarse/stale/failed fix *clears* the
+  nearest-stage state instead of keeping the previous value — no stage beats
+  the wrong stage — and consumers must treat that nil as "don't move", never
+  as "jump to the default stage". iOS retries the one-shot request a couple
+  of times first, because CoreLocation usually serves a stale cached fix
+  while the GPS warms up (the browser's `maximumAge` already prevents that
+  on web). Known limit: 100 m cannot disambiguate the tightest stage pair
+  (portal↔terrace ≈ 97 m) — accepted.
 - **All times display in `Europe/Budapest`**, hardcoded on both sides
   (`pwa/lib/queries.ts`/`format.ts`, `ManasKit/Formatting.swift`).
 

@@ -113,8 +113,10 @@ struct WatchRootView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { now = Fmt.now; resetToNow(); location.refresh(stages: stages) }
             }
-            // Nearest stage (within 150 m) becomes the selected stage.
-            .onChange(of: location.nearestSlug) { _, _ in resetToNow() }
+            // Nearest stage (within 150 m) becomes the selected stage. A cleared
+            // fix (nil) must NOT move the view — resetToNow() would fall back to
+            // the default stage and jump away from where the user is browsing.
+            .onChange(of: location.nearestSlug) { _, slug in if slug != nil { resetToNow() } }
             .onChange(of: settings.debugCoord) { _, _ in location.refresh(stages: stages) }
         }
     }
