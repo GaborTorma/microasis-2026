@@ -30,6 +30,15 @@ public enum AppLinks {
     public static let support = URL(string: "https://manas.torma.ai/support")!
     /// The app maker's site, linked from the "Made by" credit in settings.
     public static let maker = URL(string: "https://torma.ai")!
+
+    /// Custom scheme for widget → app deep links (registered in `project.yml`
+    /// on the iOS app target).
+    public static let scheme = "manas"
+    /// `manas://stage/<slug>` — tapping a home widget opens the timetable with
+    /// that stage as the leading column (`RootView.onOpenURL`).
+    public static func stageDeepLink(_ slug: String) -> URL? {
+        URL(string: "\(scheme)://stage/\(slug)")
+    }
 }
 
 /// Post-festival GROUNDING Days window + link. Web-only NowView parity (mirrors

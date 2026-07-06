@@ -55,6 +55,10 @@ targets:
         # Kept short so the home-screen label doesn't truncate; the App Store
         # listing name is the longer "Guide for MANAS 2026".
         CFBundleDisplayName: "MANAS 2026"
+        # Widget → app deep links (manas://stage/<slug>), see AppLinks.scheme.
+        CFBundleURLTypes:
+          - CFBundleURLName: ai.torma.manas.2026
+            CFBundleURLSchemes: [manas]
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."

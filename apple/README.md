@@ -74,7 +74,8 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   show the same content — the watch card's "now" block (stage · time · artist
   · act), then a bottom-anchored up-next list (act · start time, as many rows
   as fit) under a thin rule; medium is the wide variant where long names fit
-  on one line. Configurable per stage, like the watch widget. Shares the app's
+  on one line. Configurable per stage, like the watch widget. Tapping a widget
+  opens the timetable with that stage as the leading column. Shares the app's
   schedule cache and language via the App Group.
 
 **watchOS** — one stage at a time, no time grid:

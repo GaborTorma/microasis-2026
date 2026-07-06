@@ -6,6 +6,7 @@ struct RootView: View {
     @State private var tab = 0
     @State private var showSettings = false
     @State private var compactHeader = false   // landscape: hide app header on scroll
+    @State private var stageJump: String?      // widget deep link: stage slug to lead with
     @AppStorage("manas.disclaimerSeen") private var disclaimerSeen = false
     @State private var showDisclaimer = false
 
@@ -32,7 +33,8 @@ struct RootView: View {
                     // single layer behind it wouldn't show through). The header
                     // keeps its flat band above the divider.
                     TabView(selection: $tab) {
-                        TimetableView(isLandscape: landscape, compactHeader: $compactHeader)
+                        TimetableView(isLandscape: landscape, compactHeader: $compactHeader,
+                                      stageJump: $stageJump)
                             .background(AppBackground())
                             .tabItem { Label(L.t("nav.timetable", settings.locale), systemImage: "calendar") }
                             .tag(0)
@@ -61,6 +63,14 @@ struct RootView: View {
             .onAppear {
                 if !disclaimerSeen { showDisclaimer = true }
                 applyScreenshotOverrides()
+            }
+            // Widget deep link: manas://stage/<slug> → timetable tab with that
+            // stage as the leading column (TimetableView consumes `stageJump`).
+            .onOpenURL { url in
+                guard url.scheme == AppLinks.scheme, url.host() == "stage",
+                      let slug = url.pathComponents.dropFirst().first else { return }
+                tab = 0
+                stageJump = slug
             }
         }
     }

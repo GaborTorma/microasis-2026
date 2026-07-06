@@ -133,7 +133,11 @@ disclaimer with `-manas.disclaimerSeen 1`.
   translucent top-right watermark (38/48 pt at 0.26, content may run over it);
   the HU/EN chip is full-opacity — medium puts it on the title's last line and
   the time range flush with the header's trailing edge, small puts the chip
-  top-right in the header. Each extension reads the
+  top-right in the header. Tapping an iOS widget deep-links via
+  `manas://stage/<slug>` (`AppLinks.stageDeepLink`, scheme registered in
+  `project.yml`) — `RootView.onOpenURL` switches to the timetable and
+  `TimetableView` makes that stage the leading column (clamped near the end of
+  the stage list so the header and scroll stay in sync). Each extension reads the
   **schedule cache it shares with its host app** (App Group container; a copy
   fresher than 6 h skips the network, otherwise it does its own ETag-revalidated
   fetch), follows the **host app's language** via the `SharedDefaults` App Group
