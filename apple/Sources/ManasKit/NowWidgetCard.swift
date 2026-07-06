@@ -180,7 +180,7 @@ public struct NowWidgetContent: View {
     private var actLabel: Text {
         let title = Text(actText)
         guard entry.isFavorite else { return title }
-        return Text("\(Image(systemName: "heart.fill")) ").foregroundStyle(accent) + title
+        return Text("\(Image(systemName: "heart.fill")) ").foregroundStyle(.red) + title
     }
 
     private var actText: String {

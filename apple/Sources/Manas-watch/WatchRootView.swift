@@ -221,7 +221,7 @@ struct WatchRootView: View {
                         if event.slug.map(favorites.isFavorite) == true {
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(Color(hex: stage.accent))
+                                .foregroundStyle(.red)
                         }
                         // Inline kind icon keeps its normal place (top-right of the
                         // time row); the bottom-left watermark is the faint backdrop.

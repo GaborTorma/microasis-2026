@@ -464,7 +464,7 @@ private struct EventBlock: View {
                             timeLabel(Fmt.hhmm(start), font: timeFont, accent: accent, dot: false, shrink: true)
                         }
                         Spacer(minLength: 2)
-                        if isFav { heartBadge(accent) }
+                        if isFav { heartBadge }
                         kindIcon(accent, hot: hot)
                     }
                 }
@@ -483,7 +483,7 @@ private struct EventBlock: View {
                     // for a time row); the language watermark floats over (overlay).
                     if !showTime {
                         Spacer(minLength: 2)
-                        if isFav { heartBadge(accent) }
+                        if isFav { heartBadge }
                         kindIcon(accent, hot: hot)
                     }
                 }
@@ -509,12 +509,6 @@ private struct EventBlock: View {
             .background(color.opacity(live ? 0.85 : 0.28), in: RoundedRectangle(cornerRadius: 6))
             .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 2) }
             .clipShape(RoundedRectangle(cornerRadius: 6))
-            // Favorited: a slightly stronger full border in the stage accent.
-            .overlay {
-                if isFav {
-                    RoundedRectangle(cornerRadius: 6).strokeBorder(accent.opacity(0.85), lineWidth: 1.2)
-                }
-            }
             .opacity(past ? 0.45 : 1)
         }
     }
@@ -534,11 +528,12 @@ private struct EventBlock: View {
         }
     }
 
-    /// Small favorited marker, sitting beside the kind icon in the accent colour.
-    private func heartBadge(_ accent: Color) -> some View {
+    /// Small favorited marker, sitting beside the kind icon. Always red so
+    /// favorites read the same on every stage column.
+    private var heartBadge: some View {
         Image(systemName: "heart.fill")
             .font(.system(size: 8 * scale, weight: .bold))
-            .foregroundStyle(accent)
+            .foregroundStyle(.red)
     }
 
     /// The act's kind glyph. Keeps its own (stage accent) colour; when `hot`

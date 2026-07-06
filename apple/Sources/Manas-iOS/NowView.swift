@@ -214,7 +214,7 @@ private struct OpeningRowView: View {
                         .lineLimit(2).minimumScaleFactor(0.7)
                     if e.slug.map(favorites.isFavorite) == true {
                         Image(systemName: "heart.fill")
-                            .font(.system(size: 11, weight: .bold)).foregroundStyle(accent)
+                            .font(.system(size: 11, weight: .bold)).foregroundStyle(.red)
                     }
                 }
             }
@@ -386,7 +386,7 @@ private struct StageNowCard: View {
                                     .lineLimit(2).minimumScaleFactor(0.6)
                                 if live.slug.map(favorites.isFavorite) == true {
                                     Image(systemName: "heart.fill")
-                                        .font(.system(size: 13, weight: .bold)).foregroundStyle(accent)
+                                        .font(.system(size: 13, weight: .bold)).foregroundStyle(.red)
                                 }
                             }
                         }
@@ -421,7 +421,7 @@ private struct StageNowCard: View {
                                     .lineLimit(2).minimumScaleFactor(0.7)
                                 if next.slug.map(favorites.isFavorite) == true {
                                     Image(systemName: "heart.fill")
-                                        .font(.system(size: 11, weight: .bold)).foregroundStyle(accent)
+                                        .font(.system(size: 11, weight: .bold)).foregroundStyle(.red)
                                 }
                             }
                         }
