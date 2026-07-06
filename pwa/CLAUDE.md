@@ -81,7 +81,7 @@ pnpm icons               # regenerate PWA icons (mandala SVG → public/icons/*.
 ## Gotchas / footguns
 
 - **Service worker cache versioning is manual.** `public/sw.js` keys everything off
-  `VERSION = "manas-vNN"` (currently v18). **Bump it after any deploy that changes cached assets** or
+  `VERSION = "manas-vNN"` (currently v19). **Bump it after any deploy that changes cached assets** or
   returning PWA users get stale files — the #1 "my change isn't showing" trap.
 - **`pnpm db:seed` is destructive and idempotent:** it `db.delete()`s events,
   locations, stages, locationCategories, then re-inserts from the hardcoded arrays in
