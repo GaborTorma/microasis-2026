@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Coffee, MapPin } from "lucide-react";
+import { Coffee, Heart, MapPin } from "lucide-react";
 import { EVENT_ICONS, eventIconKey } from "@/lib/eventIcon";
 import { useSchedule } from "@/lib/useSchedule";
 import { useNow, currentNow } from "@/lib/useNow";
@@ -21,6 +21,7 @@ import {
 } from "@/lib/stageSettings";
 import type { EventDTO, StageDTO } from "@/lib/types";
 import { StatusBar } from "./StatusBar";
+import { useFavorites } from "./favorites/FavoritesContext";
 import { MAX_COLUMNS, useSettings } from "./settings/SettingsContext";
 
 const BASE_PX_PER_HOUR = 64; // at scale 1; grows with the text scale
@@ -514,6 +515,7 @@ function EventBlock({
   nextStart: string | null;
 }) {
   const t = useTranslations();
+  const { isFavorite, toggleFavorite, showOnlyFavorites } = useFavorites();
   const start = new Date(event.startsAt).getTime();
   const end = event.endsAt ? new Date(event.endsAt).getTime() : start + HOUR;
   const top = yFor(start);
@@ -528,10 +530,22 @@ function EventBlock({
   // Language chip shows wherever a language is set (any kind); no neutral Ø.
   const chip = event.langAvailability ? LANG_CHIPS[event.langAvailability] : null;
 
+  // Favoriting happens on a dedicated heart button only — a whole-cell tap
+  // target is too easy to hit by accident, and a focusable cell breaks the
+  // horizontal pager (focus scrolls the cell into view mid-swipe). Guard on
+  // the slug: a stale localStorage payload predating the field has none.
+  const canFav = Boolean(event.slug) && event.kind !== "break";
+  const fav = canFav && isFavorite(event.slug);
+  // Header filter: dim everything non-favorited (breaks included) — never
+  // remove cells, the grid is time-proportional.
+  const dimmed = showOnlyFavorites && !fav;
+
   if (event.kind === "break") {
     return (
       <div
-        className="absolute inset-x-0.5 flex items-center justify-center overflow-hidden rounded-md border border-dashed border-line/50 text-[0.6rem] uppercase tracking-wider text-cream-faint"
+        className={`absolute inset-x-0.5 flex items-center justify-center overflow-hidden rounded-md border border-dashed border-line/50 text-[0.6rem] uppercase tracking-wider text-cream-faint ${
+          dimmed ? "opacity-35" : ""
+        }`}
         style={{ top, height }}
       >
         {height >= 22 && (
@@ -550,10 +564,27 @@ function EventBlock({
   const iconPx = Math.round(11 * scale);
 
   return (
+    // Tap anywhere on the cell to toggle its favorite (like the iOS blocks) —
+    // a touch drag scrolls and suppresses the click, so paging stays safe.
+    // Deliberately NOT focusable (no tabIndex): focusing a cell makes the
+    // browser scroll it into view inside the pager mid-swipe, which is what
+    // originally broke the left-right stage paging.
     <div
+      onClick={canFav ? () => toggleFavorite(event.slug) : undefined}
+      role={canFav ? "button" : undefined}
+      aria-pressed={canFav ? fav : undefined}
+      aria-label={
+        canFav
+          ? t(fav ? "favorites.remove" : "favorites.add", {
+              title: tx(event.title, locale),
+            })
+          : undefined
+      }
       className={`absolute inset-x-0.5 flex flex-col overflow-hidden rounded-md border-l-2 ${
         tight ? "px-1 py-0" : "px-1.5 py-0.5"
-      } ${live ? "ring-1 ring-offset-0" : ""} ${past ? "opacity-45" : ""}`}
+      } ${live ? "ring-1 ring-offset-0" : ""} ${
+        dimmed ? "opacity-35" : past ? "opacity-45" : ""
+      } ${canFav ? "cursor-pointer select-none" : ""}`}
       style={{
         top,
         height,
@@ -574,7 +605,11 @@ function EventBlock({
             {!compact && event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
           </span>
           {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-now" />}
-          <KindIcon size={iconPx} className="ml-auto shrink-0" style={{ color: stage.accent }} />
+          <KindIcon
+            size={iconPx}
+            className="ml-auto shrink-0"
+            style={{ color: stage.accent }}
+          />
         </div>
       )}
       {!tight && event.artist && (
@@ -591,6 +626,19 @@ function EventBlock({
           className={`font-display font-semibold ${tight ? "text-cream" : "text-cream-dim"}`}
           style={{ fontSize: `${(tight ? 0.62 : 0.74) * scale}rem` }}
         >
+          {/* Inline heart: part of the title's text run, so it sits before
+              the first word and wraps with the text (like the watch widget).
+              0.8em @ -0.05em is the largest size that stays inside the 1.05
+              line box — measured: anything bigger nudges the first line down
+              (0.9em → +0.56px). em-sized, so this holds at every text scale. */}
+          {fav && (
+            <Heart
+              fill="currentColor"
+              className="mr-1 inline-block text-red-400"
+              style={{ width: "0.8em", height: "0.8em", verticalAlign: "-0.05em" }}
+              aria-hidden="true"
+            />
+          )}
           {tx(event.title, locale)}
         </span>
       </div>

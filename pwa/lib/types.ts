@@ -35,6 +35,8 @@ export type EventDTO = {
   id: number;
   stageId: number;
   stageSlug: string;
+  /** Stable cross-platform event identity (favorites key). */
+  slug: string;
   title: I18nText;
   artist: string | null;
   startsAt: string;

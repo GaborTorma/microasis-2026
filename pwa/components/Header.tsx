@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { TextScaleControl } from "./TextScaleControl";
 import { ColumnCountControl } from "./ColumnCountControl";
+import { FavoritesFilterButton } from "./favorites/FavoritesFilterButton";
 import { SettingsButton } from "./settings/SettingsButton";
 
 export function Header() {
@@ -49,6 +50,7 @@ export function Header() {
         <div className="flex shrink-0 items-center gap-1.5">
           {onTimetable && <TextScaleControl />}
           {onTimetable && <ColumnCountControl />}
+          {onTimetable && <FavoritesFilterButton />}
           <SettingsButton />
         </div>
       </div>

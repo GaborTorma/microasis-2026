@@ -13,7 +13,7 @@ struct NowProvider: AppIntentTimelineProvider {
     func snapshot(for configuration: StageIntent, in context: Context) async -> NowEntry {
         let data = await WidgetSchedule.load()
         return NowWidgetBuilder.makeEntry(at: WidgetSchedule.now, data: data, slug: configuration.stage?.id,
-                                          locale: WidgetSchedule.locale)
+                                          locale: WidgetSchedule.locale, favorites: WidgetSchedule.favorites)
     }
 
     /// Smart Stack suggestions: one pre-configured "now playing" per stage, so
@@ -31,11 +31,12 @@ struct NowProvider: AppIntentTimelineProvider {
 
     func timeline(for configuration: StageIntent, in context: Context) async -> Timeline<NowEntry> {
         let now = WidgetSchedule.now
+        let favorites = WidgetSchedule.favorites
         let data = await WidgetSchedule.load()
         guard let data, let stage = NowWidgetBuilder.resolveStage(data, slug: configuration.stage?.id) else {
             // No data yet (first run, offline, never opened): retry in an hour.
             let entry = NowWidgetBuilder.makeEntry(at: now, data: data, slug: configuration.stage?.id,
-                                                   locale: WidgetSchedule.locale)
+                                                   locale: WidgetSchedule.locale, favorites: favorites)
             return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
         }
         // QA debug clock: the *content* reflects the frozen debug time, but the
@@ -46,11 +47,13 @@ struct NowProvider: AppIntentTimelineProvider {
             let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
             let p = NowWidgetBuilder.pick(at: now, events: events)
             let entry = NowEntry(date: Date(), stage: stage, event: p.event, upcoming: p.upcoming,
-                                 isLive: p.live, locale: WidgetSchedule.locale)
+                                 isLive: p.live, favorites: favorites,
+                                 locale: WidgetSchedule.locale)
             return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
         }
         let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
-        let entries = NowWidgetBuilder.entries(now: now, stage: stage, events: events, locale: WidgetSchedule.locale)
+        let entries = NowWidgetBuilder.entries(now: now, stage: stage, events: events,
+                                               locale: WidgetSchedule.locale, favorites: favorites)
         // One entry per future act boundary lets WidgetKit roll onto the next
         // act exactly when it changes, with no extra fetch. `.atEnd` then
         // refetches (≤12 h later) to pick up schedule edits. A lone "now" entry

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 private let gutterW: CGFloat = 60
 private let headerH: CGFloat = 34
@@ -17,7 +18,11 @@ struct TimetableView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
     @EnvironmentObject var location: LocationStore
+    @EnvironmentObject var favorites: FavoritesStore
     var isLandscape: Bool = false
+    /// Favorites dim-filter (heart button in the header): non-favorited blocks
+    /// fade so the favorited ones pop.
+    var favFilter: Bool = false
     @Binding var compactHeader: Bool
     /// Widget deep link (`manas://stage/<slug>`): pending stage to lead with.
     @Binding var stageJump: String?
@@ -144,6 +149,14 @@ struct TimetableView: View {
                 }
             }
         }
+    }
+
+    /// Tap on a block: toggle its favorite state. Breaks are never favoritable,
+    /// and events without a slug (old cached payloads) can't be keyed.
+    private func toggleFavorite(_ ev: EventDTO) {
+        guard ev.isPlayable, let slug = ev.slug else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        favorites.toggle(slug)
     }
 
     /// Make the stage nearest the device (within 150 m) the left-most column.
@@ -353,9 +366,16 @@ struct TimetableView: View {
                 // start so a 15-min slot can never overlap the one below it.
                 let avail = i + 1 < evs.count ? g.y(evs[i + 1].startsAt) - g.y(ev.startsAt) : .infinity
                 let h = min(max(g.blockHeight(ev), EventBlock.minHeight(scale)), avail)
-                EventBlock(event: ev, stage: stage, now: now, near: near, locale: settings.locale, scale: scale, height: h)
+                let isFav = ev.slug.map(favorites.isFavorite) ?? false
+                EventBlock(event: ev, stage: stage, now: now, near: near, locale: settings.locale,
+                           scale: scale, height: h, isFav: isFav)
                     .frame(width: colW - 4, height: h)
                     .offset(x: 2, y: g.y(ev.startsAt))
+                    // Dim-filter: favorited acts keep full strength, the rest fade.
+                    .opacity(favFilter && !isFav ? 0.35 : 1)
+                    .onTapGesture { toggleFavorite(ev) }
+                    .accessibilityHint(ev.isPlayable && ev.slug != nil
+                        ? L.t(isFav ? "fav.remove" : "fav.add", settings.locale) : "")
             }
         }
         .frame(width: colW)
@@ -411,6 +431,8 @@ private struct EventBlock: View {
     let locale: AppLocale
     let scale: CGFloat
     let height: CGFloat
+    /// Favorited (by slug) — shows the heart badge + a stronger accent border.
+    let isFav: Bool
 
     /// Minimum block height: one title line at the current text size fits with
     /// no clipping, so even a 30-minute act shows its name in full.
@@ -470,9 +492,7 @@ private struct EventBlock: View {
                         .lineLimit(1).truncationMode(.tail)
                 }
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
-                    Text(event.title.text(locale))
-                        .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
-                        .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
+                    titleText
                         .lineLimit(showTime ? titleLines : 1).truncationMode(.tail)
                     // On a single-line block the kind icon sits inline (no room
                     // for a time row); the language watermark floats over (overlay).
@@ -520,6 +540,20 @@ private struct EventBlock: View {
                     .padding(.leading, 3 * scale)   // ~2× the gap from the time
             }
         }
+    }
+
+    /// The act title, with the always-red favorite heart inlined before the
+    /// first word as part of the same text run (like the web timetable and the
+    /// watch widget's act line) — it wraps with the text and, at 0.8× the title
+    /// size, never grows the line.
+    private var titleText: Text {
+        let title = Text(event.title.text(locale))
+            .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
+            .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
+        guard isFav else { return title }
+        return Text("\(Image(systemName: "heart.fill")) ")
+            .font(.system(size: 12 * scale * 0.8, weight: .bold))
+            .foregroundStyle(.red) + title
     }
 
     /// The act's kind glyph. Keeps its own (stage accent) colour; when `hot`

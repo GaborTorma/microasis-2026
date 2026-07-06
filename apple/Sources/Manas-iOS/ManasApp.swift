@@ -6,6 +6,7 @@ struct ManasApp: App {
     @StateObject private var store = ScheduleStore()
     @StateObject private var settings = Settings()
     @StateObject private var location = LocationStore()
+    @StateObject private var favorites = FavoritesStore()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -20,6 +21,7 @@ struct ManasApp: App {
             .environmentObject(store)
             .environmentObject(settings)
             .environmentObject(location)
+            .environmentObject(favorites)
             .preferredColorScheme(.dark)
             .tint(Theme.sun)
             .task { await store.load(); reloadWidgets() }
@@ -54,6 +56,7 @@ struct ManasApp: App {
 struct WidgetPreviewScreen: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
+    @EnvironmentObject var favorites: FavoritesStore
     let slugs: [String]
 
     var body: some View {
@@ -76,6 +79,7 @@ struct WidgetPreviewScreen: View {
     }
 
     private func entry(_ slug: String?) -> NowEntry {
-        NowWidgetBuilder.makeEntry(at: Fmt.now, data: store.data, slug: slug, locale: settings.locale)
+        NowWidgetBuilder.makeEntry(at: Fmt.now, data: store.data, slug: slug, locale: settings.locale,
+                                   favorites: favorites.favorites)
     }
 }

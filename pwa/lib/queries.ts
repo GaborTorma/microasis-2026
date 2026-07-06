@@ -21,6 +21,7 @@ export async function getSchedule() {
     id: e.id,
     stageId: e.stageId,
     stageSlug: slugById.get(e.stageId)!,
+    slug: e.slug,
     title: e.title,
     artist: e.artist,
     startsAt: e.startsAt.toISOString(),

@@ -35,6 +35,12 @@ enum WidgetSchedule {
     /// "Now" for the widget — the shared debug clock when set, else the real time.
     static var now: Date { debugNow ?? Date() }
 
+    /// Favorited event slugs the watch app mirrors into the App Group
+    /// (`FavoritesStore`). Empty until the app first writes them.
+    static var favorites: Set<String> {
+        Set(SharedDefaults.suite.stringArray(forKey: SharedDefaults.favoritesKey) ?? [])
+    }
+
     /// Widget language follows the watch app's setting, shared via the App Group.
     /// If the app hasn't written one yet, fall back to the device language (which
     /// is exactly the app's own device default). Hungarian ⇒ HU, else EN.

@@ -6,6 +6,7 @@ struct ManasWatchApp: App {
     @StateObject private var store = ScheduleStore()
     @StateObject private var settings = Settings()
     @StateObject private var location = LocationStore()
+    @StateObject private var favorites = FavoritesStore()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -20,6 +21,7 @@ struct ManasWatchApp: App {
             .environmentObject(store)
             .environmentObject(settings)
             .environmentObject(location)
+            .environmentObject(favorites)
             .tint(Theme.sun)
             .task { await store.load(); reloadWidgets() }
             // Re-fetch whenever the app returns to the foreground, and push
@@ -53,6 +55,7 @@ struct ManasWatchApp: App {
 struct WidgetPreviewScreen: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
+    @EnvironmentObject var favorites: FavoritesStore
     let slug: String
 
     var body: some View {
@@ -61,7 +64,8 @@ struct WidgetPreviewScreen: View {
             ZStack {
                 Theme.ink.ignoresSafeArea()
                 NowWidgetCard(entry: NowWidgetBuilder.makeEntry(
-                    at: Fmt.now, data: store.data, slug: slug, locale: settings.locale))
+                    at: Fmt.now, data: store.data, slug: slug, locale: settings.locale,
+                    favorites: favorites.favorites))
                     .frame(width: w, height: w * 0.46)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

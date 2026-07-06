@@ -44,12 +44,22 @@ type Entry = {
   lang?: LangAvailability;
 };
 
+/** Shared cross-platform slug algorithm (see root CLAUDE.md wire contract). */
+const slugify = (s: string) =>
+  s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 /** Turn an ordered entry list into insert rows. Uses explicit end if given,
  *  otherwise endsAt = next entry's start. `kind` is taken verbatim from each
  *  entry — the seed mirrors the DB exactly; the fine workshop categories
  *  (sound-bath, voice, drum, yoga, …) live explicitly per entry rather than being
- *  derived. Entries without a kind default to "music". */
-function withEnds(stageId: number, list: Entry[], lastMinutes = 90) {
+ *  derived. Entries without a kind default to "music". Slug parts ride along
+ *  raw; assignSlugs() finalizes them once all stages are merged. */
+function withEnds(stageSlug: string, list: Entry[], lastMinutes = 90) {
   const sorted = [...list].sort(
     (a, b) => bp(a.d, a.s).getTime() - bp(b.d, b.s).getTime(),
   );
@@ -62,7 +72,9 @@ function withEnds(stageId: number, list: Entry[], lastMinutes = 90) {
         ? bp(next.d, next.s)
         : new Date(startsAt.getTime() + lastMinutes * 60_000);
     return {
-      stageId,
+      stageSlug,
+      slugBase: `${stageSlug}-${slugify(ev.title.en)}-${ev.d.slice(5).replace("-", "")}`,
+      slugTime: ev.s.replace(":", ""),
       title: ev.title,
       artist: ev.a ?? null,
       startsAt,
@@ -71,6 +83,30 @@ function withEnds(stageId: number, list: Entry[], lastMinutes = 90) {
       langAvailability: ev.lang ?? null,
     };
   });
+}
+
+/** Finalize the wire `slug` — the stable cross-platform event identity used by
+ *  favorites (see root CLAUDE.md). `stage-title-MMDD` is a pure function of the
+ *  event's OWN fields, so adding/removing/editing *other* entries never shifts
+ *  it (a positional "-2" counter would re-point favorites at a different
+ *  session). Only a same-title-same-stage-same-day group also gets "-HHmm".
+ *  Throws on residual duplicates — callers must run this BEFORE any DB write. */
+function assignSlugs<T extends { slugBase: string; slugTime: string }>(
+  rows: T[],
+) {
+  const baseCounts = new Map<string, number>();
+  for (const r of rows)
+    baseCounts.set(r.slugBase, (baseCounts.get(r.slugBase) ?? 0) + 1);
+  const out = rows.map(({ slugBase, slugTime, ...rest }) => ({
+    ...rest,
+    slug: (baseCounts.get(slugBase) ?? 1) > 1 ? `${slugBase}-${slugTime}` : slugBase,
+  }));
+  const dupes = [
+    ...new Set(out.map((r) => r.slug).filter((s, i, all) => all.indexOf(s) !== i)),
+  ];
+  if (dupes.length)
+    throw new Error(`Duplicate event slugs: ${dupes.join(", ")}`);
+  return out;
 }
 
 // ─────────────────────────────────────────────────────────── PORTAL ──
@@ -529,6 +565,16 @@ const LOCATIONS: Loc[] = [
 ];
 
 async function main() {
+  // Build + validate every event row up front — a slug collision must abort
+  // while the DB still holds the previous dataset, not after the wipe.
+  const eventRows = assignSlugs([
+    ...withEnds("portal", PORTAL),
+    ...withEnds("field", FIELD),
+    ...withEnds("bowl", BOWL),
+    ...withEnds("terrace", TERRACE),
+    ...withEnds("mandala", MANDALA),
+  ]);
+
   console.log("Wiping existing rows…");
   await db.delete(events);
   await db.delete(locations);
@@ -599,13 +645,15 @@ async function main() {
     .returning();
 
   console.log("Inserting events…");
-  await db.insert(events).values([
-    ...withEnds(portal.id, PORTAL),
-    ...withEnds(field.id, FIELD),
-    ...withEnds(bowl.id, BOWL),
-    ...withEnds(terrace.id, TERRACE),
-    ...withEnds(mandala.id, MANDALA),
-  ]);
+  const stageIdBySlug = new Map(
+    [portal, field, bowl, terrace, mandala].map((s) => [s.slug, s.id]),
+  );
+  await db.insert(events).values(
+    eventRows.map(({ stageSlug, ...r }) => ({
+      ...r,
+      stageId: stageIdBySlug.get(stageSlug)!,
+    })),
+  );
 
   console.log("Inserting location categories…");
   const catRows = await db

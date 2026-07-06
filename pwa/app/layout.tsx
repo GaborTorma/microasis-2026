@@ -5,6 +5,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 import { SWRegister } from "@/components/SWRegister";
+import { FavoritesProvider } from "@/components/favorites/FavoritesContext";
 import { SettingsProvider } from "@/components/settings/SettingsContext";
 
 const display = Baloo_2({
@@ -71,8 +72,10 @@ export default async function RootLayout({
       <body className="min-h-full">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SettingsProvider>
-            <AppShell>{children}</AppShell>
-            <SWRegister />
+            <FavoritesProvider>
+              <AppShell>{children}</AppShell>
+              <SWRegister />
+            </FavoritesProvider>
           </SettingsProvider>
         </NextIntlClientProvider>
       </body>

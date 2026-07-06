@@ -190,6 +190,7 @@ private struct OpeningStageCard: View {
 }
 
 private struct OpeningRowView: View {
+    @EnvironmentObject var favorites: FavoritesStore
     let row: OpeningRow
     let accent: Color
     let now: Date
@@ -208,7 +209,8 @@ private struct OpeningRowView: View {
                     Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }
-                Text(e.title.text(locale)).font(.headline).foregroundStyle(Theme.cream)
+                favTitle(e.slug, Text(e.title.text(locale)).font(.headline).foregroundStyle(Theme.cream),
+                         heartSize: 14, favorites)
                     .lineLimit(2).minimumScaleFactor(0.7)
             }
             Spacer(minLength: 8)
@@ -332,6 +334,7 @@ private struct LiveDot: View {
 // MARK: - Normal grid card
 
 private struct StageNowCard: View {
+    @EnvironmentObject var favorites: FavoritesStore
     let stage: StageDTO
     let events: [EventDTO]
     let now: Date
@@ -373,7 +376,8 @@ private struct StageNowCard: View {
                                 Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
-                            Text(live.title.text(locale)).font(.title3.bold()).foregroundStyle(Theme.cream)
+                            favTitle(live.slug, Text(live.title.text(locale)).font(.title3.bold()).foregroundStyle(Theme.cream),
+                                     heartSize: 16, favorites)
                                 .lineLimit(2).minimumScaleFactor(0.6)
                         }
                         Spacer(minLength: 8)
@@ -402,7 +406,8 @@ private struct StageNowCard: View {
                                 Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamFaint)
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
-                            Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim)
+                            favTitle(next.slug, Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim),
+                                     heartSize: 14, favorites)
                                 .lineLimit(2).minimumScaleFactor(0.7)
                         }
                         Spacer(minLength: 8)
@@ -465,4 +470,14 @@ private func remaining(_ target: Date, _ now: Date) -> String {
     let s = max(0, Int(target.timeIntervalSince(now)))
     let h = s / 3600, m = (s % 3600) / 60, sec = s % 60
     return h > 0 ? String(format: "%d:%02d:%02d", h, m, sec) : String(format: "%d:%02d", m, sec)
+}
+
+/// Prepends the always-red favorite heart to a title's text run (before the
+/// first word, wrapping with the text — same as the timetable and the web).
+private func favTitle(_ slug: String?, _ title: Text, heartSize: CGFloat,
+                      _ favorites: FavoritesStore) -> Text {
+    guard slug.map(favorites.isFavorite) == true else { return title }
+    return Text("\(Image(systemName: "heart.fill")) ")
+        .font(.system(size: heartSize, weight: .bold))
+        .foregroundStyle(.red) + title
 }

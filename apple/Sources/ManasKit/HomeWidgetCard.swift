@@ -132,10 +132,21 @@ public struct HomeWidgetContent: View {
     }
 
     private var titleText: some View {
-        Text(entry.actText)
+        actLabel
             .font(.system(size: m.title, weight: .bold, design: .rounded))
             .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
             .lineLimit(m.titleLines).minimumScaleFactor(0.6)
+    }
+
+    /// The act line, with the always-red favorite heart inlined before the name
+    /// as part of the text run (wraps with the title), 0.8× the title size —
+    /// mirrors the app timetable / NowView / web.
+    private var actLabel: Text {
+        let title = Text(entry.actText)
+        guard entry.isFavorite else { return title }
+        return Text("\(Image(systemName: "heart.fill")) ")
+            .font(.system(size: m.title * 0.8, weight: .bold))
+            .foregroundStyle(.red) + title
     }
 
     @ViewBuilder private var langChip: some View {
@@ -172,7 +183,7 @@ public struct HomeWidgetContent: View {
         VStack(alignment: .leading, spacing: 3) {
             ForEach(entry.upcoming.prefix(count)) { act in
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(act.title.text(entry.locale))
+                    upcomingLabel(act)
                         .font(.system(size: m.nextTitle, weight: .semibold, design: .rounded))
                         .foregroundStyle(Theme.creamDim)
                         .lineLimit(1).minimumScaleFactor(0.7)
@@ -184,6 +195,16 @@ public struct HomeWidgetContent: View {
                 .fixedSize(horizontal: false, vertical: true)
             }
         }
+    }
+
+    /// Up-next row label: favorited acts get the same inline red heart before
+    /// the name, at 0.8× the row's font.
+    private func upcomingLabel(_ act: EventDTO) -> Text {
+        let title = Text(act.title.text(entry.locale))
+        guard NowWidgetBuilder.isFavorite(act, in: entry.favorites) else { return title }
+        return Text("\(Image(systemName: "heart.fill")) ")
+            .font(.system(size: m.nextTitle * 0.8, weight: .bold))
+            .foregroundStyle(.red) + title
     }
 }
 
