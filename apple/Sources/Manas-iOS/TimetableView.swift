@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 private let gutterW: CGFloat = 60
 private let headerH: CGFloat = 34
@@ -17,7 +18,11 @@ struct TimetableView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
     @EnvironmentObject var location: LocationStore
+    @EnvironmentObject var favorites: FavoritesStore
     var isLandscape: Bool = false
+    /// Favorites dim-filter (heart button in the header): non-favorited blocks
+    /// fade so the favorited ones pop.
+    var favFilter: Bool = false
     @Binding var compactHeader: Bool
     @Environment(\.scenePhase) private var scenePhase
 
@@ -139,6 +144,14 @@ struct TimetableView: View {
                 }
             }
         }
+    }
+
+    /// Tap on a block: toggle its favorite state. Breaks are never favoritable,
+    /// and events without a slug (old cached payloads) can't be keyed.
+    private func toggleFavorite(_ ev: EventDTO) {
+        guard ev.isPlayable, let slug = ev.slug else { return }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        favorites.toggle(slug)
     }
 
     /// Make the stage nearest the device (within 150 m) the left-most column.
@@ -335,9 +348,16 @@ struct TimetableView: View {
                 // start so a 15-min slot can never overlap the one below it.
                 let avail = i + 1 < evs.count ? g.y(evs[i + 1].startsAt) - g.y(ev.startsAt) : .infinity
                 let h = min(max(g.blockHeight(ev), EventBlock.minHeight(scale)), avail)
-                EventBlock(event: ev, stage: stage, now: now, near: near, locale: settings.locale, scale: scale, height: h)
+                let isFav = ev.slug.map(favorites.isFavorite) ?? false
+                EventBlock(event: ev, stage: stage, now: now, near: near, locale: settings.locale,
+                           scale: scale, height: h, isFav: isFav)
                     .frame(width: colW - 4, height: h)
                     .offset(x: 2, y: g.y(ev.startsAt))
+                    // Dim-filter: favorited acts keep full strength, the rest fade.
+                    .opacity(favFilter && !isFav ? 0.35 : 1)
+                    .onTapGesture { toggleFavorite(ev) }
+                    .accessibilityHint(ev.isPlayable && ev.slug != nil
+                        ? L.t(isFav ? "fav.remove" : "fav.add", settings.locale) : "")
             }
         }
         .frame(width: colW)
@@ -393,6 +413,8 @@ private struct EventBlock: View {
     let locale: AppLocale
     let scale: CGFloat
     let height: CGFloat
+    /// Favorited (by slug) — shows the heart badge + a stronger accent border.
+    let isFav: Bool
 
     /// Minimum block height: one title line at the current text size fits with
     /// no clipping, so even a 30-minute act shows its name in full.
@@ -442,6 +464,7 @@ private struct EventBlock: View {
                             timeLabel(Fmt.hhmm(start), font: timeFont, accent: accent, dot: false, shrink: true)
                         }
                         Spacer(minLength: 2)
+                        if isFav { heartBadge(accent) }
                         kindIcon(accent, hot: hot)
                     }
                 }
@@ -460,6 +483,7 @@ private struct EventBlock: View {
                     // for a time row); the language watermark floats over (overlay).
                     if !showTime {
                         Spacer(minLength: 2)
+                        if isFav { heartBadge(accent) }
                         kindIcon(accent, hot: hot)
                     }
                 }
@@ -485,6 +509,12 @@ private struct EventBlock: View {
             .background(color.opacity(live ? 0.85 : 0.28), in: RoundedRectangle(cornerRadius: 6))
             .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 2) }
             .clipShape(RoundedRectangle(cornerRadius: 6))
+            // Favorited: a slightly stronger full border in the stage accent.
+            .overlay {
+                if isFav {
+                    RoundedRectangle(cornerRadius: 6).strokeBorder(accent.opacity(0.85), lineWidth: 1.2)
+                }
+            }
             .opacity(past ? 0.45 : 1)
         }
     }
@@ -502,6 +532,13 @@ private struct EventBlock: View {
                     .padding(.leading, 3 * scale)   // ~2× the gap from the time
             }
         }
+    }
+
+    /// Small favorited marker, sitting beside the kind icon in the accent colour.
+    private func heartBadge(_ accent: Color) -> some View {
+        Image(systemName: "heart.fill")
+            .font(.system(size: 8 * scale, weight: .bold))
+            .foregroundStyle(accent)
     }
 
     /// The act's kind glyph. Keeps its own (stage accent) colour; when `hot`

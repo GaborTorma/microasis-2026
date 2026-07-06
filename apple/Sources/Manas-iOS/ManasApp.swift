@@ -5,6 +5,7 @@ struct ManasApp: App {
     @StateObject private var store = ScheduleStore()
     @StateObject private var settings = Settings()
     @StateObject private var location = LocationStore()
+    @StateObject private var favorites = FavoritesStore()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -13,6 +14,7 @@ struct ManasApp: App {
                 .environmentObject(store)
                 .environmentObject(settings)
                 .environmentObject(location)
+                .environmentObject(favorites)
                 .preferredColorScheme(.dark)
                 .tint(Theme.sun)
                 .task { await store.load() }

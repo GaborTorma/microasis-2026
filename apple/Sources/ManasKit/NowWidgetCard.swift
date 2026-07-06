@@ -12,10 +12,16 @@ public struct NowEntry: TimelineEntry {
     public let event: EventDTO?
     /// `event` is on air at `date` (vs. an upcoming "next").
     public let isLive: Bool
+    /// `event` is one of the user's favorites (matched by slug against the
+    /// list the app mirrors into the App Group). Defaults to false so call
+    /// sites that don't care about favorites keep compiling.
+    public let isFavorite: Bool
     public let locale: AppLocale
 
-    public init(date: Date, stage: StageDTO?, event: EventDTO?, isLive: Bool, locale: AppLocale) {
-        self.date = date; self.stage = stage; self.event = event; self.isLive = isLive; self.locale = locale
+    public init(date: Date, stage: StageDTO?, event: EventDTO?, isLive: Bool,
+                isFavorite: Bool = false, locale: AppLocale) {
+        self.date = date; self.stage = stage; self.event = event; self.isLive = isLive
+        self.isFavorite = isFavorite; self.locale = locale
     }
 }
 
@@ -46,18 +52,27 @@ public enum NowWidgetBuilder {
         return (nil, false)
     }
 
+    /// `event` is favorited — nil events and slug-less events (old caches) aren't.
+    public static func isFavorite(_ event: EventDTO?, in favorites: Set<String>) -> Bool {
+        guard let slug = event?.slug else { return false }
+        return favorites.contains(slug)
+    }
+
     /// A single entry for `at` — the placeholder / snapshot / preview path.
-    public static func makeEntry(at: Date, data: ScheduleData?, slug: String?, locale: AppLocale) -> NowEntry {
+    public static func makeEntry(at: Date, data: ScheduleData?, slug: String?, locale: AppLocale,
+                                 favorites: Set<String> = []) -> NowEntry {
         guard let data, let stage = resolveStage(data, slug: slug) else {
             return NowEntry(date: at, stage: nil, event: nil, isLive: false, locale: locale)
         }
         let evs = events(data, stageSlug: stage.slug)
         let p = pick(at: at, events: evs)
-        return NowEntry(date: at, stage: stage, event: p.event, isLive: p.live, locale: locale)
+        return NowEntry(date: at, stage: stage, event: p.event, isLive: p.live,
+                        isFavorite: isFavorite(p.event, in: favorites), locale: locale)
     }
 
     /// `now` plus every future act start/end within the next 12 h as entries.
-    public static func entries(now: Date, stage: StageDTO, events evs: [EventDTO], locale: AppLocale) -> [NowEntry] {
+    public static func entries(now: Date, stage: StageDTO, events evs: [EventDTO], locale: AppLocale,
+                               favorites: Set<String> = []) -> [NowEntry] {
         let horizon = now.addingTimeInterval(12 * 3600)
         var times: Set<Date> = [now]
         for e in evs {
@@ -66,7 +81,8 @@ public enum NowWidgetBuilder {
         }
         return times.sorted().prefix(60).map { t in
             let p = pick(at: t, events: evs)
-            return NowEntry(date: t, stage: stage, event: p.event, isLive: p.live, locale: locale)
+            return NowEntry(date: t, stage: stage, event: p.event, isLive: p.live,
+                            isFavorite: isFavorite(p.event, in: favorites), locale: locale)
         }
     }
 }
@@ -150,13 +166,21 @@ public struct NowWidgetContent: View {
                     // Sit tighter to the act name than to the header row.
                     .padding(.bottom, -2 * s)
             }
-            Text(actText)
+            actLabel
                 .font(.system(size: 16 * s, weight: .bold, design: .rounded))
                 .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
                 .lineLimit(2).minimumScaleFactor(0.5)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    /// The act line, with a compact accent heart inlined before the name when
+    /// the act is favorited (a `Text` run, so it wraps with the title).
+    private var actLabel: Text {
+        let title = Text(actText)
+        guard entry.isFavorite else { return title }
+        return Text("\(Image(systemName: "heart.fill")) ").foregroundStyle(accent) + title
     }
 
     private var actText: String {

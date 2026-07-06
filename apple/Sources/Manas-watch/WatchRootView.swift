@@ -7,6 +7,7 @@ struct WatchRootView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
     @EnvironmentObject var location: LocationStore
+    @EnvironmentObject var favorites: FavoritesStore
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var stageIndex = 0
@@ -67,6 +68,12 @@ struct WatchRootView: View {
             }
             .background(bg.gradient)
             .gesture(swipe)
+            // Swipes navigate; a plain tap is free, so it toggles the shown
+            // act's favorite state (no-op on breaks / the "nothing on" card).
+            .onTapGesture { toggleFavorite() }
+            .accessibilityHint(displayedEvent.flatMap { e in
+                e.slug.map { L.t(favorites.isFavorite($0) ? "fav.remove" : "fav.add", settings.locale) }
+            } ?? "")
             // Settings (leading) + the share QR (trailing) live in the system bottom
             // bar, so they never overlap the card's stage dots or its workshop chip the
             // way a bottom-corner overlay would. One bottomBar item with an HStack +
@@ -210,6 +217,12 @@ struct WatchRootView: View {
                                 .padding(.leading, 4)   // ~2× the gap from the time
                         }
                         Spacer(minLength: 2)
+                        // Favorited: a heart beside the kind icon (tap toggles it).
+                        if event.slug.map(favorites.isFavorite) == true {
+                            Image(systemName: "heart.fill")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(Color(hex: stage.accent))
+                        }
                         // Inline kind icon keeps its normal place (top-right of the
                         // time row); the bottom-left watermark is the faint backdrop.
                         KindIcon(event.kind, size: 17, color: Color(hex: stage.accent))
@@ -328,6 +341,14 @@ struct WatchRootView: View {
             return (i, evs[i].startsAt.timeIntervalSince(t) <= nearWindow)
         }
         return (evs.count - 1, false)   // everything is in the past → nothing on
+    }
+
+    /// Tap: toggle the shown act's favorite state. Breaks never reach the card
+    /// (stores filter them), but the slug can be missing on old cached payloads.
+    private func toggleFavorite() {
+        guard let event = displayedEvent, event.isPlayable, let slug = event.slug else { return }
+        favorites.toggle(slug)
+        WKInterfaceDevice.current().play(favorites.isFavorite(slug) ? .success : .click)
     }
 
     private func defaultIndex(in evs: [EventDTO]) -> Int {

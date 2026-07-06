@@ -47,6 +47,10 @@ public struct EventDTO: Codable, Identifiable, Hashable, Sendable {
     public let id: Int
     public let stageId: Int
     public let stageSlug: String
+    /// Stable cross-platform event identity (seed-generated, mirrors
+    /// `pwa/lib/types.ts`) — the favorites key. Optional because old API
+    /// payloads and old disk caches lack it; decoding must not fail on them.
+    public let slug: String?
     public let title: I18nText
     /// Performer / facilitator; nil where the act name is the title or none exists.
     public let artist: String?

@@ -3,9 +3,11 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var store: ScheduleStore
     @EnvironmentObject var settings: Settings
+    @EnvironmentObject var favorites: FavoritesStore
     @State private var tab = 0
     @State private var showSettings = false
     @State private var compactHeader = false   // landscape: hide app header on scroll
+    @State private var favFilter = false       // timetable: dim non-favorited acts
     @AppStorage("manas.disclaimerSeen") private var disclaimerSeen = false
     @State private var showDisclaimer = false
 
@@ -20,6 +22,7 @@ struct RootView: View {
                 VStack(spacing: 0) {
                     if !hideHeader {
                         HeaderBar(showSettings: $showSettings,
+                                  favFilter: $favFilter,
                                   showControls: tab == 0,
                                   landscape: landscape,
                                   stageCount: stageCount)
@@ -32,7 +35,8 @@ struct RootView: View {
                     // single layer behind it wouldn't show through). The header
                     // keeps its flat band above the divider.
                     TabView(selection: $tab) {
-                        TimetableView(isLandscape: landscape, compactHeader: $compactHeader)
+                        TimetableView(isLandscape: landscape, favFilter: favFilter,
+                                      compactHeader: $compactHeader)
                             .background(AppBackground())
                             .tabItem { Label(L.t("nav.timetable", settings.locale), systemImage: "calendar") }
                             .tag(0)
@@ -49,6 +53,8 @@ struct RootView: View {
                 .animation(.easeInOut(duration: 0.2), value: hideHeader)
             }
             .onChange(of: tab) { _, t in if t != 0 { compactHeader = false } }
+            // The filter (and its button) only makes sense with favorites to show.
+            .onChange(of: favorites.favorites.isEmpty) { _, empty in if empty { favFilter = false } }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
                     .environmentObject(store)
@@ -148,7 +154,9 @@ private struct DisclaimerHeightKey: PreferenceKey {
 
 struct HeaderBar: View {
     @EnvironmentObject var settings: Settings
+    @EnvironmentObject var favorites: FavoritesStore
     @Binding var showSettings: Bool
+    @Binding var favFilter: Bool
     var showControls: Bool = false
     var landscape: Bool = false
     var stageCount: Int = 0
@@ -191,6 +199,18 @@ struct HeaderBar: View {
                     stepper(icon: "rectangle.split.3x1",
                             minusEnabled: eff > 1, minus: { settings.adjustColumns(by: -1, visibleStages: stageCount) },
                             plusEnabled: eff < maxCols, plus: { settings.adjustColumns(by: 1, visibleStages: stageCount) })
+                }
+                // Favorites dim-filter — only offered once something is favorited.
+                if !favorites.favorites.isEmpty {
+                    Button { favFilter.toggle() } label: {
+                        Image(systemName: favFilter ? "heart.fill" : "heart")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(favFilter ? Theme.sun : Theme.creamDim)
+                            .frame(width: 34, height: 34)
+                            .background(Theme.ink2.opacity(0.7), in: Circle())
+                            .overlay(Circle().stroke(favFilter ? Theme.sun.opacity(0.6) : Theme.line))
+                    }
+                    .accessibilityLabel(L.t("fav.filter", settings.locale))
                 }
             }
 

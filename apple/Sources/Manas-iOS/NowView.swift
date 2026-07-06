@@ -190,6 +190,7 @@ private struct OpeningStageCard: View {
 }
 
 private struct OpeningRowView: View {
+    @EnvironmentObject var favorites: FavoritesStore
     let row: OpeningRow
     let accent: Color
     let now: Date
@@ -208,8 +209,14 @@ private struct OpeningRowView: View {
                     Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }
-                Text(e.title.text(locale)).font(.headline).foregroundStyle(Theme.cream)
-                    .lineLimit(2).minimumScaleFactor(0.7)
+                HStack(alignment: .firstTextBaseline, spacing: 5) {
+                    Text(e.title.text(locale)).font(.headline).foregroundStyle(Theme.cream)
+                        .lineLimit(2).minimumScaleFactor(0.7)
+                    if e.slug.map(favorites.isFavorite) == true {
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 11, weight: .bold)).foregroundStyle(accent)
+                    }
+                }
             }
             Spacer(minLength: 8)
             if row.live, let end = e.endsAt {
@@ -332,6 +339,7 @@ private struct LiveDot: View {
 // MARK: - Normal grid card
 
 private struct StageNowCard: View {
+    @EnvironmentObject var favorites: FavoritesStore
     let stage: StageDTO
     let events: [EventDTO]
     let now: Date
@@ -373,8 +381,14 @@ private struct StageNowCard: View {
                                 Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
-                            Text(live.title.text(locale)).font(.title3.bold()).foregroundStyle(Theme.cream)
-                                .lineLimit(2).minimumScaleFactor(0.6)
+                            HStack(alignment: .firstTextBaseline, spacing: 5) {
+                                Text(live.title.text(locale)).font(.title3.bold()).foregroundStyle(Theme.cream)
+                                    .lineLimit(2).minimumScaleFactor(0.6)
+                                if live.slug.map(favorites.isFavorite) == true {
+                                    Image(systemName: "heart.fill")
+                                        .font(.system(size: 13, weight: .bold)).foregroundStyle(accent)
+                                }
+                            }
                         }
                         Spacer(minLength: 8)
                         if let end = live.endsAt {
@@ -402,8 +416,14 @@ private struct StageNowCard: View {
                                 Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamFaint)
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
-                            Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim)
-                                .lineLimit(2).minimumScaleFactor(0.7)
+                            HStack(alignment: .firstTextBaseline, spacing: 5) {
+                                Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim)
+                                    .lineLimit(2).minimumScaleFactor(0.7)
+                                if next.slug.map(favorites.isFavorite) == true {
+                                    Image(systemName: "heart.fill")
+                                        .font(.system(size: 11, weight: .bold)).foregroundStyle(accent)
+                                }
+                            }
                         }
                         Spacer(minLength: 8)
                         VStack(alignment: .trailing, spacing: 3) {

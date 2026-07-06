@@ -15,6 +15,9 @@ public enum SharedDefaults {
     /// QA debug clock, mirrored here so the watch widget (its own process) sees
     /// the same overridden "now" as the app. nil/absent ⇒ real time.
     public static let debugNowKey = "manas.debugNow"
+    /// Sorted array of favorited event slugs, mirrored by `FavoritesStore` so
+    /// the watch widget (its own process) can badge favorited acts.
+    public static let favoritesKey = "manas.favorites"
 }
 
 /// Canonical outbound links. The native share sheet hands out `share` (the `/app`
