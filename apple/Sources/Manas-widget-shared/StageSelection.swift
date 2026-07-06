@@ -48,6 +48,48 @@ enum WidgetSchedule {
     }
 }
 
+/// Shared stage-list loading for the per-platform entity queries below.
+private enum StageDirectory {
+    /// (slug, display name) for every stage, in schedule order.
+    static func all() async -> [(slug: String, name: String)] {
+        let data = await WidgetSchedule.load()
+        return (data?.stages ?? [])
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map { ($0.slug, $0.name) }
+    }
+
+    /// Never fails: a configured slug must survive resolution even when the
+    /// schedule is unreachable, or the widget silently falls back to the
+    /// default stage. Slugs are the stable cross-platform key, so an entity
+    /// synthesized from the bare identifier is always valid (the display name
+    /// only matters in the configuration UI, where the real list is loaded).
+    static func resolve(_ identifiers: [String]) async -> [(slug: String, name: String)] {
+        let all = await all()
+        #if DEBUG
+        NSLog("MANASWIDGET entities(for: %@) -> %d known", identifiers.joined(separator: ","), all.count)
+        #endif
+        return identifiers.map { id in
+            all.first { $0.slug == id } ?? (id, id.capitalized)
+        }
+    }
+}
+
+/// Per-instance configuration: which stage this widget shows. Leave unset to
+/// follow the festival's default stage — so adding the widget without
+/// configuring it still shows something useful.
+///
+/// EVERY AppIntents type NAME below (intent, entity, query) is a bundle-wide
+/// AppIntents identifier, and the iOS app bundle carries TWO widget extensions
+/// (its own + the embedded watch app's), so the two platforms must not declare
+/// ANY AppIntents type with the same name: a duplicate intent name broke
+/// configuration persistence (SpringBoard stored empty parameters), and a
+/// duplicate entity name broke deserialization in the widget process
+/// ("StageEntity is not a registered AppEntity identifier" → stage always
+/// nil). watchOS keeps the shipped `StageSelectionIntent`/`StageEntity`/
+/// `StageQuery` names (renaming would reset users' configured complications);
+/// iOS gets `Home`-prefixed twins, typealiased so shared code compiles
+/// against `StageEntity`/`StageIntent` on both platforms.
+#if os(watchOS)
 /// A festival stage the user can pin a widget instance to. `id` is the slug.
 struct StageEntity: AppEntity {
     let id: String
@@ -62,47 +104,51 @@ struct StageEntity: AppEntity {
 /// Supplies the stage list to the widget configuration UI, fetched live from
 /// the API (the DB is the source of truth for stages).
 struct StageQuery: EntityQuery {
-    /// Never fails: a configured slug must survive resolution even when the
-    /// schedule is unreachable, or the widget silently falls back to the
-    /// default stage. Slugs are the stable cross-platform key, so an entity
-    /// synthesized from the bare identifier is always valid (the display name
-    /// only matters in the configuration UI, where the real list is loaded).
     func entities(for identifiers: [StageEntity.ID]) async throws -> [StageEntity] {
-        let all = await Self.allStages()
-        #if DEBUG
-        NSLog("MANASWIDGET entities(for: %@) -> %d known", identifiers.joined(separator: ","), all.count)
-        #endif
-        return identifiers.map { id in
-            all.first { $0.id == id } ?? StageEntity(id: id, name: id.capitalized)
-        }
+        await StageDirectory.resolve(identifiers).map { StageEntity(id: $0.slug, name: $0.name) }
     }
 
     func suggestedEntities() async throws -> [StageEntity] {
-        let all = await Self.allStages()
+        let all = await StageDirectory.all()
         #if DEBUG
         NSLog("MANASWIDGET suggestedEntities -> %d", all.count)
         #endif
-        return all
-    }
-
-    private static func allStages() async -> [StageEntity] {
-        let data = await WidgetSchedule.load()
-        return (data?.stages ?? [])
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map { StageEntity(id: $0.slug, name: $0.name) }
+        return all.map { StageEntity(id: $0.slug, name: $0.name) }
     }
 }
+#else
+typealias StageEntity = HomeStageEntity
 
-/// Per-instance configuration: which stage this widget shows. Leave unset to
-/// follow the festival's default stage — so adding the widget without
-/// configuring it still shows something useful.
-///
-/// The type NAME is the AppIntents identifier, and the iOS app bundle carries
-/// TWO widget extensions (its own + the embedded watch app's), so the two
-/// platforms must not declare the same intent name — a duplicate identifier on
-/// one device breaks configuration persistence. watchOS keeps the shipped
-/// `StageSelectionIntent` name (renaming would reset users' configured
-/// complications); iOS gets its own.
+/// A festival stage the user can pin a widget instance to. `id` is the slug.
+struct HomeStageEntity: AppEntity {
+    let id: String
+    let name: String
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Színpad"
+    var displayRepresentation: DisplayRepresentation { DisplayRepresentation(title: "\(name)") }
+
+    static var defaultQuery = HomeStageQuery()
+}
+
+/// Supplies the stage list to the widget configuration UI, fetched live from
+/// the API (the DB is the source of truth for stages).
+struct HomeStageQuery: EntityQuery {
+    func entities(for identifiers: [HomeStageEntity.ID]) async throws -> [HomeStageEntity] {
+        await StageDirectory.resolve(identifiers).map { HomeStageEntity(id: $0.slug, name: $0.name) }
+    }
+
+    func suggestedEntities() async throws -> [HomeStageEntity] {
+        let all = await StageDirectory.all()
+        #if DEBUG
+        NSLog("MANASWIDGET suggestedEntities -> %d", all.count)
+        #endif
+        return all.map { HomeStageEntity(id: $0.slug, name: $0.name) }
+    }
+}
+#endif
+
+/// See the identifier-collision note above: intent names must differ per
+/// platform too.
 #if os(watchOS)
 typealias StageIntent = StageSelectionIntent
 
