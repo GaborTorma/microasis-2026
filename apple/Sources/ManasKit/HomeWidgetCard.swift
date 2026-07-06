@@ -28,10 +28,10 @@ private struct Metrics {
 
     static let small = Metrics(stage: 12, time: 11, artist: 11, title: 14,
                                nextTitle: 12, nextTime: 11,
-                               icon: 38, chip: 8, titleLines: 2, timeInHeader: false)
+                               icon: 34, chip: 8, titleLines: 2, timeInHeader: false)
     static let medium = Metrics(stage: 14, time: 13, artist: 13, title: 18,
                                 nextTitle: 14, nextTime: 13,
-                                icon: 48, chip: 10, titleLines: 1, timeInHeader: true)
+                                icon: 43, chip: 10, titleLines: 1, timeInHeader: true)
 }
 
 private extension NowEntry {
