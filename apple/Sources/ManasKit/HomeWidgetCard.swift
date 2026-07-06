@@ -21,15 +21,17 @@ private struct Metrics {
     let nextTitle: CGFloat, nextTime: CGFloat
     let icon: CGFloat, chip: CGFloat, titleLines: Int
     /// The medium card is wide enough to put the time range beside the stage
-    /// name (like the watch); the small square gives it its own line.
+    /// name (like the watch) and the kind icon + chip on the title's line; the
+    /// small square stacks them instead (time under the header, chip in the
+    /// header, icon just above the rule).
     let timeInHeader: Bool
 
     static let small = Metrics(stage: 12, time: 11, artist: 11, title: 14,
                                nextTitle: 12, nextTime: 11,
-                               icon: 38, chip: 8, titleLines: 2, timeInHeader: false)
+                               icon: 13, chip: 8, titleLines: 2, timeInHeader: false)
     static let medium = Metrics(stage: 14, time: 13, artist: 13, title: 18,
                                 nextTitle: 14, nextTime: 13,
-                                icon: 48, chip: 10, titleLines: 1, timeInHeader: true)
+                                icon: 16, chip: 10, titleLines: 1, timeInHeader: true)
 }
 
 private extension NowEntry {
@@ -54,41 +56,23 @@ public struct HomeWidgetContent: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .topTrailing) {
-            // Kind-icon watermark (top-right) + language chip (bottom-right) of
-            // the current act — translucent background ornaments, like the
-            // watch card; content may run over them.
-            if let event = entry.event {
-                KindIcon(event.kind, size: m.icon, color: entry.accentColor)
-                    .opacity(0.26)
-                    .widgetAccentable()
+        VStack(alignment: .leading, spacing: 2) {
+            nowBlock
+            if !entry.upcoming.isEmpty {
+                // The up-next list is bottom-anchored (last row flush with the
+                // card bottom) and gets the leftover space proposed first
+                // (layoutPriority) so it fits as many rows as it can; the two
+                // equal spacers then split what remains, centering the rule in
+                // the gap between the title line and the list.
+                Spacer(minLength: 3)
+                Rectangle().fill(Theme.line).frame(height: 1)
+                Spacer(minLength: 3)
+                upcomingList.layoutPriority(1)
+            } else {
+                Spacer(minLength: 0)
             }
-            if let event = entry.event, event.langAvailability != nil {
-                let chip = Theme.chip(event.langAvailability)
-                Text(chip.label).font(.system(size: m.chip, weight: .bold))
-                    .padding(.horizontal, m.chip * 0.55).padding(.vertical, 2)
-                    .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
-                    .opacity(0.5)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-            }
-            VStack(alignment: .leading, spacing: 2) {
-                nowBlock
-                if !entry.upcoming.isEmpty {
-                    // The up-next list is bottom-anchored (last row flush with
-                    // the card bottom) and gets the leftover space proposed
-                    // first (layoutPriority) so it fits as many rows as it can;
-                    // the two equal spacers then split what remains, centering
-                    // the rule in the gap between the act name and the list.
-                    Spacer(minLength: 3)
-                    Rectangle().fill(Theme.line).frame(height: 1)
-                    Spacer(minLength: 3)
-                    upcomingList.layoutPriority(1)
-                } else {
-                    Spacer(minLength: 0)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: "Most" — the watch card's content
@@ -108,10 +92,12 @@ public struct HomeWidgetContent: View {
                     .symbolEffect(.pulse, options: .repeating, isActive: true)
             }
             Spacer(minLength: 4)
-            // Inset from the trailing edge so the time doesn't sit on the
-            // watermark that lives in the top-right corner.
-            if m.timeInHeader, let event = entry.event {
-                timeRange(event).padding(.trailing, m.icon * 0.75)
+            if m.timeInHeader {
+                // Medium: time range flush with the trailing edge.
+                if let event = entry.event { timeRange(event) }
+            } else {
+                // Small: language chip in the top-right corner.
+                langChip
             }
         }
         if !m.timeInHeader, let event = entry.event { timeRange(event) }
@@ -122,10 +108,34 @@ public struct HomeWidgetContent: View {
                 .lineLimit(1).minimumScaleFactor(0.7)
                 .padding(.top, 1)
         }
+        // The kind icon (both sizes) and the language chip (medium; small has
+        // it in the header) sit right-aligned on the title's last line — the
+        // lowest content line above the rule, at zero extra height so the
+        // 4-row up-next list still fits.
+        HStack(alignment: .bottom, spacing: 6) {
+            titleText
+            Spacer(minLength: 4)
+            if let event = entry.event {
+                KindIcon(event.kind, size: m.icon, color: entry.accentColor)
+            }
+            if m.timeInHeader { langChip }
+        }
+    }
+
+    private var titleText: some View {
         Text(entry.actText)
             .font(.system(size: m.title, weight: .bold, design: .rounded))
             .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
             .lineLimit(m.titleLines).minimumScaleFactor(0.6)
+    }
+
+    @ViewBuilder private var langChip: some View {
+        if let event = entry.event, event.langAvailability != nil {
+            let chip = Theme.chip(event.langAvailability)
+            Text(chip.label).font(.system(size: m.chip, weight: .bold))
+                .padding(.horizontal, m.chip * 0.55).padding(.vertical, 2)
+                .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
+        }
     }
 
     private func timeRange(_ event: EventDTO) -> some View {
