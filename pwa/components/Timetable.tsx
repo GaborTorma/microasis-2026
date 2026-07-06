@@ -563,33 +563,28 @@ function EventBlock({
   const KindIcon = EVENT_ICONS[eventIconKey(event)];
   const iconPx = Math.round(11 * scale);
 
-  // The heart floats right at the top of the text block — visually right under
-  // the kind icon — so only the line(s) beside it wrap short; everything below
-  // the button's height runs the full cell width again.
-  const heartBtn = (size: number) =>
-    canFav ? (
-      <button
-        type="button"
-        onClick={() => toggleFavorite(event.slug)}
-        aria-pressed={fav}
-        aria-label={t(fav ? "favorites.remove" : "favorites.add", {
-          title: tx(event.title, locale),
-        })}
-        className={`float-right -mr-0.5 -mt-0.5 mb-0.5 ml-1 rounded p-1 ${
-          fav ? "text-red-400" : "text-cream-faint hover:text-red-400"
-        }`}
-      >
-        <Heart size={size} fill={fav ? "currentColor" : "none"} />
-      </button>
-    ) : null;
-
   return (
+    // Tap anywhere on the cell to toggle its favorite (like the iOS blocks) —
+    // a touch drag scrolls and suppresses the click, so paging stays safe.
+    // Deliberately NOT focusable (no tabIndex): focusing a cell makes the
+    // browser scroll it into view inside the pager mid-swipe, which is what
+    // originally broke the left-right stage paging.
     <div
+      onClick={canFav ? () => toggleFavorite(event.slug) : undefined}
+      role={canFav ? "button" : undefined}
+      aria-pressed={canFav ? fav : undefined}
+      aria-label={
+        canFav
+          ? t(fav ? "favorites.remove" : "favorites.add", {
+              title: tx(event.title, locale),
+            })
+          : undefined
+      }
       className={`absolute inset-x-0.5 flex flex-col overflow-hidden rounded-md border-l-2 ${
         tight ? "px-1 py-0" : "px-1.5 py-0.5"
       } ${live ? "ring-1 ring-offset-0" : ""} ${
         dimmed ? "opacity-35" : past ? "opacity-45" : ""
-      }`}
+      } ${canFav ? "cursor-pointer select-none" : ""}`}
       style={{
         top,
         height,
@@ -610,28 +605,36 @@ function EventBlock({
             {!compact && event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
           </span>
           {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-now" />}
+          {fav && (
+            <Heart
+              size={iconPx}
+              fill="currentColor"
+              className="ml-auto shrink-0 text-red-400"
+            />
+          )}
           <KindIcon
             size={iconPx}
-            className="ml-auto shrink-0"
+            className={`${fav ? "" : "ml-auto "}shrink-0`}
             style={{ color: stage.accent }}
           />
         </div>
       )}
-      {/* Block flow (not flex) so the floated heart under the kind icon only
-          shortens the line(s) beside it; lower lines reclaim the full width.
-          The truncating artist line is a BFC, so it narrows beside the float. */}
-      <div className="leading-[1.05]">
-        {heartBtn(tight ? Math.round(9 * scale) : iconPx)}
-        {tight && live && (
-          <span className="pulse-dot mr-1 inline-block h-1.5 w-1.5 rounded-full bg-now" />
-        )}
-        {!tight && event.artist && (
-          <div
-            className="truncate font-display font-medium text-cream-faint"
-            style={{ fontSize: `${0.56 * scale}rem` }}
-          >
-            {event.artist}
-          </div>
+      {!tight && event.artist && (
+        <span
+          className="truncate font-display font-medium text-cream-faint"
+          style={{ fontSize: `${0.56 * scale}rem` }}
+        >
+          {event.artist}
+        </span>
+      )}
+      <div className="flex items-start gap-1 leading-[1.05]">
+        {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-now" />}
+        {tight && fav && (
+          <Heart
+            size={Math.round(9 * scale)}
+            fill="currentColor"
+            className="mt-0.5 shrink-0 text-red-400"
+          />
         )}
         <span
           className={`font-display font-semibold ${tight ? "text-cream" : "text-cream-dim"}`}
