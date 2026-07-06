@@ -17,6 +17,7 @@ apple/
       Localization.swift      #   AppLocale (HU default) + UI strings
       Formatting.swift        #   Europe/Budapest date/time formatting
       Theme.swift             #   green palette + Color(hex:) + language chips
+      HomeWidgetCard.swift    #   iOS home-widget layouts (shared w/ in-app preview)
     Manas-iOS/                # iOS / iPadOS app (SwiftUI)
       ManasApp.swift, RootView.swift, TimetableView.swift,
       NowView.swift, SettingsView.swift
@@ -27,7 +28,7 @@ apple/
       StageSelection.swift    #   stage AppEntity/query + WidgetConfigurationIntent
     Manas-iOS-widget/         # iOS WidgetKit extension (embedded in the iOS app)
       ManasWidgetBundle.swift #   @main bundle
-      HomeWidgets.swift       #   small / medium home-screen layouts
+      HomeWidgets.swift       #   WidgetKit glue (layouts in ManasKit/HomeWidgetCard)
     Manas-watch-widget/       # watchOS WidgetKit extension (embedded in the watch app)
       ManasWidgetBundle.swift #   @main bundle (now-playing + launcher)
       LaunchWidget.swift      #   tiny launcher (circular / inline / corner)

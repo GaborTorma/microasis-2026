@@ -36,8 +36,11 @@ devices:
     bundle: ai.torma.manas.2026.watchkitapp
 
 # view:     timetable | now | share | settings  (iPhone tab / sheet to open)
-#           widget                                (watch: render one stage's widget card)
+#           widget                                (render widget card(s) full-screen —
+#                                                  watch: one stage's Smart Stack card;
+#                                                  iPhone: medium + small home widget)
 # stage:    stage slug, required for view: widget -> manas.startWidgetPreview
+#           (iPhone takes "medium,small" slugs, e.g. "bowl,terrace")
 # time:     "yyyy-MM-dd HH:mm" Budapest-local -> manas.debugNow
 # location: stage slug -> that stage's lat,lng -> manas.debugCoord (selects the
 #           nearest stage: left column on iPhone, shown stage on watch). Omit for
@@ -91,6 +94,14 @@ shots:
     device: iphone
     view: now
     time: "2026-07-13 10:00"      # post-festival GROUNDING Days link screen
+
+  # Home-screen widgets: medium (Bowl) + small (Terrace), both live with a
+  # full up-next list at this time.
+  - name: "09-widgets"
+    device: iphone
+    view: widget
+    stage: "bowl,terrace"
+    time: "2026-07-10 20:30"
 
   - name: "01-now-portal"
     device: watch

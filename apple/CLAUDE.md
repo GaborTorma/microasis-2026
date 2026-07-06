@@ -25,7 +25,7 @@ Sources/
   Manas-widget-shared/   compiled into BOTH widget extensions: NowWidget (provider +
                          ManasNowWidget with per-platform families), StageSelection
   Manas-iOS-widget/      iOS WidgetKit ext: ManasIOSWidgetBundle, HomeWidgets
-                         (small/medium layouts)
+                         (glue; layouts live in ManasKit/HomeWidgetCard.swift)
   Manas-watch-widget/    watchOS WidgetKit ext: ManasWidgetBundle, LaunchWidget
 ```
 
@@ -125,11 +125,11 @@ disclaimer with `-manas.disclaimerSeen 1`.
   rendering differs. watch: `.accessoryRectangular` (`NowWidgetView` in ManasKit) —
   add one per stage to the Smart Stack and turn the crown to page; plus
   `LaunchWidget`, a circular/inline/corner launcher. iOS: `.systemSmall/Medium`
-  (`HomeWidgets.swift`) — both sizes render the watch card's "now" block, then a
-  bottom-anchored up-next list (act · start time; as many rows as fit, last row
-  flush with the card bottom) under a 1pt `Theme.line` rule — the flexible gap
-  sits between the act name and the rule (`NowEntry.upcoming`, capped at 4, row
-  count picked by `ViewThatFits`). Each extension reads the
+  (`ManasKit/HomeWidgetCard.swift`) — both sizes render the watch card's "now"
+  block, then a bottom-anchored up-next list (act · start time; as many rows as
+  fit, last row flush with the card bottom) with a 1pt `Theme.line` rule centered
+  in the gap between the act name and the list (`NowEntry.upcoming`, capped at 4,
+  row count picked by `ViewThatFits` + `layoutPriority`). Each extension reads the
   **schedule cache it shares with its host app** (App Group container; a copy
   fresher than 6 h skips the network, otherwise it does its own ETag-revalidated
   fetch), follows the **host app's language** via the `SharedDefaults` App Group
@@ -169,9 +169,11 @@ disclaimer with `-manas.disclaimerSeen 1`.
   scripted capture. Extra invisible, DEBUG-gated screenshot-only defaults beyond
   the two above: `manas.startView` (`timetable`/`now`/`share` tab or `settings`
   sheet), `manas.hideTestUI` (hide the in-app Testing section),
-  `manas.startWidgetPreview` (watch: render a stage's widget card full-screen).
-  The widget shot reuses the real `NowWidgetView` (moved to `ManasKit/NowWidgetCard.swift`
-  so the app + the WidgetKit extension share it). The extension honours the QA
+  `manas.startWidgetPreview` (render widget card(s) full-screen — watch: one stage
+  slug; iPhone: `"medium,small"` slugs, e.g. `bowl,terrace`, for the two home-widget
+  sizes). The widget shots reuse the real widget views (`ManasKit/NowWidgetCard.swift`
+  and `ManasKit/HomeWidgetCard.swift`, so the apps + the WidgetKit extensions share
+  them). The extension honours the QA
   debug clock too: the watch app mirrors `manas.debugNow` into the App Group
   (`SharedDefaults.debugNowKey`) and `WidgetSchedule.now` reads it (DEBUG/TestFlight
   only); when set, the provider pins one entry at the frozen time instead of the
