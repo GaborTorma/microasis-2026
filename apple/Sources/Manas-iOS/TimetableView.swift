@@ -464,7 +464,6 @@ private struct EventBlock: View {
                             timeLabel(Fmt.hhmm(start), font: timeFont, accent: accent, dot: false, shrink: true)
                         }
                         Spacer(minLength: 2)
-                        if isFav { heartBadge }
                         kindIcon(accent, hot: hot)
                     }
                 }
@@ -475,15 +474,12 @@ private struct EventBlock: View {
                         .lineLimit(1).truncationMode(.tail)
                 }
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
-                    Text(event.title.text(locale))
-                        .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
-                        .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
+                    titleText
                         .lineLimit(showTime ? titleLines : 1).truncationMode(.tail)
                     // On a single-line block the kind icon sits inline (no room
                     // for a time row); the language watermark floats over (overlay).
                     if !showTime {
                         Spacer(minLength: 2)
-                        if isFav { heartBadge }
                         kindIcon(accent, hot: hot)
                     }
                 }
@@ -528,12 +524,18 @@ private struct EventBlock: View {
         }
     }
 
-    /// Small favorited marker, sitting beside the kind icon. Always red so
-    /// favorites read the same on every stage column.
-    private var heartBadge: some View {
-        Image(systemName: "heart.fill")
-            .font(.system(size: 8 * scale, weight: .bold))
-            .foregroundStyle(.red)
+    /// The act title, with the always-red favorite heart inlined before the
+    /// first word as part of the same text run (like the web timetable and the
+    /// watch widget's act line) — it wraps with the text and, at 0.8× the title
+    /// size, never grows the line.
+    private var titleText: Text {
+        let title = Text(event.title.text(locale))
+            .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
+            .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
+        guard isFav else { return title }
+        return Text("\(Image(systemName: "heart.fill")) ")
+            .font(.system(size: 12 * scale * 0.8, weight: .bold))
+            .foregroundStyle(.red) + title
     }
 
     /// The act's kind glyph. Keeps its own (stage accent) colour; when `hot`

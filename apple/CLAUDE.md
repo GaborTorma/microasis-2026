@@ -113,9 +113,10 @@ disclaimer with `-manas.disclaimerSeen 1`.
   ("Add tovább") — a QR encoding `AppLinks.qr` (web `/get`) plus a native
   `ShareLink` handing out `AppLinks.share` (`/app`), mirroring the web `/share`
   page. Map is intentionally omitted. Tapping a timetable block toggles its
-  favorite (always-red heart badge, deliberately no border change); a header
-  heart — visible once any favorite exists — dims non-favorites; NowView hearts
-  are display-only.
+  favorite — the always-red heart is inlined before the title as part of its
+  text run (`titleText`, mirrors web + the watch widget; deliberately no border
+  change); a header heart — visible once any favorite exists — dims
+  non-favorites; NowView hearts are display-only, same inline-before-title run.
 - **watch:** one stage at a time. Swipe up/down = prev/next act; swipe left/right =
   switch stage keeping the same anchor time (so browsing never drifts). Geofence can
   auto-jump to the nearest stage on foreground. A `.bottomBar` toolbar holds settings
