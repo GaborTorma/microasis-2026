@@ -324,8 +324,7 @@ function StageNowCard({
                     <Heart
                       size={14}
                       fill="currentColor"
-                      className="shrink-0"
-                      style={{ color: stage.accent }}
+                      className="shrink-0 text-red-400"
                       aria-hidden="true"
                     />
                   )}
@@ -367,8 +366,7 @@ function StageNowCard({
                   <Heart
                     size={12}
                     fill="currentColor"
-                    className="mr-1 inline-block align-[-1px]"
-                    style={{ color: stage.accent }}
+                    className="mr-1 inline-block align-[-1px] text-red-400"
                     aria-hidden="true"
                   />
                 )}

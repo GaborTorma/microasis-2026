@@ -551,39 +551,34 @@ function EventBlock({
   const KindIcon = EVENT_ICONS[eventIconKey(event)];
   const iconPx = Math.round(11 * scale);
 
-  // Tapping a playable cell toggles its favorite. Guard on the slug: a stale
-  // localStorage payload predating the field has none — no toggle, no heart.
+  // Favoriting happens on a dedicated heart button only — a whole-cell tap
+  // target is too easy to hit by accident, and a focusable cell breaks the
+  // horizontal pager (focus scrolls the cell into view mid-swipe). Guard on
+  // the slug: a stale localStorage payload predating the field has none.
   const canFav = Boolean(event.slug);
   const fav = canFav && isFavorite(event.slug);
+  const heartBtn = (size: number, extra = "") =>
+    canFav ? (
+      <button
+        type="button"
+        onClick={() => toggleFavorite(event.slug)}
+        aria-pressed={fav}
+        aria-label={t(fav ? "favorites.remove" : "favorites.add", {
+          title: tx(event.title, locale),
+        })}
+        className={`-m-1 shrink-0 rounded p-1 ${
+          fav ? "text-red-400" : "text-cream-faint hover:text-red-400"
+        } ${extra}`}
+      >
+        <Heart size={size} fill={fav ? "currentColor" : "none"} />
+      </button>
+    ) : null;
 
   return (
     <div
-      role={canFav ? "button" : undefined}
-      tabIndex={canFav ? 0 : undefined}
-      onClick={canFav ? () => toggleFavorite(event.slug) : undefined}
-      onKeyDown={
-        canFav
-          ? (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleFavorite(event.slug);
-              }
-            }
-          : undefined
-      }
-      aria-pressed={canFav ? fav : undefined}
-      aria-label={
-        canFav
-          ? t(fav ? "favorites.remove" : "favorites.add", {
-              title: tx(event.title, locale),
-            })
-          : undefined
-      }
       className={`absolute inset-x-0.5 flex flex-col overflow-hidden rounded-md border-l-2 ${
         tight ? "px-1 py-0" : "px-1.5 py-0.5"
-      } ${live ? "ring-1 ring-offset-0" : ""} ${
-        past ? "opacity-45" : ""
-      } ${canFav ? "cursor-pointer select-none" : ""}`}
+      } ${live ? "ring-1 ring-offset-0" : ""} ${past ? "opacity-45" : ""}`}
       style={{
         top,
         height,
@@ -592,11 +587,6 @@ function EventBlock({
           ? `linear-gradient(135deg, ${stage.color}dd, ${stage.color}99)`
           : `${stage.color}40`,
         ...(live ? ({ "--tw-ring-color": stage.accent } as React.CSSProperties) : {}),
-        // Subtle accent border on favorited cells; live cells already carry
-        // the accent ring (an inline boxShadow would override it).
-        ...(fav && !live
-          ? { boxShadow: `inset 0 0 0 1px ${stage.accent}aa` }
-          : {}),
       }}
     >
       {!tight && (
@@ -609,17 +599,10 @@ function EventBlock({
             {!compact && event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
           </span>
           {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-now" />}
-          {fav && (
-            <Heart
-              size={iconPx}
-              fill="currentColor"
-              className="ml-auto shrink-0"
-              style={{ color: stage.accent }}
-            />
-          )}
+          {heartBtn(iconPx, "ml-auto")}
           <KindIcon
             size={iconPx}
-            className={`${fav ? "" : "ml-auto "}shrink-0`}
+            className={`${canFav ? "" : "ml-auto "}shrink-0`}
             style={{ color: stage.accent }}
           />
         </div>
@@ -634,14 +617,7 @@ function EventBlock({
       )}
       <div className="flex items-start gap-1 leading-[1.05]">
         {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-now" />}
-        {tight && fav && (
-          <Heart
-            size={Math.round(9 * scale)}
-            fill="currentColor"
-            className="mt-0.5 shrink-0"
-            style={{ color: stage.accent }}
-          />
-        )}
+        {tight && heartBtn(Math.round(9 * scale), "mt-0.5")}
         <span
           className={`font-display font-semibold ${tight ? "text-cream" : "text-cream-dim"}`}
           style={{ fontSize: `${(tight ? 0.62 : 0.74) * scale}rem` }}
