@@ -2,7 +2,16 @@ import Foundation
 
 /// Talks to the same Neon-backed JSON API the PWA uses.
 public struct APIClient: Sendable {
-    public static let baseURL = URL(string: "https://manas2026.vercel.app/api")!
+    /// QA override (`-manas.apiBase http://localhost:3000/api`) so a simulator
+    /// can exercise a local dev server; DEBUG/TestFlight only, like the debug clock.
+    public static let baseURL: URL = {
+        if AppEnv.debugToolsEnabled,
+           let raw = UserDefaults.standard.string(forKey: "manas.apiBase"),
+           let url = URL(string: raw) {
+            return url
+        }
+        return URL(string: "https://manas2026.vercel.app/api")!
+    }()
 
     private let session: URLSession
     public init(session: URLSession = .shared) { self.session = session }
