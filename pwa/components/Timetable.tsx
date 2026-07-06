@@ -56,13 +56,6 @@ export function Timetable() {
   const locale = useLocale();
   const t = useTranslations();
   const { order, hidden, scale, columns } = useSettings();
-  const { favorites } = useFavorites();
-  // Transient favorites-only filter (not persisted). Effective only while at
-  // least one favorite exists, so removing the last one can't leave the whole
-  // grid dimmed with the chip gone.
-  const [favoritesOnly, setFavoritesOnly] = useState(false);
-  const hasFavorites = favorites.size > 0;
-  const filterActive = favoritesOnly && hasFavorites;
   // Phone-sized portrait → column-zoom + paging (touch not required). Landscape
   // and wide screens show every stage, like the iOS app in landscape.
   const portraitMobile = useMediaQuery(
@@ -328,23 +321,6 @@ export function Timetable() {
               </button>
             );
           })}
-          {/* Favorites-only filter — only offered once something is favorited.
-              Active → non-favorited cells dim (never collapse: the grid is
-              time-proportional, removing cells would leave holes). */}
-          {hasFavorites && (
-            <button
-              type="button"
-              onClick={() => setFavoritesOnly((v) => !v)}
-              aria-pressed={favoritesOnly}
-              aria-label={t("favorites.filter")}
-              title={t("favorites.filter")}
-              className={`flex min-w-9 items-center justify-center rounded-md px-2 transition-colors ${
-                favoritesOnly ? "bg-sun text-ink" : "bg-ink-2/60 text-cream-dim hover:text-cream"
-              }`}
-            >
-              <Heart size={15} fill={favoritesOnly ? "currentColor" : "none"} />
-            </button>
-          )}
         </div>
 
         {/* Position dots — which stages of the set are in view (when paging) */}
@@ -495,7 +471,6 @@ export function Timetable() {
                         scale={scale}
                         compact={colW < 140}
                         nextStart={i + 1 < evs.length ? evs[i + 1].startsAt : null}
-                        dimmed={filterActive && !(e.slug && favorites.has(e.slug))}
                       />
                     ))}
                   </div>
@@ -529,7 +504,6 @@ function EventBlock({
   scale,
   compact,
   nextStart,
-  dimmed,
 }: {
   event: EventDTO;
   stage: StageDTO;
@@ -539,7 +513,6 @@ function EventBlock({
   scale: number;
   compact: boolean;
   nextStart: string | null;
-  dimmed: boolean;
 }) {
   const t = useTranslations();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -560,9 +533,7 @@ function EventBlock({
   if (event.kind === "break") {
     return (
       <div
-        className={`absolute inset-x-0.5 flex items-center justify-center overflow-hidden rounded-md border border-dashed border-line/50 text-[0.6rem] uppercase tracking-wider text-cream-faint ${
-          dimmed ? "opacity-35" : ""
-        }`}
+        className="absolute inset-x-0.5 flex items-center justify-center overflow-hidden rounded-md border border-dashed border-line/50 text-[0.6rem] uppercase tracking-wider text-cream-faint"
         style={{ top, height }}
       >
         {height >= 22 && (
@@ -611,7 +582,7 @@ function EventBlock({
       className={`absolute inset-x-0.5 flex flex-col overflow-hidden rounded-md border-l-2 ${
         tight ? "px-1 py-0" : "px-1.5 py-0.5"
       } ${live ? "ring-1 ring-offset-0" : ""} ${
-        dimmed ? "opacity-35" : past ? "opacity-45" : ""
+        past ? "opacity-45" : ""
       } ${canFav ? "cursor-pointer select-none" : ""}`}
       style={{
         top,

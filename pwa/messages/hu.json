@@ -26,7 +26,6 @@
     "tba": "A fellépők hamarosan"
   },
   "favorites": {
-    "filter": "Csak kedvencek",
     "add": "{title} hozzáadása a kedvencekhez",
     "remove": "{title} eltávolítása a kedvencekből"
   },
