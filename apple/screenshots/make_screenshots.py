@@ -42,6 +42,9 @@ RESET_KEYS = [
     "manas.locale", "manas.debugNow", "manas.debugCoord", "manas.columns",
     "manas.fontSize", "manas.order", "manas.hidden", "manas.startView",
     "manas.hideTestUI", "manas.disclaimerSeen",
+    # Manually-tapped favorites persist here; clear them so only a shot's
+    # `favorites:` (-manas.startFavorites, per-launch) shows hearts.
+    "manas.favoriteStates",
 ]
 
 
@@ -153,6 +156,8 @@ def launch_args(shot: dict, lang: str, coords: dict) -> list[str]:
     a += ["-manas.fontSize", str(shot.get("font", 3))]
     if shot.get("empty"):                       # watch: force the "nothing on" card
         a += ["-manas.startNoProgram", "YES"]
+    if fav := shot.get("favorites"):            # comma-separated event slugs → hearts
+        a += ["-manas.startFavorites", str(fav)]
     view = shot.get("view")
     if view in ("timetable", "now", "share", "settings"):
         a += ["-manas.startView", view]

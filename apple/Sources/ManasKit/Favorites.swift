@@ -38,6 +38,16 @@ public final class FavoritesStore: ObservableObject {
            let decoded = try? JSONDecoder().decode([String: FavState].self, from: data) {
             states = decoded
         }
+        // Screenshot-harness override (DEBUG/TestFlight): `-manas.startFavorites
+        // "slug1,slug2"` replaces the set for THIS launch only — nothing is
+        // persisted here, so shots stay deterministic (like manas.debugNow).
+        if AppEnv.debugToolsEnabled,
+           let raw = defaults.string(forKey: "manas.startFavorites"), !raw.isEmpty {
+            let now = Date().timeIntervalSince1970
+            states = Dictionary(uniqueKeysWithValues: raw.split(separator: ",").map {
+                ($0.trimmingCharacters(in: .whitespaces), FavState(isFav: true, ts: now))
+            })
+        }
         favorites = Set(states.filter { $0.value.isFav }.keys)
         mirrorForWidget()
         #if canImport(WatchConnectivity)

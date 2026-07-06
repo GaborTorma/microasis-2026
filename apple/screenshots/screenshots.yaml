@@ -48,6 +48,9 @@ devices:
 # columns:  iPhone timetable zoom (1…5) -> manas.columns  (default 3)
 # font:     text-size zoom (1…5)         -> manas.fontSize (default 3)
 # empty:    true -> watch: force the "nothing on" card  (manas.startNoProgram)
+# favorites: comma-separated event slugs -> manas.startFavorites (red hearts;
+#            per-launch only, nothing persists; slugs must be acts visible at
+#            the shot's `time` — check the live API /api/schedule for slugs)
 shots:
   - name: "01-timetable-thursday"
     device: iphone
@@ -62,12 +65,14 @@ shots:
     time: "2026-07-10 17:36"
     columns: 5
     font: 1
+    favorites: "portal-ticon-0710,field-angorang-0710,bowl-thnts-0710"
 
   - name: "03-now-friday"
     device: iphone
     view: now
     time: "2026-07-10 17:14"
     location: field
+    favorites: "field-angorang-0710,portal-ritmo-0710"
 
   - name: "04-timetable-terrace"
     device: iphone
@@ -102,11 +107,13 @@ shots:
     view: widget
     stage: "bowl,terrace"
     time: "2026-07-10 20:30"
+    favorites: "bowl-zsom-0710,bowl-sumiruna-0710"
 
   - name: "01-now-portal"
     device: watch
     time: "2026-07-09 02:30"
     location: portal
+    favorites: "portal-mercuroid-0709"
 
   - name: "02-now-terrace"
     device: watch
@@ -131,3 +138,4 @@ shots:
     view: widget
     stage: field
     time: "2026-07-10 17:14"
+    favorites: "field-angorang-0710"
