@@ -210,7 +210,7 @@ private struct OpeningRowView: View {
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }
                 favTitle(e.slug, Text(e.title.text(locale)).font(.headline).foregroundStyle(Theme.cream),
-                         heartSize: 11, favorites)
+                         heartSize: 14, favorites)
                     .lineLimit(2).minimumScaleFactor(0.7)
             }
             Spacer(minLength: 8)
@@ -377,7 +377,7 @@ private struct StageNowCard: View {
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
                             favTitle(live.slug, Text(live.title.text(locale)).font(.title3.bold()).foregroundStyle(Theme.cream),
-                                     heartSize: 13, favorites)
+                                     heartSize: 16, favorites)
                                 .lineLimit(2).minimumScaleFactor(0.6)
                         }
                         Spacer(minLength: 8)
@@ -407,7 +407,7 @@ private struct StageNowCard: View {
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
                             favTitle(next.slug, Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim),
-                                     heartSize: 11, favorites)
+                                     heartSize: 14, favorites)
                                 .lineLimit(2).minimumScaleFactor(0.7)
                         }
                         Spacer(minLength: 8)
