@@ -33,6 +33,15 @@ targets:
     dependencies:
       - target: ManasWatch
         embed: true
+      - target: ManasWidget
+        embed: true
+    # App Group: share the chosen language, the QA debug clock and the schedule
+    # disk cache (+ .etag sidecar) with the home-screen widget extension.
+    entitlements:
+      path: Sources/Manas-iOS/Manas.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.ai.torma.manas.2026
     info:
       path: Sources/Manas-iOS/Info.plist
       properties:
@@ -46,6 +55,10 @@ targets:
         # Kept short so the home-screen label doesn't truncate; the App Store
         # listing name is the longer "Guide for MANAS 2026".
         CFBundleDisplayName: "MANAS 2026"
+        # Widget → app deep links (manas://stage/<slug>), see AppLinks.scheme.
+        CFBundleURLTypes:
+          - CFBundleURLName: ai.torma.manas.2026
+            CFBundleURLSchemes: [manas]
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."
@@ -93,6 +106,40 @@ targets:
         PRODUCT_NAME: ManasWatch
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
+  # ── iOS home-screen widgets ────────────────────────────────────────
+  # WidgetKit extension embedded in the iOS app. The same configurable
+  # per-stage "now playing" widget as the watch, in the three home-screen
+  # sizes (small / medium / large). Provider + intent come from
+  # Sources/Manas-widget-shared, shared with the watch extension.
+  ManasWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Sources/ManasKit
+      - path: Sources/Manas-widget-shared
+      - path: Sources/Manas-iOS-widget
+    # App Group: read the iOS app's chosen language (shared UserDefaults)
+    # and its schedule disk cache.
+    entitlements:
+      path: Sources/Manas-iOS-widget/ManasWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.ai.torma.manas.2026
+    info:
+      path: Sources/Manas-iOS-widget/Info.plist
+      properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleDisplayName: "MANAS 2026"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.widget
+        PRODUCT_NAME: ManasWidget
+        TARGETED_DEVICE_FAMILY: "1"
+
   # ── watchOS widgets (Smart Stack + watch-face complications) ───────
   # WidgetKit extension embedded in the watch app. One configurable
   # "now playing" rectangular widget (pin each instance to a stage and
@@ -103,6 +150,7 @@ targets:
     deploymentTarget: "10.0"
     sources:
       - path: Sources/ManasKit
+      - path: Sources/Manas-widget-shared
       - path: Sources/Manas-watch-widget
     # App Group: read the watch app's chosen language (shared UserDefaults)
     # and its schedule disk cache.

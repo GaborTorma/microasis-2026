@@ -3,9 +3,7 @@ import Combine
 #if canImport(WatchConnectivity)
 import WatchConnectivity
 #endif
-#if os(watchOS)
 import WidgetKit
-#endif
 
 /// Per-event favorite state. Keeping a timestamp per slug (not just a set)
 /// makes the phone↔watch merge last-writer-wins *per item*, so concurrent
@@ -102,9 +100,9 @@ public final class FavoritesStore: ObservableObject {
     /// process via the App Group (the widget never instantiates this store).
     private func mirrorForWidget() {
         SharedDefaults.suite.set(Array(favorites).sorted(), forKey: SharedDefaults.favoritesKey)
-        #if os(watchOS)
+        // Both apps host a widget extension now (watch Smart Stack + iOS home
+        // screen) — reload so the hearts repaint right after a toggle.
         WidgetCenter.shared.reloadAllTimelines()
-        #endif
     }
 }
 

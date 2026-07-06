@@ -17,15 +17,20 @@ apple/
       Localization.swift      #   AppLocale (HU default) + UI strings
       Formatting.swift        #   Europe/Budapest date/time formatting
       Theme.swift             #   green palette + Color(hex:) + language chips
+      HomeWidgetCard.swift    #   iOS home-widget layouts (shared w/ in-app preview)
     Manas-iOS/                # iOS / iPadOS app (SwiftUI)
       ManasApp.swift, RootView.swift, TimetableView.swift,
       NowView.swift, SettingsView.swift
     Manas-watch/              # watchOS app (SwiftUI)
       ManasWatchApp.swift, WatchRootView.swift, WatchSettingsView.swift
+    Manas-widget-shared/      # widget code compiled into BOTH widget extensions
+      NowWidget.swift         #   configurable now-playing widget + timeline provider
+      StageSelection.swift    #   stage AppEntity/query + WidgetConfigurationIntent
+    Manas-iOS-widget/         # iOS WidgetKit extension (embedded in the iOS app)
+      ManasWidgetBundle.swift #   @main bundle
+      HomeWidgets.swift       #   WidgetKit glue (layouts in ManasKit/HomeWidgetCard)
     Manas-watch-widget/       # watchOS WidgetKit extension (embedded in the watch app)
       ManasWidgetBundle.swift #   @main bundle (now-playing + launcher)
-      NowWidget.swift         #   configurable 3×1 now-playing (.accessoryRectangular)
-      StageSelection.swift    #   stage AppEntity/query + WidgetConfigurationIntent
       LaunchWidget.swift      #   tiny launcher (circular / inline / corner)
 ```
 
@@ -65,6 +70,13 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - **Now** tab: per-stage now-playing + up-next, with a pre-festival countdown.
 - **Settings**: drag to reorder stages, eye toggle to hide them.
 - HU/EN toggle (HU default). Map view is intentionally omitted (paused on web too).
+- **Home-screen widgets** (small / medium): per-stage now-playing. Both sizes
+  show the same content — the watch card's "now" block (stage · time · artist
+  · act), then a bottom-anchored up-next list (act · start time, as many rows
+  as fit) under a thin rule; medium is the wide variant where long names fit
+  on one line. Configurable per stage, like the watch widget. Tapping a widget
+  opens the timetable with that stage as the leading column. Shares the app's
+  schedule cache and language via the App Group.
 
 **watchOS** — one stage at a time, no time grid:
 - Card shows **stage name · date · time-range · act name** (+ language chip).

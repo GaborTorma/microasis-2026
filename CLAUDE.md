@@ -6,7 +6,7 @@ the single source of truth** and the web app is the only backend.
 
 ```
 pwa/      Next.js 16 PWA + the JSON API (Neon Postgres via Drizzle). See pwa/CLAUDE.md
-apple/    iOS + watchOS SwiftUI apps + watch widgets.            See apple/CLAUDE.md
+apple/    iOS + watchOS SwiftUI apps + iOS/watch widgets.        See apple/CLAUDE.md
 ```
 
 There is no shared build, no root package manager, no CI auto-release. The two
@@ -65,10 +65,11 @@ Rules a future edit must respect:
   iOS Safari often lists English ahead of Hungarian on a Hungarian device, so
   first-tag-only wrongly served EN.) A user's explicit toggle persists and always wins. Implemented independently in
   web (`pwa/i18n/request.ts`, `i18n/config.ts` `DEFAULT_LOCALE='hu'`) and apple
-  (`ManasKit/AppState.swift` device default). The **watch widget** reads the watch
-  app's chosen language through an **App Group** (`group.ai.torma.manas.2026`,
-  `ManasKit/AppState.swift` `SharedDefaults`; the app mirrors `manas.locale` there and
-  reloads timelines on change), falling back to device language until the app sets one.
+  (`ManasKit/AppState.swift` device default). The **widgets** (watch Smart Stack +
+  iOS home screen) read their host app's chosen language through an **App Group**
+  (`group.ai.torma.manas.2026`, `ManasKit/AppState.swift` `SharedDefaults`; the apps
+  mirror `manas.locale` there and reload timelines on change), falling back to
+  device language until the app sets one.
 - **All stages are shown by default on every client.** Bowl was hidden by default
   until its poster shipped; both defaults were then flipped together —
   `pwa/components/settings/SettingsContext.tsx` `hidden: []` and

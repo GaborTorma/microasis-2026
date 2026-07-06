@@ -10,18 +10,24 @@ public struct NowEntry: TimelineEntry {
     public let stage: StageDTO?
     /// The act to show at `date`: the one on air, else the next upcoming one.
     public let event: EventDTO?
+    /// The acts after `event`, soonest first (capped in the builder) — the iOS
+    /// home widgets render as many rows of these as fit; the watch ignores it.
+    public let upcoming: [EventDTO]
     /// `event` is on air at `date` (vs. an upcoming "next").
     public let isLive: Bool
-    /// `event` is one of the user's favorites (matched by slug against the
-    /// list the app mirrors into the App Group). Defaults to false so call
-    /// sites that don't care about favorites keep compiling.
-    public let isFavorite: Bool
+    /// The favorite slugs the app mirrors into the App Group — kept as the set
+    /// (not a single flag) so the home widgets can mark upcoming rows too.
+    /// Defaults to empty so call sites that don't care keep compiling.
+    public let favorites: Set<String>
     public let locale: AppLocale
 
-    public init(date: Date, stage: StageDTO?, event: EventDTO?, isLive: Bool,
-                isFavorite: Bool = false, locale: AppLocale) {
-        self.date = date; self.stage = stage; self.event = event; self.isLive = isLive
-        self.isFavorite = isFavorite; self.locale = locale
+    /// `event` (the main act) is one of the user's favorites.
+    public var isFavorite: Bool { NowWidgetBuilder.isFavorite(event, in: favorites) }
+
+    public init(date: Date, stage: StageDTO?, event: EventDTO?, upcoming: [EventDTO] = [],
+                isLive: Bool, favorites: Set<String> = [], locale: AppLocale) {
+        self.date = date; self.stage = stage; self.event = event; self.upcoming = upcoming
+        self.isLive = isLive; self.favorites = favorites; self.locale = locale
     }
 }
 
@@ -44,12 +50,17 @@ public enum NowWidgetBuilder {
         return data.stages.first(where: { $0.isDefault }) ?? data.stages.first
     }
 
-    /// The act to show at `t`: on air if any, else the next upcoming. nil when
-    /// the stage's programme is entirely in the past.
-    public static func pick(at t: Date, events: [EventDTO]) -> (event: EventDTO?, live: Bool) {
-        if let live = events.first(where: { $0.isLive(at: t) }) { return (live, true) }
-        if let next = events.first(where: { $0.startsAt > t }) { return (next, false) }
-        return (nil, false)
+    /// The act to show at `t` (on air if any, else the next upcoming — nil when
+    /// the stage's programme is entirely in the past) plus the acts after it,
+    /// soonest first, for the home widgets' up-next rows. Capped at 4 — more
+    /// than fits any widget family.
+    public static func pick(at t: Date, events: [EventDTO]) -> (event: EventDTO?, live: Bool, upcoming: [EventDTO]) {
+        let future = events.filter { $0.startsAt > t }
+        if let live = events.first(where: { $0.isLive(at: t) }) {
+            return (live, true, Array(future.prefix(4)))
+        }
+        guard let first = future.first else { return (nil, false, []) }
+        return (first, false, Array(future.dropFirst().prefix(4)))
     }
 
     /// `event` is favorited — nil events and slug-less events (old caches) aren't.
@@ -66,8 +77,8 @@ public enum NowWidgetBuilder {
         }
         let evs = events(data, stageSlug: stage.slug)
         let p = pick(at: at, events: evs)
-        return NowEntry(date: at, stage: stage, event: p.event, isLive: p.live,
-                        isFavorite: isFavorite(p.event, in: favorites), locale: locale)
+        return NowEntry(date: at, stage: stage, event: p.event, upcoming: p.upcoming,
+                        isLive: p.live, favorites: favorites, locale: locale)
     }
 
     /// `now` plus every future act start/end within the next 12 h as entries.
@@ -81,8 +92,8 @@ public enum NowWidgetBuilder {
         }
         return times.sorted().prefix(60).map { t in
             let p = pick(at: t, events: evs)
-            return NowEntry(date: t, stage: stage, event: p.event, isLive: p.live,
-                            isFavorite: isFavorite(p.event, in: favorites), locale: locale)
+            return NowEntry(date: t, stage: stage, event: p.event, upcoming: p.upcoming,
+                            isLive: p.live, favorites: favorites, locale: locale)
         }
     }
 }
@@ -166,7 +177,7 @@ public struct NowWidgetContent: View {
                     // Sit tighter to the act name than to the header row.
                     .padding(.bottom, -2 * s)
             }
-            actLabel
+            actLabel(s)
                 .font(.system(size: 16 * s, weight: .bold, design: .rounded))
                 .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
                 .lineLimit(2).minimumScaleFactor(0.5)
@@ -175,12 +186,15 @@ public struct NowWidgetContent: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
-    /// The act line, with a compact accent heart inlined before the name when
-    /// the act is favorited (a `Text` run, so it wraps with the title).
-    private var actLabel: Text {
+    /// The act line, with the always-red heart inlined before the name when the
+    /// act is favorited (a `Text` run, so it wraps with the title) at 0.8× the
+    /// title size — the ratio every other surface uses.
+    private func actLabel(_ s: CGFloat) -> Text {
         let title = Text(actText)
         guard entry.isFavorite else { return title }
-        return Text("\(Image(systemName: "heart.fill")) ").foregroundStyle(.red) + title
+        return Text("\(Image(systemName: "heart.fill")) ")
+            .font(.system(size: 16 * s * 0.8, weight: .bold))
+            .foregroundStyle(.red) + title
     }
 
     private var actText: String {

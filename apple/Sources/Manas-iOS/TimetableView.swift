@@ -24,6 +24,8 @@ struct TimetableView: View {
     /// fade so the favorited ones pop.
     var favFilter: Bool = false
     @Binding var compactHeader: Bool
+    /// Widget deep link (`manas://stage/<slug>`): pending stage to lead with.
+    @Binding var stageJump: String?
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var now = Fmt.now
@@ -116,11 +118,14 @@ struct TimetableView: View {
                     .onAppear {
                         location.refresh(stages: stages)
                         selectNearestColumn(stages)
+                        consumeStageJump(stages, effCols: effCols)   // after nearest, so the tap wins
                         guard !didScroll else { return }
                         didScroll = true
                         jumpToNow(vproxy, g, data)
                     }
                 }
+                // Widget tapped while the app is alive (warm open).
+                .onChange(of: stageJump) { _, _ in consumeStageJump(stages, effCols: effCols) }
                 // Returning to the foreground re-jumps to the current time and
                 // re-selects the nearest stage as the left column.
                 .onChange(of: scenePhase) { _, phase in
@@ -158,6 +163,19 @@ struct TimetableView: View {
     private func selectNearestColumn(_ stages: [StageDTO]) {
         guard let slug = location.nearestSlug, stages.contains(where: { $0.slug == slug }) else { return }
         leadingStage = slug
+    }
+
+    /// Widget deep link: bring the tapped widget's stage on screen, as the
+    /// leading column where possible. Near the end of the stage list the
+    /// scroll clamps (fewer than `effCols` columns remain), so clamp the
+    /// target too — otherwise the header (driven by `leadingStage`) and the
+    /// actual scroll position diverge. (A hidden stage isn't in `stages` —
+    /// the jump is dropped silently.)
+    private func consumeStageJump(_ stages: [StageDTO], effCols: Int) {
+        guard let slug = stageJump else { return }
+        stageJump = nil
+        guard let idx = stages.firstIndex(where: { $0.slug == slug }) else { return }
+        leadingStage = stages[min(idx, max(stages.count - effCols, 0))].slug
     }
 
     /// Scroll so the act on now (earliest-starting if several are live, else the

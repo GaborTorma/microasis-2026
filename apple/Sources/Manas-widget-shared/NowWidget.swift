@@ -10,7 +10,7 @@ struct NowProvider: AppIntentTimelineProvider {
         NowEntry(date: Date(), stage: nil, event: nil, isLive: false, locale: WidgetSchedule.locale)
     }
 
-    func snapshot(for configuration: StageSelectionIntent, in context: Context) async -> NowEntry {
+    func snapshot(for configuration: StageIntent, in context: Context) async -> NowEntry {
         let data = await WidgetSchedule.load()
         return NowWidgetBuilder.makeEntry(at: WidgetSchedule.now, data: data, slug: configuration.stage?.id,
                                           locale: WidgetSchedule.locale, favorites: WidgetSchedule.favorites)
@@ -20,16 +20,16 @@ struct NowProvider: AppIntentTimelineProvider {
     /// the gallery offers each stage directly. Synchronous, so it reads the
     /// cached schedule (empty until the first fetch — then the widget is still
     /// addable and configurable by hand).
-    func recommendations() -> [AppIntentRecommendation<StageSelectionIntent>] {
+    func recommendations() -> [AppIntentRecommendation<StageIntent>] {
         let stages = (APIClient().cachedSchedule()?.stages ?? []).sorted { $0.sortOrder < $1.sortOrder }
         return stages.map { s in
-            let intent = StageSelectionIntent()
+            let intent = StageIntent()
             intent.stage = StageEntity(id: s.slug, name: s.name)
             return AppIntentRecommendation(intent: intent, description: Text(s.name))
         }
     }
 
-    func timeline(for configuration: StageSelectionIntent, in context: Context) async -> Timeline<NowEntry> {
+    func timeline(for configuration: StageIntent, in context: Context) async -> Timeline<NowEntry> {
         let now = WidgetSchedule.now
         let favorites = WidgetSchedule.favorites
         let data = await WidgetSchedule.load()
@@ -46,8 +46,8 @@ struct NowProvider: AppIntentTimelineProvider {
         if WidgetSchedule.debugNow != nil {
             let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
             let p = NowWidgetBuilder.pick(at: now, events: events)
-            let entry = NowEntry(date: Date(), stage: stage, event: p.event, isLive: p.live,
-                                 isFavorite: NowWidgetBuilder.isFavorite(p.event, in: favorites),
+            let entry = NowEntry(date: Date(), stage: stage, event: p.event, upcoming: p.upcoming,
+                                 isLive: p.live, favorites: favorites,
                                  locale: WidgetSchedule.locale)
             return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
         }
@@ -64,14 +64,27 @@ struct NowProvider: AppIntentTimelineProvider {
     }
 }
 
-/// 3×1 "now playing" widget — pin one per stage and scroll the Smart Stack.
+/// Per-stage "now playing" widget, shared by both widget extensions: the
+/// rectangular Smart Stack card on the watch; on iOS the small and medium
+/// home-screen sizes, both showing the watch card's "now" block with the Now
+/// tab's "up next" row beneath (medium is the wide variant).
 struct ManasNowWidget: Widget {
+    #if os(watchOS)
+    private let families: [WidgetFamily] = [.accessoryRectangular]
+    #else
+    private let families: [WidgetFamily] = [.systemSmall, .systemMedium]
+    #endif
+
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: "ManasNow", intent: StageSelectionIntent.self, provider: NowProvider()) { entry in
+        AppIntentConfiguration(kind: "ManasNow", intent: StageIntent.self, provider: NowProvider()) { entry in
+            #if os(watchOS)
             NowWidgetView(entry: entry)
+            #else
+            NowHomeWidgetView(entry: entry)
+            #endif
         }
         .configurationDisplayName("Most játszik")
         .description("Egy színpad épp futó (vagy következő) előadása.")
-        .supportedFamilies([.accessoryRectangular])
+        .supportedFamilies(families)
     }
 }
