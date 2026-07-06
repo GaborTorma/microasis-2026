@@ -627,12 +627,15 @@ function EventBlock({
           style={{ fontSize: `${(tight ? 0.62 : 0.74) * scale}rem` }}
         >
           {/* Inline heart: part of the title's text run, so it sits before
-              the first word and wraps with the text (like the watch widget). */}
+              the first word and wraps with the text (like the watch widget).
+              0.8em @ -0.05em is the largest size that stays inside the 1.05
+              line box — measured: anything bigger nudges the first line down
+              (0.9em → +0.56px). em-sized, so this holds at every text scale. */}
           {fav && (
             <Heart
-              size={Math.round((tight ? 9 : 11) * scale)}
               fill="currentColor"
-              className="mr-1 inline-block align-[-1px] text-red-400"
+              className="mr-1 inline-block text-red-400"
+              style={{ width: "0.8em", height: "0.8em", verticalAlign: "-0.05em" }}
               aria-hidden="true"
             />
           )}
