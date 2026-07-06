@@ -97,8 +97,8 @@ disclaimer with `-manas.disclaimerSeen 1`.
   devices) mirrors the app's language, the favorite slugs (`manas.favorites`),
   the QA `manas.debugNow` clock (DEBUG/TestFlight only), and — same group
   container — **one schedule disk cache** (the widget reuses the app's fetch).
-- **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.3.0`) bumped per
-  release; `CURRENT_PROJECT_VERSION` (integer, currently `12`) bumped per TestFlight
+- **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.4.0`) bumped per
+  release; `CURRENT_PROJECT_VERSION` (integer, currently `14`) bumped per TestFlight
   upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
   plist or the bump won't reach the binary.
 - **Bundle IDs:** `ai.torma.manas.2026` (iOS) · `.widget` (iOS widget) ·

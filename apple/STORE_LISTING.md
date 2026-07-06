@@ -33,17 +33,17 @@ limits. The privacy/support URLs point at the deployed pwa.
 - **HU** (93): `manas,fesztivál,2026,időrend,program,fellépők,kalauz,nemhivatalos,színpad,mostjátszik,offline`
 
 ## Promotional text (≤170, editable without resubmission)
-- **EN** (155):
+- **EN** (150):
 
-Unofficial, fan-made guide to the Manas 2026 festival: full timetable, a live Now view, offline use, Apple Watch widgets — and share it with friends by QR.
+Unofficial fan-made guide to Manas 2026: full timetable, live Now view, favourites synced iPhone↔Watch, home-screen widgets, offline — share it by QR.
 
-- **HU** (153):
+- **HU** (156):
 
-Nem hivatalos, rajongói kalauz a Manas 2026 fesztiválhoz: teljes időrend, élő Most nézet, offline mód, Apple Watch widgetek — és QR-kóddal továbbadhatod.
+Nem hivatalos rajongói kalauz a Manas 2026-hoz: teljes időrend, élő Most nézet, kedvencek iPhone↔Watch szinkronnal, widgetek, offline — QR-ral továbbadható.
 
 ## Description (≤4000)
 
-### English (2792 chars)
+### English (3257 chars)
 
 This is an unofficial, fan-made guide. It is not affiliated with, endorsed by, or sponsored by the MANAS festival or its organizers.
 
@@ -58,6 +58,15 @@ THE WHOLE PROGRAMME
 NOW VIEW
 - A "Now" screen shows what is playing right now and what is up next on each stage.
 - Before the gates open it counts down to the start; on opening day it welcomes you while the camp goes up, and after the closing act it points you to the GROUNDING days that follow.
+
+YOUR FAVOURITES, EVERYWHERE
+- Tap an act to heart it — your picks stand out in the timetable and the Now view.
+- Favourites sync automatically between iPhone and Apple Watch, and are marked in the widgets too.
+- Stored only on your devices — no account needed.
+
+ON YOUR HOME SCREEN
+- Small and medium home-screen widgets show what is playing now and what is up next on a stage of your choice.
+- Add one per stage; a tap opens the app right at that stage's column.
 
 ON YOUR APPLE WATCH
 - A built-in watchOS app lets you browse one stage at a time, with no fiddly grid.
@@ -87,7 +96,7 @@ This app is made by an independent fan and is not the official festival app. "MA
 
 Questions or feedback? Email manas2026@torma.ai
 
-### Magyar (3047 chars)
+### Magyar (3585 chars)
 
 Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MANAS fesztivállal vagy annak szervezőivel, azok nem támogatják és nem szponzorálják.
 
@@ -102,6 +111,15 @@ A TELJES PROGRAM
 MOST NÉZET
 - A „Most" képernyő megmutatja, mi szól éppen, és mi következik az egyes színpadokon.
 - A kapunyitás előtt visszaszámol a kezdésig; a nyitónapon a tábor épülése közben köszönt, a záró fellépő után pedig a GROUNDING Napokra irányít.
+
+A KEDVENCEID, MINDENHOL
+- Koppints egy programra, és jelöld szívvel — a kedvenceid kiemelkednek az időrendben és a Most nézetben is.
+- A kedvencek automatikusan szinkronizálódnak iPhone és Apple Watch között, és a widgetekben is jelölve vannak.
+- Csak a készülékeiden tárolódnak — nem kell hozzá fiók.
+
+A KEZDŐKÉPERNYŐDÖN
+- Kicsi és közepes kezdőképernyő-widgetek mutatják, mi szól éppen és mi következik az általad választott színpadon.
+- Adj hozzá színpadonként egyet; egy koppintás az appot pont annál a színpad-oszlopnál nyitja meg.
 
 AZ APPLE WATCH-ON
 - A beépített watchOS-alkalmazással egyszerre egy színpadot böngészhetsz, bonyolult rács nélkül.
@@ -131,7 +149,29 @@ Ezt az alkalmazást egy független rajongó készítette, és nem a hivatalos fe
 
 Kérdés vagy visszajelzés? Írj a manas2026@torma.ai címre.
 
-## What's New — v1.3 (current, ≤4000)
+## What's New — v1.4 (current, ≤4000)
+
+### English (579 chars)
+
+What's new in 1.4:
+
+- Favourites: tap an act to heart it. Your picks stand out in the timetable and Now view, sync automatically between iPhone and Apple Watch, and are marked in the widgets — stored only on your devices, no account needed.
+- Home-screen widgets: small and medium widgets show what is playing now and what is up next on a stage of your choice. Add one per stage — a tap opens the app right at that stage.
+- Small polish throughout the widgets and event blocks.
+
+Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+
+### Magyar (666 chars)
+
+Újdonságok az 1.4-ben:
+
+- Kedvencek: koppints egy programra, és jelöld szívvel. A kedvenceid kiemelkednek az időrendben és a Most nézetben, automatikusan szinkronizálódnak iPhone és Apple Watch között, és a widgetekben is jelölve vannak — csak a készülékeiden tárolódnak, fiók nélkül.
+- Kezdőképernyő-widgetek: kicsi és közepes widgetek mutatják, mi szól éppen és mi következik a választott színpadon. Adj hozzá színpadonként egyet — egy koppintás az appot pont annál a színpadnál nyitja.
+- Apróbb csiszolások a widgeteken és az esemény-blokkokon.
+
+Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+
+## What's New — v1.3 (history)
 
 ### English (558 chars)
 
@@ -229,7 +269,7 @@ Ez egy nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. V
 
 Unofficial, fan-made companion guide for the Manas 2026 music festival (Hungary, July 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MANAS 2026" is used referentially to indicate which festival this guide covers.
 
-New in this version (1.3): performance and reliability work only — the schedule fetch now uses standard HTTP conditional requests (ETag/If-None-Match against the same public endpoint), and on Apple Watch the app and its widgets share one local schedule cache. No new features, permissions or data collection; the App Privacy answers are unchanged.
+New in this version (1.4): favourites and iPhone home-screen widgets. Favourites are hearts the user taps onto acts; they are stored locally on the device and synced directly between the user's own iPhone and Apple Watch via Apple's WatchConnectivity framework — nothing is sent to any server, there is no account, and no data is collected. The home-screen widgets (WidgetKit, small/medium) show the same public schedule as the app for a chosen stage. No new permissions; the App Privacy answers are unchanged.
 
 No account or login required — no sign-up, no authentication of any kind. The app is free with no ads and no in-app purchases.
 
@@ -251,5 +291,5 @@ The submission includes an embedded watchOS app and watch widgets/complications 
   the build (HTTPS-only, exempt). No "Missing Compliance".
 - **Pricing:** Free.
 - **Availability:** your choice (all countries, or restrict to Hungary).
-- **Build:** attach build 13 to the 1.3 version (live is 1.2).
+- **Build:** attach build 14 to the 1.4 version (live is 1.3).
 - **Version release:** Manual (recommended) so you control go-live timing.
