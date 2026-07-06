@@ -15,23 +15,23 @@ public enum HomeWidgetSize {
     case small, medium
 }
 
-/// Per-size type scale; the two sizes render the same content.
+/// Per-size type scale; the two sizes render the same content. `icon` is the
+/// top-right kind-icon watermark.
 private struct Metrics {
     let stage: CGFloat, time: CGFloat, artist: CGFloat, title: CGFloat
     let nextTitle: CGFloat, nextTime: CGFloat
     let icon: CGFloat, chip: CGFloat, titleLines: Int
     /// The medium card is wide enough to put the time range beside the stage
-    /// name (like the watch) and the kind icon + chip on the title's line; the
-    /// small square stacks them instead (time under the header, chip in the
-    /// header, icon just above the rule).
+    /// name (like the watch) and the chip on the title's line; the small
+    /// square stacks them instead (time under the header, chip in the header).
     let timeInHeader: Bool
 
     static let small = Metrics(stage: 12, time: 11, artist: 11, title: 14,
                                nextTitle: 12, nextTime: 11,
-                               icon: 13, chip: 8, titleLines: 2, timeInHeader: false)
+                               icon: 38, chip: 8, titleLines: 2, timeInHeader: false)
     static let medium = Metrics(stage: 14, time: 13, artist: 13, title: 18,
                                 nextTitle: 14, nextTime: 13,
-                                icon: 16, chip: 10, titleLines: 1, timeInHeader: true)
+                                icon: 48, chip: 10, titleLines: 1, timeInHeader: true)
 }
 
 private extension NowEntry {
@@ -56,23 +56,34 @@ public struct HomeWidgetContent: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            nowBlock
-            if !entry.upcoming.isEmpty {
-                // The up-next list is bottom-anchored (last row flush with the
-                // card bottom) and gets the leftover space proposed first
-                // (layoutPriority) so it fits as many rows as it can; the two
-                // equal spacers then split what remains, centering the rule in
-                // the gap between the title line and the list.
-                Spacer(minLength: 3)
-                Rectangle().fill(Theme.line).frame(height: 1)
-                Spacer(minLength: 3)
-                upcomingList.layoutPriority(1)
-            } else {
-                Spacer(minLength: 0)
+        ZStack(alignment: .topTrailing) {
+            // Kind-icon watermark (top-right) of the current act — a
+            // translucent background ornament, like the watch card; content
+            // may run over it.
+            if let event = entry.event {
+                KindIcon(event.kind, size: m.icon, color: entry.accentColor)
+                    .opacity(0.26)
+                    .widgetAccentable()
             }
+            VStack(alignment: .leading, spacing: 2) {
+                nowBlock
+                if !entry.upcoming.isEmpty {
+                    // The up-next list is bottom-anchored (last row flush with
+                    // the card bottom) and gets the leftover space proposed
+                    // first (layoutPriority) so it fits as many rows as it
+                    // can; the two equal spacers then split what remains,
+                    // centering the rule in the gap between the title line
+                    // and the list.
+                    Spacer(minLength: 3)
+                    Rectangle().fill(Theme.line).frame(height: 1)
+                    Spacer(minLength: 3)
+                    upcomingList.layoutPriority(1)
+                } else {
+                    Spacer(minLength: 0)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: "Most" — the watch card's content
@@ -108,17 +119,15 @@ public struct HomeWidgetContent: View {
                 .lineLimit(1).minimumScaleFactor(0.7)
                 .padding(.top, 1)
         }
-        // The kind icon (both sizes) and the language chip (medium; small has
-        // it in the header) sit right-aligned on the title's last line — the
-        // lowest content line above the rule, at zero extra height so the
-        // 4-row up-next list still fits.
+        // The language chip on medium sits right-aligned on the title's last
+        // line (small has it in the header) — zero extra height so the 4-row
+        // up-next list still fits. The kind icon is the top-right watermark.
         HStack(alignment: .bottom, spacing: 6) {
             titleText
-            Spacer(minLength: 4)
-            if let event = entry.event {
-                KindIcon(event.kind, size: m.icon, color: entry.accentColor)
+            if m.timeInHeader {
+                Spacer(minLength: 4)
+                langChip
             }
-            if m.timeInHeader { langChip }
         }
     }
 
