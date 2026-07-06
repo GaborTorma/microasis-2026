@@ -71,8 +71,9 @@ private struct NowUpNextView: View {
             VStack(alignment: .leading, spacing: 2) {
                 nowBlock
                 if !entry.upcoming.isEmpty {
-                    Divider().overlay(Theme.line).padding(.vertical, 3)
-                    upcomingList
+                    // Just enough of a gap for the up-next list to read as its
+                    // own block while a 4th row still fits on medium.
+                    upcomingList.padding(.top, 2)
                 }
                 Spacer(minLength: 0)
             }

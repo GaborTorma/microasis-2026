@@ -71,10 +71,10 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - HU/EN toggle (HU default). Map view is intentionally omitted (paused on web too).
 - **Home-screen widgets** (small / medium): per-stage now-playing. Both sizes
   show the same content — the watch card's "now" block (stage · time · artist
-  · act), a divider, then as many up-next rows (act · start time) as fit;
-  medium is the wide variant where long names fit on one line. Configurable
-  per stage, like the watch widget. Shares the app's schedule cache and
-  language via the App Group.
+  · act), then as many up-next rows (act · start time) as fit; medium is the
+  wide variant where long names fit on one line. Configurable per stage, like
+  the watch widget. Shares the app's schedule cache and language via the App
+  Group.
 
 **watchOS** — one stage at a time, no time grid:
 - Card shows **stage name · date · time-range · act name** (+ language chip).
