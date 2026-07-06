@@ -68,6 +68,10 @@ export const events = pgTable(
       .notNull()
       .references(() => stages.id, { onDelete: "cascade" }),
     title: jsonb("title").$type<I18nText>().notNull(),
+    /** Stable cross-platform event identity, generated + uniqueness-asserted
+     *  by the seed (not DB-enforced: the column backfills '' on push before
+     *  the seed runs). */
+    slug: text("slug").notNull().default(""),
     /** Performer / facilitator. Language-neutral proper noun; null where the
      *  act name already is the title (Portal/Bowl) or there is no performer. */
     artist: text("artist"),

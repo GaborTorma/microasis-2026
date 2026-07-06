@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, MapPin, Sunset, Waves } from "lucide-react";
+import { ArrowUpRight, Heart, MapPin, Sunset, Waves } from "lucide-react";
 import { EVENT_ICONS, eventIconKey } from "@/lib/eventIcon";
 import { useSchedule } from "@/lib/useSchedule";
 import { useNow } from "@/lib/useNow";
@@ -12,6 +12,7 @@ import { orderedVisibleStages } from "@/lib/stageSettings";
 import { GROUNDING } from "@/lib/grounding";
 import type { EventDTO, StageDTO } from "@/lib/types";
 import { StatusBar } from "./StatusBar";
+import { useFavorites } from "./favorites/FavoritesContext";
 import { useSettings } from "./settings/SettingsContext";
 
 /** Time left until `endIso`, "H:MM:SS" (or "M:SS" under an hour). */
@@ -254,6 +255,7 @@ function StageNowCard({
   near: boolean;
 }) {
   const t = useTranslations();
+  const { isFavorite } = useFavorites();
   const playable = events.filter((e) => e.kind !== "break");
   const live = playable.find(
     (e) =>
@@ -269,6 +271,9 @@ function StageNowCard({
   // Per-category workshop icon (mirrors the grid); music / ceremony → speaker.
   const LiveKind = live ? EVENT_ICONS[eventIconKey(live)] : null;
   const NextKind = soonNext ? EVENT_ICONS[eventIconKey(soonNext)] : null;
+  // Display-only favorite marks (slug may be missing on a stale cached payload).
+  const favLive = Boolean(live?.slug && isFavorite(live.slug));
+  const favNext = Boolean(soonNext?.slug && isFavorite(soonNext.slug));
 
   return (
     <article
@@ -314,10 +319,21 @@ function StageNowCard({
                     {live.artist}
                   </p>
                 )}
-                <FitText
-                  text={tx(live.title, locale)}
-                  className="font-display text-xl font-bold leading-tight text-cream"
-                />
+                <div className="flex items-center gap-1.5">
+                  {favLive && (
+                    <Heart
+                      size={14}
+                      fill="currentColor"
+                      className="shrink-0"
+                      style={{ color: stage.accent }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <FitText
+                    text={tx(live.title, locale)}
+                    className="min-w-0 flex-1 font-display text-xl font-bold leading-tight text-cream"
+                  />
+                </div>
               </div>
               {live.endsAt && (
                 <div className="shrink-0 text-right">
@@ -347,6 +363,15 @@ function StageNowCard({
                 </p>
               )}
               <p className="font-display text-base font-semibold text-cream-dim">
+                {favNext && (
+                  <Heart
+                    size={12}
+                    fill="currentColor"
+                    className="mr-1 inline-block align-[-1px]"
+                    style={{ color: stage.accent }}
+                    aria-hidden="true"
+                  />
+                )}
                 {tx(soonNext.title, locale)}
               </p>
             </div>

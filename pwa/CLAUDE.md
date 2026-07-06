@@ -16,7 +16,7 @@ See `../CLAUDE.md` for the web ↔ apple wire contract before editing any DTO or
 ```
 app/
   layout.tsx        Root layout (server): metadata, viewport, NextIntlClientProvider,
-                    SettingsProvider, Header, BottomNav, SWRegister, manifest link
+                    SettingsProvider, FavoritesProvider, Header, BottomNav, SWRegister
   page.tsx          /      → <Timetable/>
   now/page.tsx      /now   → <NowView/>
   map/page.tsx      /map   → <MapView/>  (live but unlinked from nav — intentional)
@@ -24,7 +24,7 @@ app/
   api/locations/    GET, ETag/304 + 60s payload memo, getLocations() (web map only)
   actions/locale.ts setLocale() server action → sets manas-locale cookie
   manifest.ts       PWA manifest        globals.css  Tailwind v4 @theme + utilities
-components/         Timetable / NowView / MapView (+ map/, settings/), Header, BottomNav
+components/         Timetable / NowView / MapView (+ map/, settings/, favorites/), Header, BottomNav
 lib/                db/ (schema + client), queries, types, format, festival, geo,
                     etag, mapConfig, stageSettings, useSchedule, useNearestStage
 i18n/               config (LOCALES, DEFAULT_LOCALE='hu') + request (locale detection)
@@ -46,8 +46,10 @@ public/             sw.js, icons/       scripts/  seed.ts, icons.ts
   with `If-None-Match` (304 → keep cache), persist body + etag, refetch on tab focus.
   `offline` is only set when the network fails *and* there is no cache — a stale
   cache is shown silently.
-- **Settings** (stage order/visibility, text scale, column count) live in React
-  context + `localStorage`, never server-side.
+- **Settings** (stage order/visibility, text scale, column count) and **favorites**
+  (event-slug list, `components/favorites/FavoritesContext.tsx`, key
+  `manas-favorites-v1`) live in React context + `localStorage`, never server-side.
+  Favorites are keyed on the seed-generated event `slug` — see `../CLAUDE.md`.
 - **i18n is cookie-based, no middleware, no locale path segments.** There is no
   `middleware.ts` and no `/hu`/`/en` routes. `i18n/request.ts`: cookie `manas-locale`
   > `Accept-Language` first tag (`hu*`→HU else EN) > HU default; cookie always wins.
@@ -55,8 +57,8 @@ public/             sw.js, icons/       scripts/  seed.ts, icons.ts
 ## Data model (`lib/db/schema.ts`)
 
 `stages` (slug, name, colors, `sortOrder`, `isDefault`, `lat/lng/radiusM` geofence) ·
-`events` (stageId FK, `title` jsonb i18n, `startsAt`/`endsAt` tz timestamps, `kind`,
-`langAvailability`, `sortOrder`) · `locationCategories` · `locations` (SVG `svgX/svgY`
+`events` (stageId FK, `slug` seed-generated stable identity, `title` jsonb i18n,
+`startsAt`/`endsAt` tz timestamps, `kind`, `langAvailability`, `sortOrder`) · `locationCategories` · `locations` (SVG `svgX/svgY`
 + optional `lat/lng`, `refCode`, `requiresRegistration`). All translatable text is
 `I18nText = {en, hu}` stored as jsonb. Times are `timestamp withTimezone`.
 
@@ -79,14 +81,14 @@ pnpm icons               # regenerate PWA icons (mandala SVG → public/icons/*.
 ## Gotchas / footguns
 
 - **Service worker cache versioning is manual.** `public/sw.js` keys everything off
-  `VERSION = "manas-vNN"` (currently v17). **Bump it after any deploy that changes cached assets** or
+  `VERSION = "manas-vNN"` (currently v18). **Bump it after any deploy that changes cached assets** or
   returning PWA users get stale files — the #1 "my change isn't showing" trap.
 - **`pnpm db:seed` is destructive and idempotent:** it `db.delete()`s events,
   locations, stages, locationCategories, then re-inserts from the hardcoded arrays in
   `scripts/seed.ts` (transcribed from the printed posters). **Any data edited in the DB
   directly is lost on the next seed.** Seed is the source of truth for content.
-- **localStorage cache keys are hand-versioned:** `manas-schedule-v1`,
-  `manas-locations-v1`, `manas-settings-v1`, `manas-tent-v1` (+ `<key>:etag`
+- **localStorage cache keys are hand-versioned:** `manas-schedule-v2`,
+  `manas-locations-v1`, `manas-settings-v1`, `manas-favorites-v1`, `manas-tent-v1` (+ `<key>:etag`
   sidecars for the conditional refetch). Bump on DTO changes or stale cache can
   feed malformed data.
 - **Payload memo = 60s:** DB edits take up to a minute (plus client cache) to appear.

@@ -25,6 +25,11 @@
     "empty": "Schedule coming soon",
     "tba": "Line-up to be announced"
   },
+  "favorites": {
+    "filter": "Favorites only",
+    "add": "Add {title} to favorites",
+    "remove": "Remove {title} from favorites"
+  },
   "now": {
     "title": "Now",
     "live": "LIVE",
