@@ -605,16 +605,9 @@ function EventBlock({
             {!compact && event.endsAt ? ` – ${hhmm(event.endsAt, locale)}` : ""}
           </span>
           {live && <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-now" />}
-          {fav && (
-            <Heart
-              size={iconPx}
-              fill="currentColor"
-              className="ml-auto shrink-0 text-red-400"
-            />
-          )}
           <KindIcon
             size={iconPx}
-            className={`${fav ? "" : "ml-auto "}shrink-0`}
+            className="ml-auto shrink-0"
             style={{ color: stage.accent }}
           />
         </div>
@@ -629,17 +622,20 @@ function EventBlock({
       )}
       <div className="flex items-start gap-1 leading-[1.05]">
         {tight && live && <span className="pulse-dot mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-now" />}
-        {tight && fav && (
-          <Heart
-            size={Math.round(9 * scale)}
-            fill="currentColor"
-            className="mt-0.5 shrink-0 text-red-400"
-          />
-        )}
         <span
           className={`font-display font-semibold ${tight ? "text-cream" : "text-cream-dim"}`}
           style={{ fontSize: `${(tight ? 0.62 : 0.74) * scale}rem` }}
         >
+          {/* Inline heart: part of the title's text run, so it sits before
+              the first word and wraps with the text (like the watch widget). */}
+          {fav && (
+            <Heart
+              size={Math.round((tight ? 9 : 11) * scale)}
+              fill="currentColor"
+              className="mr-1 inline-block align-[-1px] text-red-400"
+              aria-hidden="true"
+            />
+          )}
           {tx(event.title, locale)}
         </span>
       </div>
