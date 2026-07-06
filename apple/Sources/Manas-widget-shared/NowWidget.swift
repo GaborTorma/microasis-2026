@@ -32,9 +32,6 @@ struct NowProvider: AppIntentTimelineProvider {
     func timeline(for configuration: StageIntent, in context: Context) async -> Timeline<NowEntry> {
         let now = WidgetSchedule.now
         let data = await WidgetSchedule.load()
-        #if DEBUG
-        NSLog("MANASWIDGET timeline: configured stage=%@", configuration.stage?.id ?? "<nil>")
-        #endif
         guard let data, let stage = NowWidgetBuilder.resolveStage(data, slug: configuration.stage?.id) else {
             // No data yet (first run, offline, never opened): retry in an hour.
             let entry = NowWidgetBuilder.makeEntry(at: now, data: data, slug: configuration.stage?.id,

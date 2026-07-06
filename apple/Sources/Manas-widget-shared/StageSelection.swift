@@ -65,9 +65,6 @@ private enum StageDirectory {
     /// only matters in the configuration UI, where the real list is loaded).
     static func resolve(_ identifiers: [String]) async -> [(slug: String, name: String)] {
         let all = await all()
-        #if DEBUG
-        NSLog("MANASWIDGET entities(for: %@) -> %d known", identifiers.joined(separator: ","), all.count)
-        #endif
         return identifiers.map { id in
             all.first { $0.slug == id } ?? (id, id.capitalized)
         }
@@ -109,11 +106,7 @@ struct StageQuery: EntityQuery {
     }
 
     func suggestedEntities() async throws -> [StageEntity] {
-        let all = await StageDirectory.all()
-        #if DEBUG
-        NSLog("MANASWIDGET suggestedEntities -> %d", all.count)
-        #endif
-        return all.map { StageEntity(id: $0.slug, name: $0.name) }
+        await StageDirectory.all().map { StageEntity(id: $0.slug, name: $0.name) }
     }
 }
 #else
@@ -138,11 +131,7 @@ struct HomeStageQuery: EntityQuery {
     }
 
     func suggestedEntities() async throws -> [HomeStageEntity] {
-        let all = await StageDirectory.all()
-        #if DEBUG
-        NSLog("MANASWIDGET suggestedEntities -> %d", all.count)
-        #endif
-        return all.map { HomeStageEntity(id: $0.slug, name: $0.name) }
+        await StageDirectory.all().map { HomeStageEntity(id: $0.slug, name: $0.name) }
     }
 }
 #endif

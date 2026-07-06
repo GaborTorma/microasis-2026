@@ -129,10 +129,11 @@ disclaimer with `-manas.disclaimerSeen 1`.
   block, then a bottom-anchored up-next list (act · start time; as many rows as
   fit, last row flush with the card bottom) with a 1pt `Theme.line` rule centered
   in the gap between the act name and the list (`NowEntry.upcoming`, capped at 4,
-  row count picked by `ViewThatFits` + `layoutPriority`). Ornaments are inline at
-  full opacity (no watermark): medium puts the time range flush with the trailing
-  edge of the header and the kind icon + HU/EN chip on the title's last line;
-  small puts the chip top-right in the header and the kind icon on the title line. Each extension reads the
+  row count picked by `ViewThatFits` + `layoutPriority`). The kind icon is a
+  translucent top-right watermark (38/48 pt at 0.26, content may run over it);
+  the HU/EN chip is full-opacity — medium puts it on the title's last line and
+  the time range flush with the header's trailing edge, small puts the chip
+  top-right in the header. Each extension reads the
   **schedule cache it shares with its host app** (App Group container; a copy
   fresher than 6 h skips the network, otherwise it does its own ETag-revalidated
   fetch), follows the **host app's language** via the `SharedDefaults` App Group
@@ -192,6 +193,6 @@ disclaimer with `-manas.disclaimerSeen 1`.
   appex-side AppIntents decode still fails ("HomeStageEntity is not a registered
   AppEntity identifier", metadata fetch via linkd fails, Apple parser faults on a
   corrupt `to-0.0` AppEnum case) → the widget falls back to the default stage.
-  Reproduced on two sims, fresh installs, with `ENABLE_DEBUG_DYLIB=NO` too — verify
-  stage configs on a real device / TestFlight, and check the DEBUG
-  `MANASWIDGET timeline: configured stage=` NSLog for ground truth.
+  Reproduced on two sims, fresh installs, with `ENABLE_DEBUG_DYLIB=NO` too. Stage
+  configs **work on a real device** (verified 2026-07-06) — don't chase the
+  default-stage fallback on the simulator.
