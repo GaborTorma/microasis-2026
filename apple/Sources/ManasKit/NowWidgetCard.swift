@@ -10,12 +10,17 @@ public struct NowEntry: TimelineEntry {
     public let stage: StageDTO?
     /// The act to show at `date`: the one on air, else the next upcoming one.
     public let event: EventDTO?
+    /// The upcoming act after `event` — only the large iOS widget renders it
+    /// (its second "up next" row); the compact families ignore it.
+    public let next: EventDTO?
     /// `event` is on air at `date` (vs. an upcoming "next").
     public let isLive: Bool
     public let locale: AppLocale
 
-    public init(date: Date, stage: StageDTO?, event: EventDTO?, isLive: Bool, locale: AppLocale) {
-        self.date = date; self.stage = stage; self.event = event; self.isLive = isLive; self.locale = locale
+    public init(date: Date, stage: StageDTO?, event: EventDTO?, next: EventDTO? = nil,
+                isLive: Bool, locale: AppLocale) {
+        self.date = date; self.stage = stage; self.event = event; self.next = next
+        self.isLive = isLive; self.locale = locale
     }
 }
 
@@ -38,12 +43,14 @@ public enum NowWidgetBuilder {
         return data.stages.first(where: { $0.isDefault }) ?? data.stages.first
     }
 
-    /// The act to show at `t`: on air if any, else the next upcoming. nil when
-    /// the stage's programme is entirely in the past.
-    public static func pick(at t: Date, events: [EventDTO]) -> (event: EventDTO?, live: Bool) {
-        if let live = events.first(where: { $0.isLive(at: t) }) { return (live, true) }
-        if let next = events.first(where: { $0.startsAt > t }) { return (next, false) }
-        return (nil, false)
+    /// The act to show at `t` (on air if any, else the next upcoming — nil when
+    /// the stage's programme is entirely in the past) plus the upcoming act
+    /// after it, for the two-row large widget.
+    public static func pick(at t: Date, events: [EventDTO]) -> (event: EventDTO?, live: Bool, next: EventDTO?) {
+        let upcoming = events.filter { $0.startsAt > t }
+        if let live = events.first(where: { $0.isLive(at: t) }) { return (live, true, upcoming.first) }
+        guard let first = upcoming.first else { return (nil, false, nil) }
+        return (first, false, upcoming.count > 1 ? upcoming[1] : nil)
     }
 
     /// A single entry for `at` — the placeholder / snapshot / preview path.
@@ -53,7 +60,7 @@ public enum NowWidgetBuilder {
         }
         let evs = events(data, stageSlug: stage.slug)
         let p = pick(at: at, events: evs)
-        return NowEntry(date: at, stage: stage, event: p.event, isLive: p.live, locale: locale)
+        return NowEntry(date: at, stage: stage, event: p.event, next: p.next, isLive: p.live, locale: locale)
     }
 
     /// `now` plus every future act start/end within the next 12 h as entries.
@@ -66,7 +73,7 @@ public enum NowWidgetBuilder {
         }
         return times.sorted().prefix(60).map { t in
             let p = pick(at: t, events: evs)
-            return NowEntry(date: t, stage: stage, event: p.event, isLive: p.live, locale: locale)
+            return NowEntry(date: t, stage: stage, event: p.event, next: p.next, isLive: p.live, locale: locale)
         }
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 struct SettingsView: View {
     @EnvironmentObject var store: ScheduleStore
@@ -7,7 +8,11 @@ struct SettingsView: View {
     @State private var stages: [StageDTO] = []
 
     private var localeBinding: Binding<AppLocale> {
-        Binding(get: { settings.locale }, set: { settings.locale = $0 })
+        Binding(get: { settings.locale }, set: {
+            settings.locale = $0
+            // Push the new language to the shared App Group widgets.
+            WidgetCenter.shared.reloadAllTimelines()
+        })
     }
 
     private var defaultDebugDate: Date { store.data?.festival.startsAt ?? Fmt.now }

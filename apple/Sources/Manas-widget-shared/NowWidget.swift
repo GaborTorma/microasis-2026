@@ -45,8 +45,8 @@ struct NowProvider: AppIntentTimelineProvider {
         if WidgetSchedule.debugNow != nil {
             let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
             let p = NowWidgetBuilder.pick(at: now, events: events)
-            let entry = NowEntry(date: Date(), stage: stage, event: p.event, isLive: p.live,
-                                 locale: WidgetSchedule.locale)
+            let entry = NowEntry(date: Date(), stage: stage, event: p.event, next: p.next,
+                                 isLive: p.live, locale: WidgetSchedule.locale)
             return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
         }
         let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
@@ -61,14 +61,27 @@ struct NowProvider: AppIntentTimelineProvider {
     }
 }
 
-/// 3×1 "now playing" widget — pin one per stage and scroll the Smart Stack.
+/// Per-stage "now playing" widget, shared by both widget extensions: the
+/// rectangular Smart Stack card on the watch, the three home-screen sizes on
+/// iOS (small ≈ the watch card, medium adds one-line room for long artist
+/// names, large mirrors the app's Now view with current + next act).
 struct ManasNowWidget: Widget {
+    #if os(watchOS)
+    private let families: [WidgetFamily] = [.accessoryRectangular]
+    #else
+    private let families: [WidgetFamily] = [.systemSmall, .systemMedium, .systemLarge]
+    #endif
+
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "ManasNow", intent: StageSelectionIntent.self, provider: NowProvider()) { entry in
+            #if os(watchOS)
             NowWidgetView(entry: entry)
+            #else
+            NowHomeWidgetView(entry: entry)
+            #endif
         }
         .configurationDisplayName("Most játszik")
         .description("Egy színpad épp futó (vagy következő) előadása.")
-        .supportedFamilies([.accessoryRectangular])
+        .supportedFamilies(families)
     }
 }
