@@ -71,11 +71,19 @@ private struct NowUpNextView: View {
             VStack(alignment: .leading, spacing: 2) {
                 nowBlock
                 if !entry.upcoming.isEmpty {
-                    // Just enough of a gap for the up-next list to read as its
-                    // own block while a 4th row still fits on medium.
-                    upcomingList.padding(.top, 2)
+                    // Bottom-anchored: the last row sits flush with the card's
+                    // bottom, the divider rides just above the list, and the
+                    // leftover space opens up between the act name and the line.
+                    VStack(alignment: .leading, spacing: 0) {
+                        // A 1pt rule instead of Divider(): the 0.33pt hairline
+                        // all but vanishes on the dark card.
+                        Rectangle().fill(Theme.line).frame(height: 1)
+                        upcomingList.padding(.top, 3)
+                    }
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                } else {
+                    Spacer(minLength: 0)
                 }
-                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
