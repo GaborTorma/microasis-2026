@@ -62,13 +62,27 @@ struct StageEntity: AppEntity {
 /// Supplies the stage list to the widget configuration UI, fetched live from
 /// the API (the DB is the source of truth for stages).
 struct StageQuery: EntityQuery {
+    /// Never fails: a configured slug must survive resolution even when the
+    /// schedule is unreachable, or the widget silently falls back to the
+    /// default stage. Slugs are the stable cross-platform key, so an entity
+    /// synthesized from the bare identifier is always valid (the display name
+    /// only matters in the configuration UI, where the real list is loaded).
     func entities(for identifiers: [StageEntity.ID]) async throws -> [StageEntity] {
         let all = await Self.allStages()
-        return all.filter { identifiers.contains($0.id) }
+        #if DEBUG
+        NSLog("MANASWIDGET entities(for: %@) -> %d known", identifiers.joined(separator: ","), all.count)
+        #endif
+        return identifiers.map { id in
+            all.first { $0.id == id } ?? StageEntity(id: id, name: id.capitalized)
+        }
     }
 
     func suggestedEntities() async throws -> [StageEntity] {
-        await Self.allStages()
+        let all = await Self.allStages()
+        #if DEBUG
+        NSLog("MANASWIDGET suggestedEntities -> %d", all.count)
+        #endif
+        return all
     }
 
     private static func allStages() async -> [StageEntity] {
@@ -82,6 +96,16 @@ struct StageQuery: EntityQuery {
 /// Per-instance configuration: which stage this widget shows. Leave unset to
 /// follow the festival's default stage — so adding the widget without
 /// configuring it still shows something useful.
+///
+/// The type NAME is the AppIntents identifier, and the iOS app bundle carries
+/// TWO widget extensions (its own + the embedded watch app's), so the two
+/// platforms must not declare the same intent name — a duplicate identifier on
+/// one device breaks configuration persistence. watchOS keeps the shipped
+/// `StageSelectionIntent` name (renaming would reset users' configured
+/// complications); iOS gets its own.
+#if os(watchOS)
+typealias StageIntent = StageSelectionIntent
+
 struct StageSelectionIntent: WidgetConfigurationIntent {
     static var title: LocalizedStringResource = "Színpad"
     static var description = IntentDescription("Válaszd ki, melyik színpad műsorát mutassa a widget. Több példányt is felvehetsz, színpadonként egyet, és a Smart Stackben lapozhatsz köztük.")
@@ -91,3 +115,16 @@ struct StageSelectionIntent: WidgetConfigurationIntent {
 
     init() {}
 }
+#else
+typealias StageIntent = HomeStageSelectionIntent
+
+struct HomeStageSelectionIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource = "Színpad"
+    static var description = IntentDescription("Válaszd ki, melyik színpad műsorát mutassa a widget. Több példányt is felvehetsz, színpadonként egyet, és egymásra húzva paklit készíthetsz belőlük.")
+
+    @Parameter(title: "Színpad")
+    var stage: StageEntity?
+
+    init() {}
+}
+#endif

@@ -10,7 +10,7 @@ struct NowProvider: AppIntentTimelineProvider {
         NowEntry(date: Date(), stage: nil, event: nil, isLive: false, locale: WidgetSchedule.locale)
     }
 
-    func snapshot(for configuration: StageSelectionIntent, in context: Context) async -> NowEntry {
+    func snapshot(for configuration: StageIntent, in context: Context) async -> NowEntry {
         let data = await WidgetSchedule.load()
         return NowWidgetBuilder.makeEntry(at: WidgetSchedule.now, data: data, slug: configuration.stage?.id,
                                           locale: WidgetSchedule.locale)
@@ -20,18 +20,21 @@ struct NowProvider: AppIntentTimelineProvider {
     /// the gallery offers each stage directly. Synchronous, so it reads the
     /// cached schedule (empty until the first fetch — then the widget is still
     /// addable and configurable by hand).
-    func recommendations() -> [AppIntentRecommendation<StageSelectionIntent>] {
+    func recommendations() -> [AppIntentRecommendation<StageIntent>] {
         let stages = (APIClient().cachedSchedule()?.stages ?? []).sorted { $0.sortOrder < $1.sortOrder }
         return stages.map { s in
-            let intent = StageSelectionIntent()
+            let intent = StageIntent()
             intent.stage = StageEntity(id: s.slug, name: s.name)
             return AppIntentRecommendation(intent: intent, description: Text(s.name))
         }
     }
 
-    func timeline(for configuration: StageSelectionIntent, in context: Context) async -> Timeline<NowEntry> {
+    func timeline(for configuration: StageIntent, in context: Context) async -> Timeline<NowEntry> {
         let now = WidgetSchedule.now
         let data = await WidgetSchedule.load()
+        #if DEBUG
+        NSLog("MANASWIDGET timeline: configured stage=%@", configuration.stage?.id ?? "<nil>")
+        #endif
         guard let data, let stage = NowWidgetBuilder.resolveStage(data, slug: configuration.stage?.id) else {
             // No data yet (first run, offline, never opened): retry in an hour.
             let entry = NowWidgetBuilder.makeEntry(at: now, data: data, slug: configuration.stage?.id,
@@ -73,7 +76,7 @@ struct ManasNowWidget: Widget {
     #endif
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: "ManasNow", intent: StageSelectionIntent.self, provider: NowProvider()) { entry in
+        AppIntentConfiguration(kind: "ManasNow", intent: StageIntent.self, provider: NowProvider()) { entry in
             #if os(watchOS)
             NowWidgetView(entry: entry)
             #else
