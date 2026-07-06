@@ -139,14 +139,13 @@ public struct HomeWidgetContent: View {
     }
 
     /// The act line, with the always-red favorite heart inlined before the name
-    /// as part of the text run (wraps with the title), 0.8× the title size —
-    /// mirrors the app timetable / NowView / web.
+    /// as part of the text run (wraps with the title). No own font: it inherits
+    /// the title's, which SF symbols need to sit on the cap height instead of
+    /// reading small and baseline-sunk.
     private var actLabel: Text {
         let title = Text(entry.actText)
         guard entry.isFavorite else { return title }
-        return Text("\(Image(systemName: "heart.fill")) ")
-            .font(.system(size: m.title * 0.8, weight: .bold))
-            .foregroundStyle(.red) + title
+        return Text("\(Image(systemName: "heart.fill")) ").foregroundStyle(.red) + title
     }
 
     @ViewBuilder private var langChip: some View {
@@ -198,13 +197,11 @@ public struct HomeWidgetContent: View {
     }
 
     /// Up-next row label: favorited acts get the same inline red heart before
-    /// the name, at 0.8× the row's font.
+    /// the name, inheriting the row's font.
     private func upcomingLabel(_ act: EventDTO) -> Text {
         let title = Text(act.title.text(entry.locale))
         guard NowWidgetBuilder.isFavorite(act, in: entry.favorites) else { return title }
-        return Text("\(Image(systemName: "heart.fill")) ")
-            .font(.system(size: m.nextTitle * 0.8, weight: .bold))
-            .foregroundStyle(.red) + title
+        return Text("\(Image(systemName: "heart.fill")) ").foregroundStyle(.red) + title
     }
 }
 

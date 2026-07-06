@@ -210,7 +210,7 @@ private struct OpeningRowView: View {
                         .lineLimit(1).minimumScaleFactor(0.7)
                 }
                 favTitle(e.slug, Text(e.title.text(locale)).font(.headline).foregroundStyle(Theme.cream),
-                         heartSize: 14, favorites)
+                         heartFont: .headline, favorites)
                     .lineLimit(2).minimumScaleFactor(0.7)
             }
             Spacer(minLength: 8)
@@ -377,7 +377,7 @@ private struct StageNowCard: View {
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
                             favTitle(live.slug, Text(live.title.text(locale)).font(.title3.bold()).foregroundStyle(Theme.cream),
-                                     heartSize: 16, favorites)
+                                     heartFont: .title3.bold(), favorites)
                                 .lineLimit(2).minimumScaleFactor(0.6)
                         }
                         Spacer(minLength: 8)
@@ -407,7 +407,7 @@ private struct StageNowCard: View {
                                     .lineLimit(1).minimumScaleFactor(0.7)
                             }
                             favTitle(next.slug, Text(next.title.text(locale)).font(.headline).foregroundStyle(Theme.creamDim),
-                                     heartSize: 14, favorites)
+                                     heartFont: .headline, favorites)
                                 .lineLimit(2).minimumScaleFactor(0.7)
                         }
                         Spacer(minLength: 8)
@@ -474,10 +474,12 @@ private func remaining(_ target: Date, _ now: Date) -> String {
 
 /// Prepends the always-red favorite heart to a title's text run (before the
 /// first word, wrapping with the text — same as the timetable and the web).
-private func favTitle(_ slug: String?, _ title: Text, heartSize: CGFloat,
+private func favTitle(_ slug: String?, _ title: Text, heartFont: Font,
                       _ favorites: FavoritesStore) -> Text {
     guard slug.map(favorites.isFavorite) == true else { return title }
+    // Same font as the title run: SF symbols are optically sized to the font's
+    // cap height, so a smaller run reads as tiny and baseline-sunk.
     return Text("\(Image(systemName: "heart.fill")) ")
-        .font(.system(size: heartSize, weight: .bold))
+        .font(heartFont)
         .foregroundStyle(.red) + title
 }

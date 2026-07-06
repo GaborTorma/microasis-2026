@@ -177,7 +177,7 @@ public struct NowWidgetContent: View {
                     // Sit tighter to the act name than to the header row.
                     .padding(.bottom, -2 * s)
             }
-            actLabel(s)
+            actLabel
                 .font(.system(size: 16 * s, weight: .bold, design: .rounded))
                 .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
                 .lineLimit(2).minimumScaleFactor(0.5)
@@ -187,14 +187,13 @@ public struct NowWidgetContent: View {
     }
 
     /// The act line, with the always-red heart inlined before the name when the
-    /// act is favorited (a `Text` run, so it wraps with the title) at 0.8× the
-    /// title size — the ratio every other surface uses.
-    private func actLabel(_ s: CGFloat) -> Text {
+    /// act is favorited (a `Text` run, so it wraps with the title). No own font:
+    /// it inherits the act line's, which SF symbols need to sit on the cap
+    /// height instead of reading small and baseline-sunk.
+    private var actLabel: Text {
         let title = Text(actText)
         guard entry.isFavorite else { return title }
-        return Text("\(Image(systemName: "heart.fill")) ")
-            .font(.system(size: 16 * s * 0.8, weight: .bold))
-            .foregroundStyle(.red) + title
+        return Text("\(Image(systemName: "heart.fill")) ").foregroundStyle(.red) + title
     }
 
     private var actText: String {

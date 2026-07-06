@@ -551,8 +551,10 @@ private struct EventBlock: View {
             .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
             .foregroundStyle(event.kind == EventKind.music ? Theme.cream : Theme.creamDim)
         guard isFav else { return title }
+        // Same font as the title: SF symbols are optically sized to their font's
+        // cap height, so a smaller run reads as tiny AND baseline-sunk.
         return Text("\(Image(systemName: "heart.fill")) ")
-            .font(.system(size: 12 * scale * 0.8, weight: .bold))
+            .font(.system(size: 12 * scale, weight: .semibold, design: .rounded))
             .foregroundStyle(.red) + title
     }
 
