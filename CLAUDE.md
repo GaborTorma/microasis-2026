@@ -26,7 +26,9 @@ Rules a future edit must respect:
 
 1. **Field parity is manual.** Add/rename/retype a field in `types.ts` → mirror it in
    `Models.swift` (and vice-versa) in the same change. They are in sync today
-   (incl. `radiusM: number|null` ↔ `Int?`, event `artist: string|null` ↔ `String?`).
+   (incl. `radiusM: number|null` ↔ `Int?`, event `artist: string|null` ↔ `String?`,
+   and event `slug: string` ↔ `String?` — optional in Swift on purpose: pre-slug
+   payloads and old disk caches must keep decoding).
    A mismatch silently breaks decoding on device — the web app keeps working, so
    it's easy to miss.
 2. **The date wire format is a strict dual-shape contract — the most fragile edit in
@@ -74,6 +76,18 @@ Rules a future edit must respect:
   users who already persisted `hidden: ["bowl"]` keep it until they toggle it back.
 - **Stage `slug`** (`portal`, `field`, `bowl`, `terrace`, `mandala`) is the stable
   cross-platform key. Never repurpose a slug.
+- **Event `slug` is the favorites key on every client** — event serial ids renumber
+  on every re-seed and must never be persisted. Slugs (`portal-liquid-soul-0709`)
+  are generated + uniqueness-asserted by `pwa/scripts/seed.ts`: `stage-title-MMDD`,
+  a pure function of the event's own fields (never a positional counter — other
+  entries' edits must not shift it); only a same-title-same-stage-same-day group
+  also gets `-HHmm`. Editing an event's title or moving it across days orphans its
+  favorites; a time-of-day correction doesn't. Favorites storage is deliberately
+  split: web keeps them device-local (`manas-favorites-v1` localStorage — NO
+  web↔apple sync, no accounts); iPhone↔watch sync via WatchConnectivity
+  (`ManasKit/Favorites.swift`, per-slug last-writer-wins); the watch widget reads
+  the App Group mirror (`manas.favorites`). Breaks (`kind == "break"`) are never
+  favoritable.
 - **All times display in `Europe/Budapest`**, hardcoded on both sides
   (`pwa/lib/queries.ts`/`format.ts`, `ManasKit/Formatting.swift`).
 
