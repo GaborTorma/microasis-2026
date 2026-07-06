@@ -2,9 +2,9 @@ import WidgetKit
 import SwiftUI
 
 /// Home-screen renderings of the "now playing" entry. Small and medium share
-/// one layout: the watch card's "now" block (stage · time · artist · act) with
-/// the Now tab's "up next" row beneath it — medium is the wide variant where
-/// long artist names fit on one line.
+/// one layout: the watch card's "now" block (stage · time · artist · act), a
+/// divider right under the act name, then as many up-next rows as fit —
+/// medium is the wide variant where long names fit on one line.
 struct NowHomeWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let entry: NowEntry
@@ -30,29 +30,31 @@ private extension NowEntry {
 /// Per-family type scale; the two families render the same content.
 private struct Metrics {
     let stage: CGFloat, time: CGFloat, artist: CGFloat, title: CGFloat
-    let eyebrow: CGFloat, nextArtist: CGFloat, nextTitle: CGFloat, nextTime: CGFloat
+    let nextTitle: CGFloat, nextTime: CGFloat
     let icon: CGFloat, chip: CGFloat, titleLines: Int
     /// The medium card is wide enough to put the time range beside the stage
     /// name (like the watch); the small square gives it its own line.
     let timeInHeader: Bool
 
     static let small = Metrics(stage: 12, time: 11, artist: 11, title: 14,
-                               eyebrow: 8, nextArtist: 10, nextTitle: 12, nextTime: 11,
+                               nextTitle: 12, nextTime: 11,
                                icon: 38, chip: 8, titleLines: 2, timeInHeader: false)
     static let medium = Metrics(stage: 14, time: 13, artist: 13, title: 18,
-                                eyebrow: 9, nextArtist: 12, nextTitle: 14, nextTime: 13,
+                                nextTitle: 14, nextTime: 13,
                                 icon: 48, chip: 10, titleLines: 1, timeInHeader: true)
 }
 
-/// The shared card: "now" on top (watch style), "up next" below (Now tab style).
+/// The shared card: "now" on top (watch style), a divider under the act name,
+/// then the upcoming acts — as many rows as the leftover space fits.
 private struct NowUpNextView: View {
     let entry: NowEntry
     let m: Metrics
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            // Kind-icon watermark + language chip of the current act — the same
-            // translucent background ornaments as the watch card.
+        ZStack(alignment: .topTrailing) {
+            // Kind-icon watermark (top-right) + language chip (bottom-right) of
+            // the current act — translucent background ornaments, like the
+            // watch card; content may run over them.
             if let event = entry.event {
                 KindIcon(event.kind, size: m.icon, color: entry.accentColor)
                     .opacity(0.26)
@@ -68,9 +70,13 @@ private struct NowUpNextView: View {
             }
             VStack(alignment: .leading, spacing: 2) {
                 nowBlock
-                Spacer(minLength: 3)
-                if let next = entry.next { nextBlock(next) }
+                if !entry.upcoming.isEmpty {
+                    Divider().overlay(Theme.line).padding(.vertical, 3)
+                    upcomingList
+                }
+                Spacer(minLength: 0)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -91,7 +97,11 @@ private struct NowUpNextView: View {
                     .symbolEffect(.pulse, options: .repeating, isActive: true)
             }
             Spacer(minLength: 4)
-            if m.timeInHeader, let event = entry.event { timeRange(event) }
+            // Inset from the trailing edge so the time doesn't sit on the
+            // watermark that now lives in the top-right corner.
+            if m.timeInHeader, let event = entry.event {
+                timeRange(event).padding(.trailing, m.icon * 0.75)
+            }
         }
         if !m.timeInHeader, let event = entry.event { timeRange(event) }
         if let artist = entry.event?.artist {
@@ -114,42 +124,34 @@ private struct NowUpNextView: View {
             .lineLimit(1).minimumScaleFactor(0.6)
     }
 
-    // MARK: "Következik" — the Now tab's up-next row
+    // MARK: "Következik" — as many rows as fit below the divider
 
-    private func nextBlock(_ next: EventDTO) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Divider().overlay(Theme.line).padding(.bottom, 2)
-            Text(L.t("now.upNext", entry.locale).uppercased())
-                .font(.system(size: m.eyebrow, weight: .semibold)).tracking(1.5)
-                .foregroundStyle(Theme.creamFaint)
-            HStack(alignment: .lastTextBaseline, spacing: 6) {
-                VStack(alignment: .leading, spacing: 1) {
-                    if let artist = next.artist {
-                        Text(artist)
-                            .font(.system(size: m.nextArtist, weight: .medium, design: .rounded))
-                            .foregroundStyle(Theme.creamFaint)
-                            .lineLimit(1).minimumScaleFactor(0.7)
-                    }
-                    Text(next.title.text(entry.locale))
+    /// Largest row count whose rows all fit the leftover vertical space; rows
+    /// are fixed-height so ViewThatFits measures honestly. (Candidates with
+    /// more rows than available acts just repeat the full list — harmless.)
+    private var upcomingList: some View {
+        ViewThatFits(in: .vertical) {
+            rows(4)
+            rows(3)
+            rows(2)
+            rows(1)
+        }
+    }
+
+    private func rows(_ count: Int) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            ForEach(entry.upcoming.prefix(count)) { act in
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(act.title.text(entry.locale))
                         .font(.system(size: m.nextTitle, weight: .semibold, design: .rounded))
                         .foregroundStyle(Theme.creamDim)
-                        .lineLimit(1).minimumScaleFactor(0.6)
-                }
-                Spacer(minLength: 4)
-                VStack(alignment: .trailing, spacing: 1) {
-                    Text(Fmt.hhmm(next.startsAt))
+                        .lineLimit(1).minimumScaleFactor(0.7)
+                    Spacer(minLength: 4)
+                    Text(Fmt.hhmm(act.startsAt))
                         .font(.system(size: m.nextTime, weight: .semibold, design: .monospaced))
                         .foregroundStyle(entry.accentColor)
-                    // Bare HH:mm would mislead across midnight — date it when
-                    // the act is on a later festival day than the one shown
-                    // above it. (Not compared to entry.date: the QA debug-clock
-                    // path pins entries to the real wall clock.)
-                    if let current = entry.event, next.day != current.day {
-                        Text(Fmt.mmdd(next.day))
-                            .font(.system(size: m.eyebrow))
-                            .foregroundStyle(Theme.creamFaint)
-                    }
                 }
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
     }

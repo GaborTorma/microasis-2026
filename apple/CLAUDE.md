@@ -125,9 +125,9 @@ disclaimer with `-manas.disclaimerSeen 1`.
   rendering differs. watch: `.accessoryRectangular` (`NowWidgetView` in ManasKit) —
   add one per stage to the Smart Stack and turn the crown to page; plus
   `LaunchWidget`, a circular/inline/corner launcher. iOS: `.systemSmall/Medium`
-  (`HomeWidgets.swift`) — both sizes render the watch card's "now" block with the
-  Now tab's "up next" row beneath (`NowEntry.next`; a `mm.dd` hint marks a next act
-  on a later festival day than the current one). Each extension reads the
+  (`HomeWidgets.swift`) — both sizes render the watch card's "now" block, a divider
+  under the act name, then as many up-next rows (act · start time) as fit
+  (`NowEntry.upcoming`, capped at 4, row count picked by `ViewThatFits`). Each extension reads the
   **schedule cache it shares with its host app** (App Group container; a copy
   fresher than 6 h skips the network, otherwise it does its own ETag-revalidated
   fetch), follows the **host app's language** via the `SharedDefaults` App Group

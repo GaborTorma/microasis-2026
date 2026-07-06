@@ -45,7 +45,7 @@ struct NowProvider: AppIntentTimelineProvider {
         if WidgetSchedule.debugNow != nil {
             let events = NowWidgetBuilder.events(data, stageSlug: stage.slug)
             let p = NowWidgetBuilder.pick(at: now, events: events)
-            let entry = NowEntry(date: Date(), stage: stage, event: p.event, next: p.next,
+            let entry = NowEntry(date: Date(), stage: stage, event: p.event, upcoming: p.upcoming,
                                  isLive: p.live, locale: WidgetSchedule.locale)
             return Timeline(entries: [entry], policy: .after(Date().addingTimeInterval(3600)))
         }
