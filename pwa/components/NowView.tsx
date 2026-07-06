@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight, Heart, MapPin, Sunset, Waves } from "lucide-react";
 import { EVENT_ICONS, eventIconKey } from "@/lib/eventIcon";
@@ -41,17 +41,22 @@ type OpeningCard = { stage: StageDTO; rows: OpeningRow[] };
  *  truncating) when it would wrap past `lines` lines. Re-fits on width change. */
 function FitText({
   text,
+  prefix,
   className,
   minRem = 0.85,
   lines = 2,
 }: {
   text: string;
+  /** Inline node rendered inside the text run before the first word (e.g. the
+   *  favorite heart) — em-sized content scales with the fitted font. */
+  prefix?: ReactNode;
   className?: string;
   minRem?: number;
   lines?: number;
 }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [rem, setRem] = useState<number | null>(null);
+  const hasPrefix = prefix != null;
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -83,13 +88,14 @@ function FitText({
     });
     ro.observe(parent);
     return () => ro.disconnect();
-  }, [text, minRem, lines]);
+  }, [text, minRem, lines, hasPrefix]);
   return (
     <p
       ref={ref}
       className={className}
       style={rem != null ? { fontSize: `${rem}rem` } : undefined}
     >
+      {prefix}
       {text}
     </p>
   );
@@ -319,20 +325,24 @@ function StageNowCard({
                     {live.artist}
                   </p>
                 )}
-                <div className="flex items-center gap-1.5">
-                  {favLive && (
-                    <Heart
-                      size={14}
-                      fill="currentColor"
-                      className="shrink-0 text-red-400"
-                      aria-hidden="true"
-                    />
-                  )}
-                  <FitText
-                    text={tx(live.title, locale)}
-                    className="min-w-0 flex-1 font-display text-xl font-bold leading-tight text-cream"
-                  />
-                </div>
+                <FitText
+                  prefix={
+                    favLive ? (
+                      <Heart
+                        fill="currentColor"
+                        className="mr-1 inline-block text-red-400"
+                        style={{
+                          width: "0.8em",
+                          height: "0.8em",
+                          verticalAlign: "-0.05em",
+                        }}
+                        aria-hidden="true"
+                      />
+                    ) : undefined
+                  }
+                  text={tx(live.title, locale)}
+                  className="min-w-0 flex-1 font-display text-xl font-bold leading-tight text-cream"
+                />
               </div>
               {live.endsAt && (
                 <div className="shrink-0 text-right">
@@ -364,9 +374,13 @@ function StageNowCard({
               <p className="font-display text-base font-semibold text-cream-dim">
                 {favNext && (
                   <Heart
-                    size={12}
                     fill="currentColor"
-                    className="mr-1 inline-block align-[-1px] text-red-400"
+                    className="mr-1 inline-block text-red-400"
+                    style={{
+                      width: "0.8em",
+                      height: "0.8em",
+                      verticalAlign: "-0.05em",
+                    }}
                     aria-hidden="true"
                   />
                 )}
