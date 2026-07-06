@@ -62,14 +62,14 @@ struct NowProvider: AppIntentTimelineProvider {
 }
 
 /// Per-stage "now playing" widget, shared by both widget extensions: the
-/// rectangular Smart Stack card on the watch, the three home-screen sizes on
-/// iOS (small ≈ the watch card, medium adds one-line room for long artist
-/// names, large mirrors the app's Now view with current + next act).
+/// rectangular Smart Stack card on the watch; on iOS the small and medium
+/// home-screen sizes, both showing the watch card's "now" block with the Now
+/// tab's "up next" row beneath (medium is the wide variant).
 struct ManasNowWidget: Widget {
     #if os(watchOS)
     private let families: [WidgetFamily] = [.accessoryRectangular]
     #else
-    private let families: [WidgetFamily] = [.systemSmall, .systemMedium, .systemLarge]
+    private let families: [WidgetFamily] = [.systemSmall, .systemMedium]
     #endif
 
     var body: some WidgetConfiguration {

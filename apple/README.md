@@ -27,7 +27,7 @@ apple/
       StageSelection.swift    #   stage AppEntity/query + WidgetConfigurationIntent
     Manas-iOS-widget/         # iOS WidgetKit extension (embedded in the iOS app)
       ManasWidgetBundle.swift #   @main bundle
-      HomeWidgets.swift       #   small / medium / large home-screen layouts
+      HomeWidgets.swift       #   small / medium home-screen layouts
     Manas-watch-widget/       # watchOS WidgetKit extension (embedded in the watch app)
       ManasWidgetBundle.swift #   @main bundle (now-playing + launcher)
       LaunchWidget.swift      #   tiny launcher (circular / inline / corner)
@@ -69,11 +69,11 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
 - **Now** tab: per-stage now-playing + up-next, with a pre-festival countdown.
 - **Settings**: drag to reorder stages, eye toggle to hide them.
 - HU/EN toggle (HU default). Map view is intentionally omitted (paused on web too).
-- **Home-screen widgets** (small / medium / large): per-stage now-playing —
-  small and medium mirror the watch card, large mirrors the Now tab's stage
-  card (act on air with a live countdown + up next; between acts, the next
-  two). Configurable per stage, like the watch widget. Shares the app's
-  schedule cache and language via the App Group.
+- **Home-screen widgets** (small / medium): per-stage now-playing. Both sizes
+  show the same content — the watch card's "now" block (stage · time · artist
+  · act) with the Now tab's "up next" row beneath; medium is the wide variant
+  where long artist names fit on one line. Configurable per stage, like the
+  watch widget. Shares the app's schedule cache and language via the App Group.
 
 **watchOS** — one stage at a time, no time grid:
 - Card shows **stage name · date · time-range · act name** (+ language chip).

@@ -25,7 +25,7 @@ Sources/
   Manas-widget-shared/   compiled into BOTH widget extensions: NowWidget (provider +
                          ManasNowWidget with per-platform families), StageSelection
   Manas-iOS-widget/      iOS WidgetKit ext: ManasIOSWidgetBundle, HomeWidgets
-                         (small/medium/large layouts)
+                         (small/medium layouts)
   Manas-watch-widget/    watchOS WidgetKit ext: ManasWidgetBundle, LaunchWidget
 ```
 
@@ -124,17 +124,16 @@ disclaimer with `-manas.disclaimerSeen 1`.
   `AppEntity`/`WidgetConfigurationIntent` and shared by both extensions; only the
   rendering differs. watch: `.accessoryRectangular` (`NowWidgetView` in ManasKit) —
   add one per stage to the Smart Stack and turn the crown to page; plus
-  `LaunchWidget`, a circular/inline/corner launcher. iOS: `.systemSmall/Medium/Large`
-  (`HomeWidgets.swift`) — small/medium re-skin the watch card, large mirrors the Now
-  tab's stage card (live act + `Text(timerInterval:)` countdown + up-next row; between
-  acts the next two, with a `mm.dd` hint when an act is on a later festival day).
-  Each extension reads the **schedule cache it shares with its host app** (App Group
-  container; a copy fresher than 6 h skips the network, otherwise it does its own
-  ETag-revalidated fetch), follows the **host app's language** via the
-  `SharedDefaults` App Group (device language until the app sets one), and places one
-  timeline entry per act boundary. Both apps call
-  `WidgetCenter.reloadAllTimelines()` after foreground fetches and on language
-  change.
+  `LaunchWidget`, a circular/inline/corner launcher. iOS: `.systemSmall/Medium`
+  (`HomeWidgets.swift`) — both sizes render the watch card's "now" block with the
+  Now tab's "up next" row beneath (`NowEntry.next`; a `mm.dd` hint marks a next act
+  on a later festival day than the current one). Each extension reads the
+  **schedule cache it shares with its host app** (App Group container; a copy
+  fresher than 6 h skips the network, otherwise it does its own ETag-revalidated
+  fetch), follows the **host app's language** via the `SharedDefaults` App Group
+  (device language until the app sets one), and places one timeline entry per act
+  boundary. Both apps call `WidgetCenter.reloadAllTimelines()` after foreground
+  fetches and on language change.
 
 ## Gotchas
 

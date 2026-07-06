@@ -1,28 +1,17 @@
 import WidgetKit
 import SwiftUI
 
-/// Home-screen renderings of the "now playing" entry. Small keeps the watch
-/// card's look on a square canvas, medium is the same card with one-line room
-/// for long artist names, large mirrors the app's Now view: the act on air
-/// plus the next one (or the next two when the stage is between acts).
+/// Home-screen renderings of the "now playing" entry. Small and medium share
+/// one layout: the watch card's "now" block (stage · time · artist · act) with
+/// the Now tab's "up next" row beneath it — medium is the wide variant where
+/// long artist names fit on one line.
 struct NowHomeWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let entry: NowEntry
 
     var body: some View {
-        switch family {
-        case .systemLarge:
-            NowLargeView(entry: entry)
-                // The Now view's card surface — the stage tint lives in the
-                // header band here, like StageNowCard, not in the background.
-                .containerBackground(for: .widget) { Theme.ink2 }
-        case .systemMedium:
-            NowMediumView(entry: entry)
-                .containerBackground(for: .widget) { nowWidgetBackground(entry) }
-        default:
-            NowSmallView(entry: entry)
-                .containerBackground(for: .widget) { nowWidgetBackground(entry) }
-        }
+        NowUpNextView(entry: entry, m: family == .systemMedium ? .medium : .small)
+            .containerBackground(for: .widget) { nowWidgetBackground(entry) }
     }
 }
 
@@ -38,258 +27,130 @@ private extension NowEntry {
     }
 }
 
-/// Pulsing on-air dot, sized to sit beside a stage-name line — the home-screen
-/// counterpart of the watch card's live dot.
-private struct WidgetLiveDot: View {
-    var size: CGFloat = 8
-    var body: some View {
-        Image(systemName: "circle.fill")
-            .font(.system(size: size))
-            .foregroundStyle(Theme.now)
-            .shadow(color: Theme.now, radius: size / 2)
-            .symbolEffect(.pulse, options: .repeating, isActive: true)
-    }
+/// Per-family type scale; the two families render the same content.
+private struct Metrics {
+    let stage: CGFloat, time: CGFloat, artist: CGFloat, title: CGFloat
+    let eyebrow: CGFloat, nextArtist: CGFloat, nextTitle: CGFloat, nextTime: CGFloat
+    let icon: CGFloat, chip: CGFloat, titleLines: Int
+    /// The medium card is wide enough to put the time range beside the stage
+    /// name (like the watch); the small square gives it its own line.
+    let timeInHeader: Bool
+
+    static let small = Metrics(stage: 12, time: 11, artist: 11, title: 14,
+                               eyebrow: 8, nextArtist: 10, nextTitle: 12, nextTime: 11,
+                               icon: 38, chip: 8, titleLines: 2, timeInHeader: false)
+    static let medium = Metrics(stage: 14, time: 13, artist: 13, title: 18,
+                                eyebrow: 9, nextArtist: 12, nextTitle: 14, nextTime: 13,
+                                icon: 48, chip: 10, titleLines: 1, timeInHeader: true)
 }
 
-/// Stage name in the stage accent + the live dot, as on the watch card.
-private struct StageLine: View {
+/// The shared card: "now" on top (watch style), "up next" below (Now tab style).
+private struct NowUpNextView: View {
     let entry: NowEntry
-    let size: CGFloat
-    var body: some View {
-        HStack(spacing: 5) {
-            Text(entry.stage?.name.uppercased() ?? "MANAS")
-                .font(.system(size: size, weight: .heavy, design: .rounded))
-                .foregroundStyle(entry.accentColor)
-                .lineLimit(1).minimumScaleFactor(0.7)
-                .widgetAccentable()
-            if entry.isLive { WidgetLiveDot(size: size * 0.6) }
-        }
-    }
-}
-
-/// Kind-icon watermark (bottom-left) + language chip (bottom-right) — the same
-/// translucent background ornaments as the watch card; content draws over them.
-private struct CardOrnaments: View {
-    let entry: NowEntry
-    let iconSize: CGFloat
-    let chipSize: CGFloat
+    let m: Metrics
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
+            // Kind-icon watermark + language chip of the current act — the same
+            // translucent background ornaments as the watch card.
             if let event = entry.event {
-                KindIcon(event.kind, size: iconSize, color: entry.accentColor)
-                    .opacity(0.28)
+                KindIcon(event.kind, size: m.icon, color: entry.accentColor)
+                    .opacity(0.26)
                     .widgetAccentable()
             }
             if let event = entry.event, event.langAvailability != nil {
                 let chip = Theme.chip(event.langAvailability)
-                Text(chip.label).font(.system(size: chipSize, weight: .bold))
-                    .padding(.horizontal, chipSize * 0.55).padding(.vertical, 2)
+                Text(chip.label).font(.system(size: m.chip, weight: .bold))
+                    .padding(.horizontal, m.chip * 0.55).padding(.vertical, 2)
                     .background(chip.bg, in: Capsule()).foregroundStyle(chip.fg)
                     .opacity(0.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
+            VStack(alignment: .leading, spacing: 2) {
+                nowBlock
+                Spacer(minLength: 3)
+                if let next = entry.next { nextBlock(next) }
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
     }
-}
 
-// MARK: - Small (2×2) — the watch card on a square canvas
+    // MARK: "Most" — the watch card's content
 
-private struct NowSmallView: View {
-    let entry: NowEntry
+    @ViewBuilder private var nowBlock: some View {
+        HStack(spacing: 5) {
+            Text(entry.stage?.name.uppercased() ?? "MANAS")
+                .font(.system(size: m.stage, weight: .heavy, design: .rounded))
+                .foregroundStyle(entry.accentColor)
+                .lineLimit(1).minimumScaleFactor(0.7)
+                .widgetAccentable()
+            if entry.isLive {
+                Image(systemName: "circle.fill")
+                    .font(.system(size: m.stage * 0.6))
+                    .foregroundStyle(Theme.now)
+                    .shadow(color: Theme.now, radius: m.stage * 0.3)
+                    .symbolEffect(.pulse, options: .repeating, isActive: true)
+            }
+            Spacer(minLength: 4)
+            if m.timeInHeader, let event = entry.event { timeRange(event) }
+        }
+        if !m.timeInHeader, let event = entry.event { timeRange(event) }
+        if let artist = entry.event?.artist {
+            Text(artist)
+                .font(.system(size: m.artist, weight: .medium, design: .rounded))
+                .foregroundStyle(Theme.creamDim)
+                .lineLimit(1).minimumScaleFactor(0.7)
+                .padding(.top, 1)
+        }
+        Text(entry.actText)
+            .font(.system(size: m.title, weight: .bold, design: .rounded))
+            .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
+            .lineLimit(m.titleLines).minimumScaleFactor(0.6)
+    }
 
-    var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            CardOrnaments(entry: entry, iconSize: 44, chipSize: 9)
-            VStack(alignment: .leading, spacing: 3) {
-                StageLine(entry: entry, size: 13)
-                if let event = entry.event {
-                    // The square is too narrow for a trailing time — own line.
-                    Text(Fmt.range(event.startsAt, event.endsAt))
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Theme.cream)
+    private func timeRange(_ event: EventDTO) -> some View {
+        Text(Fmt.range(event.startsAt, event.endsAt))
+            .font(.system(size: m.time, weight: .semibold, design: .rounded))
+            .foregroundStyle(Theme.cream)
+            .lineLimit(1).minimumScaleFactor(0.6)
+    }
+
+    // MARK: "Következik" — the Now tab's up-next row
+
+    private func nextBlock(_ next: EventDTO) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Divider().overlay(Theme.line).padding(.bottom, 2)
+            Text(L.t("now.upNext", entry.locale).uppercased())
+                .font(.system(size: m.eyebrow, weight: .semibold)).tracking(1.5)
+                .foregroundStyle(Theme.creamFaint)
+            HStack(alignment: .lastTextBaseline, spacing: 6) {
+                VStack(alignment: .leading, spacing: 1) {
+                    if let artist = next.artist {
+                        Text(artist)
+                            .font(.system(size: m.nextArtist, weight: .medium, design: .rounded))
+                            .foregroundStyle(Theme.creamFaint)
+                            .lineLimit(1).minimumScaleFactor(0.7)
+                    }
+                    Text(next.title.text(entry.locale))
+                        .font(.system(size: m.nextTitle, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Theme.creamDim)
                         .lineLimit(1).minimumScaleFactor(0.6)
                 }
-                if let artist = entry.event?.artist {
-                    Text(artist)
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
-                        .foregroundStyle(Theme.creamDim)
-                        .lineLimit(1).minimumScaleFactor(0.7)
-                        .padding(.top, 2)
-                }
-                Text(entry.actText)
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
-                    .lineLimit(3).minimumScaleFactor(0.6)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            }
-        }
-    }
-}
-
-// MARK: - Medium (4×2) — the watch layout with room to breathe
-
-private struct NowMediumView: View {
-    let entry: NowEntry
-
-    var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            CardOrnaments(entry: entry, iconSize: 54, chipSize: 10)
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 5) {
-                    StageLine(entry: entry, size: 14)
-                    Spacer(minLength: 4)
-                    if let event = entry.event {
-                        Text(Fmt.range(event.startsAt, event.endsAt))
-                            .font(.system(size: 13, weight: .semibold, design: .rounded))
-                            .foregroundStyle(Theme.cream)
-                            .lineLimit(1).minimumScaleFactor(0.6)
+                Spacer(minLength: 4)
+                VStack(alignment: .trailing, spacing: 1) {
+                    Text(Fmt.hhmm(next.startsAt))
+                        .font(.system(size: m.nextTime, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(entry.accentColor)
+                    // Bare HH:mm would mislead across midnight — date it when
+                    // the act is on a later festival day than the one shown
+                    // above it. (Not compared to entry.date: the QA debug-clock
+                    // path pins entries to the real wall clock.)
+                    if let current = entry.event, next.day != current.day {
+                        Text(Fmt.mmdd(next.day))
+                            .font(.system(size: m.eyebrow))
+                            .foregroundStyle(Theme.creamFaint)
                     }
                 }
-                if let artist = entry.event?.artist {
-                    Text(artist)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(Theme.creamDim)
-                        .lineLimit(1).minimumScaleFactor(0.7)
-                        .padding(.top, 2)
-                }
-                Text(entry.actText)
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(entry.event == nil ? Theme.creamDim : Theme.cream)
-                    .lineLimit(2).minimumScaleFactor(0.6)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
         }
-    }
-}
-
-// MARK: - Large (4×4) — the Now view's stage card: on air + up next
-
-private struct NowLargeView: View {
-    let entry: NowEntry
-
-    var body: some View {
-        if let stage = entry.stage {
-            ZStack(alignment: .bottomLeading) {
-                // Kind-icon watermark fills the spare space under the two rows,
-                // like the compact families' background ornament.
-                if let event = entry.event {
-                    KindIcon(event.kind, size: 64, color: entry.accentColor)
-                        .opacity(0.22)
-                        .widgetAccentable()
-                }
-                VStack(alignment: .leading, spacing: 12) {
-                    header(stage)
-                    if entry.isLive, let live = entry.event {
-                        liveRow(live)
-                        if let next = entry.next {
-                            Divider().overlay(Theme.line)
-                            upcomingRow(next, eyebrow: true, dim: false)
-                        }
-                    } else if let first = entry.event {
-                        // Between acts: the next two, the nearer one brighter.
-                        upcomingRow(first, eyebrow: true, dim: false)
-                        if let second = entry.next {
-                            Divider().overlay(Theme.line)
-                            upcomingRow(second, eyebrow: false, dim: true)
-                        }
-                    } else {
-                        Text(L.t("now.nothing", entry.locale))
-                            .font(.subheadline).foregroundStyle(Theme.creamFaint)
-                            .padding(.horizontal, 2)
-                    }
-                    Spacer(minLength: 0)
-                }
-            }
-        } else {
-            VStack {
-                Spacer()
-                Text(L.t("common.loading", entry.locale)).foregroundStyle(Theme.creamFaint)
-                Spacer()
-            }
-            .frame(maxWidth: .infinity)
-        }
-    }
-
-    /// Stage-color gradient band with the name — StageNowCard's header, rounded
-    /// to live inside the widget's content margins.
-    private func header(_ stage: StageDTO) -> some View {
-        let color = Color(hex: stage.color)
-        return HStack(spacing: 8) {
-            if entry.isLive { WidgetLiveDot(size: 9) }
-            Text(stage.name).font(.title3.bold()).foregroundStyle(Theme.cream)
-                .lineLimit(1).minimumScaleFactor(0.7)
-            Spacer()
-            if entry.isLive, let live = entry.event {
-                KindIcon(live.kind, size: 18, color: Theme.cream.opacity(0.9))
-            }
-        }
-        .padding(.horizontal, 13).padding(.vertical, 9)
-        .background(LinearGradient(colors: [color, color.opacity(0.73)],
-                                   startPoint: .topLeading, endPoint: .bottomTrailing),
-                    in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-    }
-
-    /// The act on air: artist + title, with a self-updating countdown to its
-    /// end on the trailing side (Text(timerInterval:) keeps ticking without
-    /// timeline entries — the entry at the act's end swaps the content).
-    private func liveRow(_ e: EventDTO) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            VStack(alignment: .leading, spacing: 2) {
-                if let artist = e.artist {
-                    Text(artist).font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
-                        .lineLimit(1).minimumScaleFactor(0.7)
-                }
-                Text(e.title.text(entry.locale)).font(.title3.bold()).foregroundStyle(Theme.cream)
-                    .lineLimit(2).minimumScaleFactor(0.6)
-            }
-            Spacer(minLength: 8)
-            if let end = e.endsAt, end > entry.date {
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text(timerInterval: entry.date...end, countsDown: true)
-                        .font(.system(.subheadline, design: .monospaced).weight(.semibold))
-                        .foregroundStyle(Theme.sun)
-                        .multilineTextAlignment(.trailing)
-                    Text("\(L.t("now.until", entry.locale)) \(Fmt.hhmm(end))")
-                        .font(.caption).foregroundStyle(Theme.creamDim)
-                }
-            }
-        }
-        .padding(.horizontal, 2)
-    }
-
-    private func upcomingRow(_ e: EventDTO, eyebrow: Bool, dim: Bool) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            VStack(alignment: .leading, spacing: 4) {
-                if eyebrow {
-                    Text(L.t("now.upNext", entry.locale).uppercased())
-                        .font(.system(size: 9, weight: .semibold)).tracking(2)
-                        .foregroundStyle(Theme.creamFaint)
-                }
-                if let artist = e.artist {
-                    Text(artist).font(.subheadline.weight(.medium))
-                        .foregroundStyle(dim ? Theme.creamFaint : Theme.creamDim)
-                        .lineLimit(1).minimumScaleFactor(0.7)
-                }
-                Text(e.title.text(entry.locale)).font(.headline)
-                    .foregroundStyle(dim ? Theme.creamDim : Theme.cream)
-                    .lineLimit(2).minimumScaleFactor(0.7)
-            }
-            Spacer(minLength: 8)
-            VStack(alignment: .trailing, spacing: 3) {
-                Text(Fmt.hhmm(e.startsAt))
-                    .font(.system(.subheadline, design: .monospaced).weight(.semibold))
-                    .foregroundStyle(entry.accentColor)
-                // Bare HH:mm would mislead across midnight — date it when the
-                // act is on a later festival day than the entry.
-                if e.day != Fmt.festivalDay(entry.date) {
-                    Text(Fmt.mmdd(e.day))
-                        .font(.caption2).foregroundStyle(Theme.creamFaint)
-                }
-                KindIcon(e.kind, size: 14, color: entry.accentColor)
-            }
-        }
-        .padding(.horizontal, 2)
     }
 }
