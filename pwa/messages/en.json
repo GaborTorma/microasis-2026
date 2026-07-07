@@ -173,6 +173,14 @@
         "title": "The “Now” view",
         "body": "It shows, stage by stage, what’s playing right now and who’s up next, with a countdown on whatever is currently running — the whole festival’s pulse on one screen. And before the gates open it counts down to the start, so you know exactly how long is left."
       },
+      "favorites": {
+        "title": "Favorites, one tap away",
+        "body": "Tap an act in the timetable and it gets a red heart. The heart button in the header spotlights your favorites — everything else fades, so you instantly see where you’re headed next. Your favorites sync automatically between iPhone and Apple Watch."
+      },
+      "widgets": {
+        "title": "Widgets on your home screen",
+        "body": "Put your favorite stages on the home screen: the widget shows what’s playing right now and who’s up next — without even opening the app. A tap jumps straight to that stage’s timetable, and your favorites’ hearts are right there on it."
+      },
       "settings": {
         "title": "Set it up your way",
         "body": "Drag the stages into the order you actually walk the festival, and hide the ones you’re not following. Switch between Hungarian and English with a single tap, and set the text size or the number of columns."

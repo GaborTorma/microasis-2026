@@ -63,6 +63,7 @@ IPHONE_FRAME, IPHONE_SIZE = "iPhone 15 Pro - Black Titanium - Portrait", [1419, 
 IPHONE_SHOTS = [
     "iphone-01-timetable-thursday", "iphone-02-timetable-friday",
     "iphone-03-now-friday", "iphone-04-timetable-terrace", "iphone-05-settings",
+    "iphone-09-widgets", "iphone-10-favorites",
 ]
 WATCH_SHOTS = [
     "watch-01-now-portal", "watch-02-now-terrace", "watch-03-now-mandala",

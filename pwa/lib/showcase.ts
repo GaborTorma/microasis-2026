@@ -23,6 +23,8 @@ export const PHONE_SHOTS = {
   now: "iphone-03-now-friday",
   terrace: "iphone-04-timetable-terrace",
   settings: "iphone-05-settings",
+  widgets: "iphone-09-widgets",
+  favorites: "iphone-10-favorites",
 } as const;
 
 export const WATCH_SHOTS = {

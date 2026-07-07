@@ -19,13 +19,15 @@ import { CtaBand } from "./CtaBand";
 import { ShowcaseFooter } from "./ShowcaseFooter";
 import { Reveal } from "./Reveal";
 
-// The three alternating feature rows: 1 left · 2 right · 3 left. Each device gets a
-// slight desktop-only tilt; row 1's copy is nudged up to sit beside its tall shot.
-// The float amp/dur/delay differ per row so the three devices bob irregularly,
-// never re-syncing (negative delays start each one mid-phase).
+// The five alternating feature rows (left · right · left · right · left). Each
+// device gets a slight desktop-only tilt; row 1's copy is nudged up to sit beside
+// its tall shot. The float amp/dur/delay differ per row so the devices bob
+// irregularly, never re-syncing (negative delays start each one mid-phase).
 const FEATURES = [
   { key: "timetable", shot: "timetableFri", flip: false, rotate: "md:-rotate-[8deg]", bodyClass: "md:-mt-[200px]", floatAmp: "-12px", floatDur: "7s", floatDelay: "0s" },
   { key: "now", shot: "now", flip: true, rotate: "md:rotate-[4deg]", bodyClass: "", floatAmp: "-9px", floatDur: "7.6s", floatDelay: "-1.6s" },
+  { key: "favorites", shot: "favorites", flip: false, rotate: "md:-rotate-[5deg]", bodyClass: "", floatAmp: "-10px", floatDur: "7.2s", floatDelay: "-2.4s" },
+  { key: "widgets", shot: "widgets", flip: true, rotate: "md:rotate-[6deg]", bodyClass: "", floatAmp: "-12px", floatDur: "6.8s", floatDelay: "-4.2s" },
   { key: "settings", shot: "settings", flip: false, rotate: "", bodyClass: "", floatAmp: "-11px", floatDur: "6.6s", floatDelay: "-3.1s" },
 ] as const;
 
