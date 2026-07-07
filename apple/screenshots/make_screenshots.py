@@ -158,6 +158,8 @@ def launch_args(shot: dict, lang: str, coords: dict) -> list[str]:
         a += ["-manas.startNoProgram", "YES"]
     if fav := shot.get("favorites"):            # comma-separated event slugs → hearts
         a += ["-manas.startFavorites", str(fav)]
+    if shot.get("favfilter"):                   # timetable favorites dim-filter on
+        a += ["-manas.startFavFilter", "YES"]
     view = shot.get("view")
     if view in ("timetable", "now", "share", "settings"):
         a += ["-manas.startView", view]

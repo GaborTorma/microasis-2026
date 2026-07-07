@@ -51,6 +51,8 @@ devices:
 # favorites: comma-separated event slugs -> manas.startFavorites (red hearts;
 #            per-launch only, nothing persists; slugs must be acts visible at
 #            the shot's `time` — check the live API /api/schedule for slugs)
+# favfilter: true -> manas.startFavFilter (timetable favorites dim-filter:
+#            non-favorited blocks fade, header heart fills — needs `favorites:`)
 shots:
   - name: "01-timetable-thursday"
     device: iphone
@@ -108,6 +110,17 @@ shots:
     stage: "bowl,terrace"
     time: "2026-07-10 20:30"
     favorites: "bowl-zsom-0710,bowl-sumiruna-0710"
+
+  # Saturday night with the favorites dim-filter on: the hearted acts pop,
+  # everything else fades — the landing page's favorites section.
+  - name: "10-favorites"
+    device: iphone
+    view: timetable
+    time: "2026-07-11 21:47"
+    columns: 3
+    font: 2
+    favorites: "portal-faders-0711,portal-electric-universe-0711,field-korai-electric-0711,bowl-mary-yuzovskaya-0711"
+    favfilter: true
 
   - name: "01-now-portal"
     device: watch

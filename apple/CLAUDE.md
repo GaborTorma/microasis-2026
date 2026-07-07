@@ -191,9 +191,11 @@ disclaimer with `-manas.disclaimerSeen 1`.
   scripted capture. Extra invisible, DEBUG-gated screenshot-only defaults beyond
   the two above: `manas.startView` (`timetable`/`now`/`share` tab or `settings`
   sheet), `manas.hideTestUI` (hide the in-app Testing section),
-  `manas.startWidgetPreview` (render widget card(s) full-screen — watch: one stage, and
-  `manas.startFavorites` (comma-separated event slugs → red hearts, per-launch).
-  slug; iPhone: `"medium,small"` slugs, e.g. `bowl,terrace`, for the two home-widget
+  `manas.startFavorites` (comma-separated event slugs → red hearts, per-launch),
+  `manas.startFavFilter` (turn on the timetable favorites dim-filter — pair with
+  `manas.startFavorites`), and `manas.startWidgetPreview` (render widget card(s)
+  full-screen — watch: one stage slug; iPhone: `"medium,small"` slugs, e.g.
+  `bowl,terrace`, for the two home-widget
   sizes). The widget shots reuse the real widget views (`ManasKit/NowWidgetCard.swift`
   and `ManasKit/HomeWidgetCard.swift`, so the apps + the WidgetKit extensions share
   them). The extension honours the QA

@@ -82,8 +82,10 @@ struct RootView: View {
 
     /// Screenshot-harness hook (DEBUG/TestFlight only) so a capture can target any
     /// screen without UI taps: `manas.startView` names the view to open —
-    /// `timetable` / `now` / `share` (tabs) or `settings` (the sheet). Invisible
-    /// default, no-op in App Store builds.
+    /// `timetable` / `now` / `share` (tabs) or `settings` (the sheet) — and
+    /// `manas.startFavFilter` turns on the timetable's favorites dim-filter (pair
+    /// it with `manas.startFavorites`, or the empty-favorites reset undoes it).
+    /// Invisible defaults, no-op in App Store builds.
     private func applyScreenshotOverrides() {
         guard AppEnv.debugToolsEnabled else { return }
         switch UserDefaults.standard.string(forKey: "manas.startView") {
@@ -93,6 +95,7 @@ struct RootView: View {
         case "settings": showSettings = true
         default: break
         }
+        if UserDefaults.standard.bool(forKey: "manas.startFavFilter") { favFilter = true }
     }
 }
 
