@@ -38,11 +38,16 @@ public final class FavoritesStore: ObservableObject {
            let decoded = try? JSONDecoder().decode([String: FavState].self, from: data) {
             states = decoded
         }
-        // Screenshot-harness override (DEBUG/TestFlight): `-manas.startFavorites
-        // "slug1,slug2"` replaces the set for THIS launch only — nothing is
-        // persisted here, so shots stay deterministic (like manas.debugNow).
+        // Screenshot-harness override (DEBUG/TestFlight): a PRESENT
+        // `-manas.startFavorites "slug1,slug2"` replaces the set for THIS launch
+        // only (empty value → no favorites) — nothing is persisted, so shots stay
+        // deterministic (like manas.debugNow). It also disables WCSession sync
+        // below: a paired simulator's stale applicationContext once merged a
+        // watch shot's favorite into the next run's iPhone shots.
+        var harnessRun = false
         if AppEnv.debugToolsEnabled,
-           let raw = defaults.string(forKey: "manas.startFavorites"), !raw.isEmpty {
+           let raw = defaults.string(forKey: "manas.startFavorites") {
+            harnessRun = true
             let now = Date().timeIntervalSince1970
             states = Dictionary(uniqueKeysWithValues: raw.split(separator: ",").map {
                 ($0.trimmingCharacters(in: .whitespaces), FavState(isFav: true, ts: now))
@@ -53,7 +58,7 @@ public final class FavoritesStore: ObservableObject {
         #if canImport(WatchConnectivity)
         // isSupported() is false in app extensions (the widget process must
         // never activate a session) and on iPad — only real apps sync.
-        if WCSession.isSupported() { sync = FavoritesSync(store: self) }
+        if !harnessRun, WCSession.isSupported() { sync = FavoritesSync(store: self) }
         #endif
     }
 

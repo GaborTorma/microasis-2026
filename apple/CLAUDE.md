@@ -191,7 +191,10 @@ disclaimer with `-manas.disclaimerSeen 1`.
   scripted capture. Extra invisible, DEBUG-gated screenshot-only defaults beyond
   the two above: `manas.startView` (`timetable`/`now`/`share` tab or `settings`
   sheet), `manas.hideTestUI` (hide the in-app Testing section),
-  `manas.startFavorites` (comma-separated event slugs → red hearts, per-launch),
+  `manas.startFavorites` (comma-separated event slugs → red hearts, per-launch;
+  the harness pins it on every shot — its presence also disables WCSession sync,
+  because a paired simulator's stale applicationContext once bled a watch shot's
+  favorite into the next run's iPhone captures),
   `manas.startFavFilter` (turn on the timetable favorites dim-filter — pair with
   `manas.startFavorites`), and `manas.startWidgetPreview` (render widget card(s)
   full-screen — watch: one stage slug; iPhone: `"medium,small"` slugs, e.g.

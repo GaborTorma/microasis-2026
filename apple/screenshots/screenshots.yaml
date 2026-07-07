@@ -50,7 +50,10 @@ devices:
 # empty:    true -> watch: force the "nothing on" card  (manas.startNoProgram)
 # favorites: comma-separated event slugs -> manas.startFavorites (red hearts;
 #            per-launch only, nothing persists; slugs must be acts visible at
-#            the shot's `time` — check the live API /api/schedule for slugs)
+#            the shot's `time` — check the live API /api/schedule for slugs).
+#            The harness pins the key on EVERY shot (omitted -> empty -> no
+#            hearts) and its presence disables WCSession sync, so a paired
+#            simulator can never bleed favorites into a shot.
 # favfilter: true -> manas.startFavFilter (timetable favorites dim-filter:
 #            non-favorited blocks fade, header heart fills — needs `favorites:`)
 shots:

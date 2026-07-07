@@ -156,8 +156,10 @@ def launch_args(shot: dict, lang: str, coords: dict) -> list[str]:
     a += ["-manas.fontSize", str(shot.get("font", 3))]
     if shot.get("empty"):                       # watch: force the "nothing on" card
         a += ["-manas.startNoProgram", "YES"]
-    if fav := shot.get("favorites"):            # comma-separated event slugs → hearts
-        a += ["-manas.startFavorites", str(fav)]
+    # Always pin favorites (comma-separated event slugs → hearts; empty = none):
+    # a present key also makes FavoritesStore skip WCSession sync, so a paired
+    # simulator's stale applicationContext can't bleed hearts into a shot.
+    a += ["-manas.startFavorites", str(shot.get("favorites", ""))]
     if shot.get("favfilter"):                   # timetable favorites dim-filter on
         a += ["-manas.startFavFilter", "YES"]
     view = shot.get("view")
