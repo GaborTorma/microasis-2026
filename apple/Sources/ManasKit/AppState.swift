@@ -89,8 +89,9 @@ public final class Settings: ObservableObject {
 
     public init() {
         order = defaults.stringArray(forKey: Key.order) ?? []
-        // No stages hidden by default; users can hide any stage in settings.
-        hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
+        // The Yoga Terrace has no published programme yet, so it starts hidden
+        // (kept in sync with the web SettingsContext — see ../../CLAUDE.md).
+        hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? ["terrace"])
         locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
         // `integer(forKey:)` (not `object as? Int`) so a value injected via the
         // launch-argument domain — a string, e.g. the screenshot harness's

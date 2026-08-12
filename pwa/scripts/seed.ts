@@ -1,21 +1,18 @@
 /**
- * Seed the Manas 2026 schedule into Neon.
+ * Seed the MicrOasis 2026 schedule into Neon.
  *
- * Data transcribed from the printed PORTAL, FIELD and BOWL timetable posters.
- * Times are festival-local (Europe/Budapest = CEST = UTC+02:00 in July).
+ * Data transcribed from the printed WADI and OASIS timetable posters.
+ * Times are festival-local (Europe/Budapest = CEST = UTC+02:00 in August).
  *
  * Run: pnpm db:seed   (idempotent — wipes and re-inserts)
  *
- * NOTE: Field workshop language availability (both/en/hu) is best-effort from
- * the poster colour legend and should be verified. Everything is editable in
- * the DB without redeploying any client.
+ * A set that runs past midnight is ONE entry (its end comes from the next
+ * entry's start), not the two blocks the poster draws — the timetable is a
+ * single continuous timeline with day dividers, so it renders across the
+ * divider, and one act keeps one slug (= one favorite).
  */
 import { db, schema } from "../lib/db";
-import type {
-  I18nText,
-  EventKind,
-  LangAvailability,
-} from "../lib/db/schema";
+import type { I18nText, EventKind, LangAvailability } from "../lib/db/schema";
 
 try {
   process.loadEnvFile(".env.local");
@@ -39,7 +36,7 @@ type Entry = {
   e?: string; // explicit end HH:mm (else = next entry's start)
   ed?: string; // explicit end date (for cross-midnight ends)
   title: I18nText;
-  a?: string; // performer / facilitator (null where the act name is the title)
+  a?: string; // performer (null where the act name is the title)
   kind?: EventKind;
   lang?: LangAvailability;
 };
@@ -55,10 +52,9 @@ const slugify = (s: string) =>
 
 /** Turn an ordered entry list into insert rows. Uses explicit end if given,
  *  otherwise endsAt = next entry's start. `kind` is taken verbatim from each
- *  entry — the seed mirrors the DB exactly; the fine workshop categories
- *  (sound-bath, voice, drum, yoga, …) live explicitly per entry rather than being
- *  derived. Entries without a kind default to "music". Slug parts ride along
- *  raw; assignSlugs() finalizes them once all stages are merged. */
+ *  entry — the seed mirrors the DB exactly. Entries without a kind default to
+ *  "music". Slug parts ride along raw; assignSlugs() finalizes them once all
+ *  stages are merged. */
 function withEnds(stageSlug: string, list: Entry[], lastMinutes = 90) {
   const sorted = [...list].sort(
     (a, b) => bp(a.d, a.s).getTime() - bp(b.d, b.s).getTime(),
@@ -109,343 +105,109 @@ function assignSlugs<T extends { slugBase: string; slugTime: string }>(
   return out;
 }
 
-// ─────────────────────────────────────────────────────────── PORTAL ──
-const PORTAL: Entry[] = [
-  { d: "2026-07-08", s: "19:00", title: { en: "Portal Opening Ceremony", hu: "Portal Nyitóceremónia" }, kind: "ceremony" },
-  { d: "2026-07-08", s: "19:15", title: t("Óperentzia") },
-  { d: "2026-07-08", s: "20:45", title: t("Emok") },
-  { d: "2026-07-08", s: "22:30", title: t("Danger vs Beyond") },
-  { d: "2026-07-09", s: "00:00", title: t("Volcano On Mars") },
-  { d: "2026-07-09", s: "02:00", title: t("Mercuroid") },
-  { d: "2026-07-09", s: "03:30", title: t("Agmon") },
-  { d: "2026-07-09", s: "05:00", title: t("Yury vs Eltawave") },
-  { d: "2026-07-09", s: "07:30", title: BREAK, kind: "break" },
-  { d: "2026-07-09", s: "14:00", title: t("Bellegance & Fraser") },
-  { d: "2026-07-09", s: "15:30", title: t("Sphera") },
-  { d: "2026-07-09", s: "17:00", title: t("Liquid Soul") },
-  { d: "2026-07-09", s: "19:00", title: t("Pettra") },
-  { d: "2026-07-09", s: "20:30", title: t("Antinomy") },
-  { d: "2026-07-09", s: "22:00", title: t("X-Noize") },
-  { d: "2026-07-09", s: "23:30", title: t("Burn In Noise") },
-  { d: "2026-07-10", s: "01:00", title: t("Siloka") },
-  { d: "2026-07-10", s: "02:30", title: t("Ingrained Instincts") },
-  { d: "2026-07-10", s: "04:00", title: t("Ikoza") },
-  { d: "2026-07-10", s: "05:30", title: t("Alphakey") },
-  { d: "2026-07-10", s: "07:30", title: BREAK, kind: "break" },
-  { d: "2026-07-10", s: "14:00", title: t("Botond") },
-  { d: "2026-07-10", s: "15:30", title: t("Protonica") },
-  { d: "2026-07-10", s: "17:00", title: t("Ticon") },
-  { d: "2026-07-10", s: "18:30", title: t("Ritmo") },
-  { d: "2026-07-10", s: "20:00", title: t("SpaceNoiZe") },
-  { d: "2026-07-10", s: "22:00", title: t("Outsiders") },
-  { d: "2026-07-10", s: "23:30", title: t("Wegha") },
-  { d: "2026-07-11", s: "01:00", title: t("Kala") },
-  { d: "2026-07-11", s: "02:30", title: t("Yabba Dabba") },
-  { d: "2026-07-11", s: "04:00", title: t("Dr Space") },
-  { d: "2026-07-11", s: "05:30", title: t("DJ Latam") },
-  { d: "2026-07-11", s: "07:30", title: BREAK, kind: "break" },
-  { d: "2026-07-11", s: "14:00", title: t("Ori") },
-  { d: "2026-07-11", s: "15:30", title: t("Enki") },
-  { d: "2026-07-11", s: "17:00", title: t("Rising Dust") },
-  { d: "2026-07-11", s: "20:00", title: t("Uncharted Territory") },
-  { d: "2026-07-11", s: "21:30", title: t("Faders") },
-  { d: "2026-07-11", s: "23:00", title: t("Electric Universe") },
-  { d: "2026-07-12", s: "00:30", title: t("Artifex") },
-  { d: "2026-07-12", s: "02:00", title: t("Evertwo") },
-  { d: "2026-07-12", s: "03:30", title: t("Digicult") },
-  { d: "2026-07-12", s: "05:00", title: t("Solitary Shell") },
-  { d: "2026-07-12", s: "07:00", title: t("Toge") },
-  { d: "2026-07-12", s: "08:30", title: t("Ilija") },
-  { d: "2026-07-12", s: "10:00", title: t("Fullip vs Progtamin") },
-  { d: "2026-07-12", s: "12:00", title: t("Inner Sphere") },
-  { d: "2026-07-12", s: "14:00", title: t("Oleg") },
-  { d: "2026-07-12", s: "16:00", e: "19:00", title: t("Dekel") },
+// ─────────────────────────────────────────────────────────────── WADI ──
+// Thursday 16:30 → Sunday 23:00, with a long daytime break on Fri/Sat/Sun.
+const WADI: Entry[] = [
+  // Thursday 08/20
+  { d: "2026-08-20", s: "16:30", title: t("Baazs") },
+  { d: "2026-08-20", s: "18:00", title: t("Borish & Szoa") },
+  { d: "2026-08-20", s: "20:00", title: t("SNP") },
+  { d: "2026-08-20", s: "21:30", title: t("Route 8") },
+  { d: "2026-08-20", s: "23:00", title: t("Lau") }, // runs to 00:30 on Friday
+  // Friday 08/21
+  { d: "2026-08-21", s: "00:30", title: t("3en & Daniel Moritz") },
+  { d: "2026-08-21", s: "02:30", title: t("Gingershot & Rozalinaa") },
+  { d: "2026-08-21", s: "04:30", title: t("Dé & Korodi") },
+  { d: "2026-08-21", s: "06:30", title: BREAK, kind: "break" },
+  { d: "2026-08-21", s: "14:00", title: t("Olchie") },
+  { d: "2026-08-21", s: "15:30", title: t("Stark & Hanussen") },
+  { d: "2026-08-21", s: "17:30", title: t("ADX & D365") },
+  { d: "2026-08-21", s: "19:30", title: t("Varis") },
+  { d: "2026-08-21", s: "21:00", title: t("Pau Perez") },
+  { d: "2026-08-21", s: "22:30", title: t("1SU") },
+  // Saturday 08/22
+  { d: "2026-08-22", s: "00:00", title: t("Mode & Valens") },
+  { d: "2026-08-22", s: "02:00", title: t("Azami") },
+  { d: "2026-08-22", s: "03:30", title: t("Aga2l") },
+  { d: "2026-08-22", s: "05:00", title: t("BLZS") },
+  { d: "2026-08-22", s: "06:30", title: BREAK, kind: "break" },
+  { d: "2026-08-22", s: "15:00", title: t("Sabani") },
+  { d: "2026-08-22", s: "16:30", title: t("Apua") },
+  { d: "2026-08-22", s: "18:00", title: t("Stipo") },
+  { d: "2026-08-22", s: "19:30", title: t("Tolo") },
+  { d: "2026-08-22", s: "21:00", title: t("Jaffa Surfa") },
+  { d: "2026-08-22", s: "22:30", title: t("Maron") },
+  // Sunday 08/23
+  { d: "2026-08-23", s: "00:00", title: t("Justine Perry") },
+  { d: "2026-08-23", s: "02:00", title: t("Réka Zalán") },
+  { d: "2026-08-23", s: "04:00", title: t("Mankind") },
+  { d: "2026-08-23", s: "05:30", title: t("Faktor X") },
+  { d: "2026-08-23", s: "07:00", title: BREAK, kind: "break" },
+  { d: "2026-08-23", s: "17:00", title: t("Raasa") },
+  { d: "2026-08-23", s: "18:30", title: t("Vedat Akdag") },
+  { d: "2026-08-23", s: "20:00", e: "23:00", title: t("Josefina Tapia") },
 ];
 
-// ──────────────────────────────────────────────────────────── FIELD ──
-// Workshops carry the leader/instructor in `a` (artist); the title holds just
-// the activity. Music/live acts have no separate artist (the act is the title),
-// matching Portal/Bowl.
-const w = (en: string, hu: string): I18nText => ({ en, hu });
-const FIELD: Entry[] = [
-  // Wed
-  { d: "2026-07-08", s: "20:30", title: t("Konkol") },
-  { d: "2026-07-08", s: "22:00", title: t("AkashaLive") },
-  { d: "2026-07-08", s: "23:00", title: t("Savaborsa") },
-  // Thu
-  { d: "2026-07-09", s: "00:30", title: t("Zsager Balázs") },
-  { d: "2026-07-09", s: "02:00", title: t("Modul") },
-  { d: "2026-07-09", s: "03:00", title: t("Buddhasmile") },
-  { d: "2026-07-09", s: "04:30", title: t("Nautis") },
-  { d: "2026-07-09", s: "06:00", title: t("Swanasa") },
-  { d: "2026-07-09", s: "08:00", e: "09:00",title: w("Dynamic Pilates", "Dinamikus Pilates"), a: "Litauszky Lilla", kind: "workshop", lang: "both" },
-  { d: "2026-07-09", s: "10:00", e: "11:00", title: t("Capoeira Escola"), a: "Mestre Tocha", kind: "workshop", lang: "en" },
-  { d: "2026-07-09", s: "12:00", title: w("Singing Circle", "Énekkör"), a: "Gebri Bernadett", kind: "voice", lang: "both" },
-  { d: "2026-07-09", s: "13:00", title: w("Drum Circle", "Dobkör"), a: "Ethnosound", kind: "drum", lang: "both" },
-  { d: "2026-07-09", s: "14:00", title: t("Takkra") },
-  { d: "2026-07-09", s: "15:00", title: t("Cord") },
-  { d: "2026-07-09", s: "16:00", e: "17:00", title: t("Fodor Réka x Novan") },
-  { d: "2026-07-09", s: "17:30", title: t("Dudukia") },
-  { d: "2026-07-09", s: "18:30", title: t("Bodoo") },
-  { d: "2026-07-09", s: "20:00", title: t("Earth Jam") },
-  { d: "2026-07-09", s: "21:30", title: t("Marcel") },
-  { d: "2026-07-09", s: "22:30", title: t("Anima In Dub") },
-  // Fri
-  { d: "2026-07-10", s: "00:00", title: t("Sena") },
-  { d: "2026-07-10", s: "01:30", title: t("Once Upon A Time") },
-  { d: "2026-07-10", s: "03:00", title: t("The Amygdala") },
-  { d: "2026-07-10", s: "04:30", title: t("Fraser x Bellegance") },
-  { d: "2026-07-10", s: "06:00", e: "07:00", title: t("SABW") },
-  { d: "2026-07-10", s: "08:00", e: "09:00", title: w("Hatha Yoga accompanied by philosophy", "Hatha Jóga filozófiai kísérővel"), a: "Sipos László", kind: "yoga", lang: "hu" },
-  { d: "2026-07-10", s: "10:00", e: "11:00", title: w("The Art of Touch", "Az érintés művészete"), a: "Grecsó Zoltán", kind: "workshop", lang: "en" },
-  { d: "2026-07-10", s: "12:00", title: w("Singing Circle", "Énekkör"), a: "Fodor Réka", kind: "voice", lang: "both" },
-  { d: "2026-07-10", s: "13:00", title: w("Drum Circle", "Dobkör"), a: "Ethnosound", kind: "drum", lang: "both" },
-  { d: "2026-07-10", s: "14:00", e: "15:00", title: t("Arulei") },
-  { d: "2026-07-10", s: "15:30", e: "16:30", title: t("Dizna") },
-  { d: "2026-07-10", s: "17:00", e: "18:00", title: t("Angorang") },
-  { d: "2026-07-10", s: "18:30", e: "20:00", title: w("Dance House", "Táncház"), a: "Musica Veneris", kind: "dance", lang: "both" },
-  { d: "2026-07-10", s: "20:30", title: t("BeshoDrom") },
-  { d: "2026-07-10", s: "22:00", title: t("Obadu") },
-  { d: "2026-07-10", s: "23:00", title: t("Csángálló") },
-  // Sat
-  { d: "2026-07-11", s: "00:30", title: t("Suefo x Hunbaba") },
-  { d: "2026-07-11", s: "02:00", title: t("Meo Culpa") },
-  { d: "2026-07-11", s: "03:30", title: t("Kalumet") },
-  { d: "2026-07-11", s: "05:00", title: t("Infest") },
-  { d: "2026-07-11", s: "06:00", e: "07:30", title: t("Peter Van Minden (Siblicity)") },
-  { d: "2026-07-11", s: "08:00", e: "09:30", title: w("Meditation", "Meditáció"), a: "Lukács Gabi", kind: "mind", lang: "en" },
-  { d: "2026-07-11", s: "10:00", e: "11:30",title: t("Breath'n Body"), a: "Fáy Viki, Generál Péter", kind: "wind", lang: "both" },
-  { d: "2026-07-11", s: "12:00", title: w("Singing Circle", "Énekkör"), a: "Oláh Annamári", kind: "voice", lang: "both" },
-  { d: "2026-07-11", s: "13:00", title: w("Drum Circle", "Dobkör"), a: "Ethnosound", kind: "drum", lang: "both" },
-  { d: "2026-07-11", s: "14:00", title: t("Further") },
-  { d: "2026-07-11", s: "15:00", title: t("Gelka") },
-  { d: "2026-07-11", s: "16:30", title: t("Zsüja") },
-  { d: "2026-07-11", s: "17:30", title: t("Napfonat") },
-  { d: "2026-07-11", s: "18:30", title: t("Eff:Ek aka Zakhorov x Fluidum") },
-  { d: "2026-07-11", s: "20:00", e: "21:30", title: t("Ölvedi Gábor") },
-  { d: "2026-07-11", s: "22:00", title: t("Oláh Annamari") },
-  { d: "2026-07-11", s: "23:00", title: t("Korai Electric") },
-  // Sun
-  { d: "2026-07-12", s: "00:30", title: t("Hybrid Drummer") },
-  { d: "2026-07-12", s: "01:30", title: t("Dekel In Downtempo") },
-  { d: "2026-07-12", s: "03:00", title: t("Mesterhazy") },
-  { d: "2026-07-12", s: "04:30", title: t("Ikoza") },
-  { d: "2026-07-12", s: "05:30", title: t("Papa x Alagi") },
-  { d: "2026-07-12", s: "07:00", title: t("Kezo") },
-  { d: "2026-07-12", s: "08:00", e: "09:30", title: w("Dance Meditation", "Táncmeditáció"), a: "Nagy Györgyi", kind: "dance", lang: "both" },
-  { d: "2026-07-12", s: "10:00", e: "11:30", title: w("Dynamic Pilates", "Dinamikus Pilates"), a: "Litauszky Lilla", kind: "workshop", lang: "both" },
-  { d: "2026-07-12", s: "12:00", e: "13:30", title: w("Trance Breathing", "Transzlégzés"), a: "Gauranga Das, Heszberger Antal", kind: "wind", lang: "both" },
-  { d: "2026-07-12", s: "14:00", e: "15:30", title: w("Compás in space (Flamenco)", "Compás a térben (Flamenco)"), a: "Bajnay Beáta", kind: "dance", lang: "hu" },
-  { d: "2026-07-12", s: "16:00", e: "17:30", title: w("Contemporary Dance Show", "Modern táncelőadás"), a: "Grecsó Zoltán", kind: "dance" },
+// ────────────────────────────────────────────────────────────── OASIS ──
+// Thursday 14:30 → Sunday 20:00, non-stop apart from one Friday-noon break.
+const OASIS: Entry[] = [
+  // Thursday 08/20
+  { d: "2026-08-20", s: "14:30", title: t("Valaki & T-Coslo") },
+  { d: "2026-08-20", s: "16:30", title: t("Lost In Details") },
+  { d: "2026-08-20", s: "18:00", title: t("Glev & Rosalcodo") },
+  { d: "2026-08-20", s: "20:00", title: t("Octile") },
+  { d: "2026-08-20", s: "21:30", title: t("Daniel Meister") },
+  { d: "2026-08-20", s: "23:30", title: t("Constratti") }, // runs to 02:00 on Friday
+  // Friday 08/21
+  { d: "2026-08-21", s: "02:00", title: t("Pauli (live)") },
+  { d: "2026-08-21", s: "04:00", title: t("Spy C & Révész Bálint") },
+  { d: "2026-08-21", s: "06:00", title: t("Octave") },
+  { d: "2026-08-21", s: "08:30", title: t("Lakidani & Moh") },
+  { d: "2026-08-21", s: "10:30", title: BREAK, kind: "break" },
+  { d: "2026-08-21", s: "12:30", title: t("Möb & Akhi") },
+  { d: "2026-08-21", s: "14:30", title: t("Jess") },
+  { d: "2026-08-21", s: "16:00", title: t("Lilos") },
+  { d: "2026-08-21", s: "17:30", title: t("Chiodan & Hanzo") },
+  { d: "2026-08-21", s: "20:00", title: t("Lukea") },
+  { d: "2026-08-21", s: "22:30", title: t("Moma") }, // runs to 00:30 on Saturday
+  // Saturday 08/22
+  { d: "2026-08-22", s: "00:30", title: t("Cap") },
+  { d: "2026-08-22", s: "03:30", title: t("Baco & Li") },
+  { d: "2026-08-22", s: "05:30", title: t("Mihai Pol") },
+  { d: "2026-08-22", s: "08:00", title: t("Flixon") },
+  { d: "2026-08-22", s: "09:30", title: t("Martin M") },
+  { d: "2026-08-22", s: "11:00", title: t("Liro & Robert Dobak") },
+  { d: "2026-08-22", s: "13:00", title: t("Krudy C") },
+  { d: "2026-08-22", s: "14:30", title: t("Rolo") },
+  { d: "2026-08-22", s: "16:00", title: t("Knoll") },
+  { d: "2026-08-22", s: "17:30", title: t("Peter Bernath") },
+  { d: "2026-08-22", s: "19:30", title: t("Barac") },
+  { d: "2026-08-22", s: "23:30", title: t("Electricano") }, // runs to 02:00 on Sunday
+  // Sunday 08/23
+  { d: "2026-08-23", s: "02:00", title: t("Coloboma + S&H (live)") },
+  { d: "2026-08-23", s: "05:00", title: t("Erro") },
+  { d: "2026-08-23", s: "07:30", title: t("Ambos") },
+  { d: "2026-08-23", s: "09:00", title: t("Raqpar") },
+  { d: "2026-08-23", s: "10:30", title: t("Mole") },
+  { d: "2026-08-23", s: "12:00", title: t("Kele") },
+  { d: "2026-08-23", s: "13:30", title: t("Roocha & Roland Kandrick") },
+  { d: "2026-08-23", s: "15:30", title: t("Zvezda Beta") },
+  { d: "2026-08-23", s: "18:00", e: "20:00", title: t("Zsom") },
 ];
 
-// ───────────────────────────────────────────────────────────── BOWL ──
-// Open-air techno / progressive. Continuous overnight programming; only Wed
-// and Thu have a daytime BREAK. Conntex runs 23:30 Thu → 01:30 Fri across
-// the printed column boundary (a single set, listed once).
-const BOWL: Entry[] = [
-  // Wed (Jul 8)
-  { d: "2026-07-08", s: "14:00", title: t("Garpo & Li & Laslo") },
-  { d: "2026-07-08", s: "18:00", title: BREAK, kind: "break" },
-  { d: "2026-07-08", s: "20:30", title: t("Lilos") },
-  { d: "2026-07-08", s: "22:30", title: t("Moma") },
-  // Thu (Jul 9)
-  { d: "2026-07-09", s: "00:00", title: t("Chiodan") },
-  { d: "2026-07-09", s: "02:00", title: t("Baco") },
-  { d: "2026-07-09", s: "03:30", title: t("ADX B2B D365") },
-  { d: "2026-07-09", s: "05:30", title: t("Spy C") },
-  { d: "2026-07-09", s: "07:00", title: BREAK, kind: "break" },
-  { d: "2026-07-09", s: "14:00", title: t("Marcel") },
-  { d: "2026-07-09", s: "16:00", title: t("Révész Bálint") },
-  { d: "2026-07-09", s: "17:30", title: t("Peter Bernath") },
-  { d: "2026-07-09", s: "19:30", title: t("Bernathy") },
-  { d: "2026-07-09", s: "21:30", title: t("Titusz") },
-  { d: "2026-07-09", s: "23:30", title: t("Conntex") },
-  // Fri (Jul 10)
-  { d: "2026-07-10", s: "01:30", title: t("Katamii") },
-  { d: "2026-07-10", s: "03:00", title: t("Subotage") },
-  { d: "2026-07-10", s: "04:30", title: t("Ruenge") },
-  { d: "2026-07-10", s: "06:00", title: t("Kele") },
-  { d: "2026-07-10", s: "07:30", title: t("Alllusion") },
-  { d: "2026-07-10", s: "09:30", title: t("Bodry") },
-  { d: "2026-07-10", s: "11:00", title: t("Further") },
-  { d: "2026-07-10", s: "12:00", title: t("Berko") },
-  { d: "2026-07-10", s: "14:00", title: t("Szamy") },
-  { d: "2026-07-10", s: "16:00", title: t("Acideal (live)") },
-  { d: "2026-07-10", s: "18:00", title: t("THNTS") },
-  { d: "2026-07-10", s: "20:00", title: t("Zsom") },
-  { d: "2026-07-10", s: "22:00", title: t("Sumiruna") },
-  // Sat (Jul 11)
-  { d: "2026-07-11", s: "00:00", title: t("Kliment") },
-  { d: "2026-07-11", s: "02:00", title: t("Szlym B2B Szoliver") },
-  { d: "2026-07-11", s: "04:00", title: t("Urklang") },
-  { d: "2026-07-11", s: "06:00", title: t("Axeev") },
-  { d: "2026-07-11", s: "07:30", title: t("THNTS B2B Mankind") },
-  { d: "2026-07-11", s: "12:00", title: t("P.E.P") },
-  { d: "2026-07-11", s: "13:30", title: t("Garpo") },
-  { d: "2026-07-11", s: "15:00", title: t("Mankind") },
-  { d: "2026-07-11", s: "16:30", title: t("Zagi") },
-  { d: "2026-07-11", s: "18:00", title: t("Zvezda Beta") },
-  { d: "2026-07-11", s: "20:00", title: t("Psyk") },
-  { d: "2026-07-11", s: "22:00", title: t("Mary Yuzovskaya") },
-  // Sun (Jul 12)
-  { d: "2026-07-12", s: "00:00", title: t("Kohra") },
-  { d: "2026-07-12", s: "02:00", title: t("Erro") },
-  { d: "2026-07-12", s: "04:00", title: t("Tsu B2B Switch Nollie") },
-  { d: "2026-07-12", s: "06:00", e: "09:00", title: t("Roland Handrick") },
-];
-
-// ────────────────────────────────────────────────────────── TERRACE ──
-// Yoga / meditation / movement. All slots have explicit start–end ranges.
-// Language: both = EN+HU (yellow), en = purple, hu = turquoise, Ø = grey.
-const FEEL_TRILOGY = w(
-  "Feel. Let go. Live. – Somatic emotion-releasing trilogy",
-  "Érezd. Engedd. Éld. – Szomatikus érzelemfelszabadító trilógia",
-);
-const PRESENT = w("Presence Within Yourself", "Jelen önmagadban");
-const BODY_SPEAKS = w(
-  "The Body Speaks – theatre & movement therapy",
-  "A test beszél – színház- és mozgásterápia",
-);
-const PSY_FLOW = t("Psy Flow Yoga");
-const TRANCE_RELAX = t("Trance & Relax");
-const SHADOW_YOGA = w("Shadow Yoga", "Shadow jóga");
-
-// Full grid transcribed from the printed YOGA TERRACE poster + the bilingual
-// programme cards (title, instructor, language badge). 90-min slots unless noted.
-const TERRACE: Entry[] = [
-  // Wed
-  { d: "2026-07-08", s: "20:00", e: "22:00", title: TRANCE_RELAX, a: "Lipták Boglárka", kind: "workshop", lang: "both" },
-  // Thu
-  { d: "2026-07-09", s: "08:00", e: "09:30", title: t("Yoga – All in One"), a: "Diószegi Ádám", kind: "yoga", lang: "hu" },
-  { d: "2026-07-09", s: "10:00", e: "11:30", title: w("Five Animal Chi Kung", "Öt állat chi kung"), a: "Lukács Gabi", kind: "wind", lang: "both" },
-  { d: "2026-07-09", s: "12:00", e: "13:30", title: w("OM Healing Circle", "OM gyógyító kör"), a: "Astar Luca", kind: "voice", lang: "en" },
-  { d: "2026-07-09", s: "14:00", e: "15:30", title: FEEL_TRILOGY, a: "Németh Kitti", kind: "dance", lang: "both" },
-  { d: "2026-07-09", s: "18:00", e: "19:30", title: PRESENT, a: "Grecsó Zoltán", kind: "mind", lang: "both" },
-  { d: "2026-07-09", s: "20:00", e: "21:30", title: SHADOW_YOGA, a: "Fáy Zsolt", kind: "yoga", lang: "both" },
-  // Fri
-  { d: "2026-07-10", s: "08:00", e: "09:30", title: w("Embodied Gesture", "Nyomhagyás"), a: "Pakosz Anna", kind: "dance" },
-  { d: "2026-07-10", s: "10:00", e: "11:30", title: w("Tai Chi, or the Power of Intention", "Tai chi, avagy a szándék ereje"), a: "Lukács Gabi", kind: "wind", lang: "both" },
-  { d: "2026-07-10", s: "12:00", e: "13:30", title: w("Mantra Singing Circle Workshop", "Mantraéneklő kör workshop"), a: "Efi Love Light", kind: "voice", lang: "en" },
-  { d: "2026-07-10", s: "14:00", e: "15:30", title: FEEL_TRILOGY, a: "Németh Kitti", kind: "dance", lang: "both" },
-  { d: "2026-07-10", s: "16:00", e: "17:30", title: BODY_SPEAKS, a: "Boglár Andrea", kind: "drama", lang: "both" },
-  { d: "2026-07-10", s: "18:00", e: "19:30", title: w("Rewilding the Self", "Ösztön játék"), a: "Rosselet Ati", kind: "dance", lang: "both" },
-  { d: "2026-07-10", s: "20:00", e: "21:30", title: w("Unity – yoga with two instructors", "Egység – jóga két oktatóval"), a: "Nagy Norman", kind: "yoga", lang: "hu" },
-  { d: "2026-07-10", s: "22:00", e: "00:00", ed: "2026-07-11", title: TRANCE_RELAX, a: "Lipták Boglárka", kind: "workshop", lang: "both" },
-  // Sat
-  { d: "2026-07-11", s: "08:00", e: "09:30", title: SHADOW_YOGA, a: "Fáy Zsolt", kind: "yoga", lang: "both" },
-  { d: "2026-07-11", s: "10:00", e: "11:30", title: w("5 Elements Chi Kung", "5 elem chi kung"), a: "Bilibók András", kind: "wind", lang: "hu" },
-  { d: "2026-07-11", s: "12:00", e: "13:30", title: w("Laugh and Love", "Nevess és szeress"), a: "Katona Bernadett", kind: "workshop", lang: "both" },
-  { d: "2026-07-11", s: "14:00", e: "15:30", title: FEEL_TRILOGY, a: "Németh Kitti", kind: "dance", lang: "both" },
-  { d: "2026-07-11", s: "16:00", e: "17:30", title: BODY_SPEAKS, a: "Boglár Andrea", kind: "drama", lang: "both" },
-  { d: "2026-07-11", s: "18:00", e: "19:30", title: w("Hatha Flow Yoga & guided meditation", "Hatha flow jóga és vezetett meditáció"), a: "Kovács Olívia", kind: "yoga", lang: "hu" },
-  { d: "2026-07-11", s: "20:00", e: "21:30", title: PSY_FLOW, a: "Üveges Csenge", kind: "yoga" },
-  // Sun
-  { d: "2026-07-12", s: "08:00", e: "09:30", title: w("Hatha Yoga & Pranayama", "Hatha jóga és pránájáma"), a: "Pinke Roland", kind: "yoga", lang: "hu" },
-  { d: "2026-07-12", s: "10:00", e: "11:30", title: PRESENT, a: "Grecsó Zoltán", kind: "mind", lang: "en" },
-  { d: "2026-07-12", s: "12:00", e: "13:30", title: w("Functional Movement Fundamentals – fascia focus", "Funkcionális mozgásalapok – fascia fókusz"), a: "Janka", kind: "workshop", lang: "hu" },
-  { d: "2026-07-12", s: "20:00", e: "21:30", title: PSY_FLOW, a: "Üveges Csenge", kind: "yoga" },
-  { d: "2026-07-12", s: "16:00", e: "18:30", title: w("Conscious Presence", "Tudatos jelenlét"), a: "Szabo Emma", kind: "mind", lang: "both" },
-];
-
-// ────────────────────────────────────────────────────────── MANDALA ──
-// Sound baths & ceremonies. Most are language-neutral (Ø). Explicit ranges.
-const SOUNDS_SPIRIT = w("Sounds & Spirit Sound Baths", "Sounds & Spirit Hangfürdők");
-const SOUND_BATH = w("Sound Bath", "Hangfürdő");
-const GONG_BATH = w("Gong Sound Bath", "Gongos hangfürdő");
-const SACRAL_PULSE = w("Sacral Pulse", "Rezgő erőtér");
-const SOUND_SCULPTURE = w("Organic Sound Sculpture Building", "Organikus hangszobor építés");
-const SOUND_WIZARDS = w("Sound Magicians – sound magic from the tales of the Dragon and the Phoenix", "Hangvarázslók – Sárkány és Főnix meséi hangvarázslat");
-const SACRAL = w("Sacral Eclectic Hybrid Sound Bath", "Sacral Eklektik Hibrid Hangfürdő");
-const SOUND_JOURNEY = w("Sound Journey", "Hangutazás");
-const INTUITIVE = w("Intuitive Sound Journey", "Intuíciós hangutazás");
-const MEDITATIVE = w("Meditative Sound Journey", "Meditatív hangutazás");
-const MANTRA = w("Mantra Meditation", "Mantra meditáció");
-const KIRTAN = t("Kirtan Fest Hungary");
-const OSENEK = w("ŐsÉnek Concert – The Music of the Soul", "Ősének koncert – A lélek zenéje");
-const QUEEN_JAGUAR = t("Queen Jaguar Sound Journey – Echoes Between Worlds");
-const HANDPAN = w("Handpan Sound Journey", "Handpan hangutazás");
-const DEPTHS = w("Depths of Us – Sound Journey", "Depths of Us – Hangutazás");
-const STAR_MUSIC = w("Star Music", "Csillagzene");
-const TAIZE = w("Taizé Prayer", "Taizéi ima");
-const SZEDER_TRIBAL = t("Tribal Folk Jazz Sound Journey");
-const SZEDER_CONCERT = w("Szeder Songs and Sound Journey", "Szeder Hangutazás Koncert");
-const NOVAN_PIANO = w("Astral Piano Whisperer", "Asztrális zongorasimogató");
-const TEMPLE = t("Temple of Sounds");
-const SHAMANIC_JOURNEY = w("Guided Shamanic Journey", "Sámándobos Lélekutazás");
-
-// Full 5-day grid transcribed from the printed MANDALA poster + the bilingual
-// programme cards (title, performer, language badge). All slots are 90-min
-// workshop blocks. The Wed 17:30 sound bath + 18:30 opening ceremony are left
-// untouched (no performer) — they predate this transcription.
-const MANDALA: Entry[] = [
-  // Wed (Jul 8) — opening block kept as-is
-  { d: "2026-07-08", s: "17:30", e: "18:30", title: SACRAL, kind: "sound-bath" },
-  { d: "2026-07-08", s: "18:30", e: "19:00", title: w("Mandala sand-painting opening ceremony", "Mandala homokszórás nyitó szertartás"), kind: "ceremony", lang: "both" },
-  { d: "2026-07-08", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
-  { d: "2026-07-08", s: "22:00", e: "23:30", title: DEPTHS, a: "Lengyel Borbála", kind: "sound-bath" },
-  // Thu (Jul 9)
-  { d: "2026-07-09", s: "00:00", e: "01:30", title: HANDPAN, a: "Kuritár Csaba", kind: "handpan" },
-  { d: "2026-07-09", s: "02:00", e: "03:30", title: MEDITATIVE, a: "Richard Bakay", kind: "sound-bath" },
-  { d: "2026-07-09", s: "04:00", e: "05:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
-  { d: "2026-07-09", s: "06:00", e: "07:30", title: QUEEN_JAGUAR, a: "Péterfi Kinga", kind: "sound-bath", lang: "both" },
-  { d: "2026-07-09", s: "08:00", e: "09:30", title: SOUND_JOURNEY, a: "Yogama Reni", kind: "sound-bath" },
-  { d: "2026-07-09", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
-  { d: "2026-07-09", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
-  { d: "2026-07-09", s: "14:00", e: "15:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
-  { d: "2026-07-09", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
-  { d: "2026-07-09", s: "18:00", e: "19:30", title: SOUND_WIZARDS, a: "Virág Emese", kind: "sound-bath", lang: "hu" },
-  { d: "2026-07-09", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
-  { d: "2026-07-09", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "voice" },
-  // Fri (Jul 10)
-  { d: "2026-07-10", s: "00:00", e: "01:30", title: GONG_BATH, a: "Pinke Roland", kind: "sound-bath" },
-  { d: "2026-07-10", s: "02:00", e: "03:30", title: SOUND_JOURNEY, a: "Budai Benjámin", kind: "sound-bath" },
-  { d: "2026-07-10", s: "04:00", e: "05:30", title: SACRAL_PULSE, a: "Kertész Tímea", kind: "sound-bath" },
-  { d: "2026-07-10", s: "06:00", e: "07:30", title: SOUND_JOURNEY, a: "Yogama Reni", kind: "sound-bath" },
-  { d: "2026-07-10", s: "08:00", e: "09:30", title: SACRAL, a: "Máté-Németh Szilvi", kind: "sound-bath" },
-  { d: "2026-07-10", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
-  { d: "2026-07-10", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
-  { d: "2026-07-10", s: "14:00", e: "15:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
-  { d: "2026-07-10", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
-  { d: "2026-07-10", s: "18:00", e: "19:30", title: SOUND_WIZARDS, a: "Virág Emese", kind: "sound-bath", lang: "hu" },
-  { d: "2026-07-10", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
-  { d: "2026-07-10", s: "22:00", e: "23:30", title: OSENEK, a: "Frida Lorca", kind: "voice" },
-  // Sat (Jul 11)
-  { d: "2026-07-11", s: "00:00", e: "01:30", title: GONG_BATH, a: "Pinke Roland", kind: "sound-bath" },
-  { d: "2026-07-11", s: "02:00", e: "03:30", title: SZEDER_TRIBAL, a: "Szeder x Novan x Bóta", kind: "sound-bath" },
-  { d: "2026-07-11", s: "04:00", e: "05:30", title: KIRTAN, a: "Bhaktipádá Gosvámí", kind: "voice" },
-  { d: "2026-07-11", s: "06:00", e: "07:30", title: STAR_MUSIC, a: "Antal Éva", kind: "sound-bath" },
-  { d: "2026-07-11", s: "08:00", e: "09:30", title: TAIZE, a: "Kovács Orsolya", kind: "voice" },
-  { d: "2026-07-11", s: "10:00", e: "11:30", title: INTUITIVE, a: "Fáy Ági", kind: "sound-bath", lang: "hu" },
-  { d: "2026-07-11", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
-  { d: "2026-07-11", s: "14:00", e: "15:30", title: SACRAL_PULSE, a: "Kertész Tímea", kind: "sound-bath" },
-  { d: "2026-07-11", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
-  { d: "2026-07-11", s: "18:00", e: "19:30", title: SHAMANIC_JOURNEY, a: "Paulinyi Tamás", kind: "drum", lang: "hu" },
-  { d: "2026-07-11", s: "20:00", e: "21:30", title: SOUNDS_SPIRIT, a: "Kalmár Andrea", kind: "sound-bath" },
-  { d: "2026-07-11", s: "22:00", e: "23:30", title: TEMPLE, a: "Erdősi-Bóta Bence", kind: "sound-bath" },
-  // Sun (Jul 12)
-  { d: "2026-07-12", s: "00:00", e: "01:30", title: GONG_BATH, a: "Pinke Roland", kind: "sound-bath" },
-  { d: "2026-07-12", s: "02:00", e: "03:30", title: MANTRA, a: "Jaitra Mantra Music", kind: "voice" },
-  { d: "2026-07-12", s: "04:00", e: "05:30", title: SACRAL_PULSE, a: "Kertész Tímea", kind: "sound-bath" },
-  { d: "2026-07-12", s: "06:00", e: "07:30", title: MEDITATIVE, a: "Richard Bakay", kind: "sound-bath" },
-  { d: "2026-07-12", s: "08:00", e: "09:30", title: SZEDER_CONCERT, a: "Szeder Sound Healing", kind: "sound-bath" },
-  { d: "2026-07-12", s: "10:00", e: "11:30", title: SOUND_JOURNEY, a: "Budai Benjámin", kind: "sound-bath" },
-  { d: "2026-07-12", s: "12:00", e: "13:30", title: SOUND_BATH, a: "Rácz Dénes", kind: "sound-bath" },
-  { d: "2026-07-12", s: "14:00", e: "15:30", title: NOVAN_PIANO, a: "NovaN", kind: "sound-bath" },
-  { d: "2026-07-12", s: "16:00", e: "17:30", title: SOUND_SCULPTURE, a: "Kardoslaci", kind: "handpan" },
-  { d: "2026-07-12", s: "18:00", e: "19:00", title: SACRAL, a: "Máté-Németh Szilvi", kind: "sound-bath" },
-  { d: "2026-07-12", s: "19:00", e: "19:30", title: w("Sand-mandala dissolution ceremony", "Homokmandala elmúlás szertartása"), a: "Fáy Nóra", kind: "ceremony", lang: "both" },
-];
+// ──────────────────────────────────────────────────────── YOGA TERRACE ──
+// Third stage, announced but with no published programme yet. Seeded so the
+// stage exists (settings, geofence); hidden by default on every client until
+// it has acts.
+const TERRACE: Entry[] = [];
 
 async function main() {
   // Build + validate every event row up front — a slug collision must abort
   // while the DB still holds the previous dataset, not after the wipe.
   const eventRows = assignSlugs([
-    ...withEnds("portal", PORTAL),
-    ...withEnds("field", FIELD),
-    ...withEnds("bowl", BOWL),
+    ...withEnds("oasis", OASIS),
+    ...withEnds("wadi", WADI),
     ...withEnds("terrace", TERRACE),
-    ...withEnds("mandala", MANDALA),
   ]);
 
   console.log("Wiping existing rows…");
@@ -453,71 +215,46 @@ async function main() {
   await db.delete(stages);
 
   console.log("Inserting stages…");
-  const [portal, field, bowl, terrace, mandala] = await db
+  const [oasis, wadi, terrace] = await db
     .insert(stages)
     .values([
       {
-        slug: "portal",
-        name: "Portal",
-        subtitle: { en: "Main psytrance stage", hu: "Fő psytrance színpad" },
-        color: "#7a2e2e",
-        accent: "#e8a04c",
+        slug: "oasis",
+        name: "Oasis",
+        color: "#4a3428",
+        accent: "#c89468",
         sortOrder: 0,
         isDefault: true,
-        lat: 46.673682383648455,
-        lng: 17.66211333408678,
-        radiusM: 150,
+        lat: 46.67397480333385,
+        lng: 17.660425843597828,
+        radiusM: 50,
       },
       {
-        slug: "field",
-        name: "Field",
-        subtitle: { en: "Live, acoustic & workshops", hu: "Live, akusztikus & workshopok" },
-        color: "#1f4a47",
-        accent: "#4fb3a6",
+        slug: "wadi",
+        name: "Wadi",
+        color: "#2e3b45",
+        accent: "#8fa69b",
         sortOrder: 1,
-        lat: 46.676117401484305,
-        lng: 17.658342620761708,
-        radiusM: 150,
-      },
-      {
-        slug: "bowl",
-        name: "Bowl",
-        subtitle: { en: "Open-air techno", hu: "Szabadtéri techno" },
-        color: "#5a3a1f",
-        accent: "#d98c3a",
-        sortOrder: 2,
         lat: 46.676109554244164,
         lng: 17.661461486061544,
-        radiusM: 150,
+        radiusM: 50,
       },
       {
         slug: "terrace",
-        name: "Terrace",
-        subtitle: { en: "Yoga & meditation", hu: "Jóga & meditáció" },
+        name: "Yoga Terrace",
         color: "#46603a",
         accent: "#93c06a",
-        sortOrder: 3,
+        sortOrder: 2,
         lat: 46.674407488023085,
         lng: 17.661415611588946,
-        radiusM: 150,
-      },
-      {
-        slug: "mandala",
-        name: "Mandala",
-        subtitle: { en: "Sound baths & ceremonies", hu: "Hangfürdők & ceremóniák" },
-        color: "#4a3a6b",
-        accent: "#b79be0",
-        sortOrder: 4,
-        lat: 46.67379233364376,
-        lng: 17.65907946930414,
-        radiusM: 150,
+        radiusM: 50,
       },
     ])
     .returning();
 
   console.log("Inserting events…");
   const stageIdBySlug = new Map(
-    [portal, field, bowl, terrace, mandala].map((s) => [s.slug, s.id]),
+    [oasis, wadi, terrace].map((s) => [s.slug, s.id]),
   );
   await db.insert(events).values(
     eventRows.map(({ stageSlug, ...r }) => ({
@@ -527,12 +264,12 @@ async function main() {
   );
 
   const counts = {
-    stages: 5,
-    portalEvents: PORTAL.length,
-    fieldEvents: FIELD.length,
-    bowlEvents: BOWL.length,
+    stages: 3,
+    oasisEvents: OASIS.length,
+    wadiEvents: WADI.length,
     terraceEvents: TERRACE.length,
-    mandalaEvents: MANDALA.length,
+    acts: eventRows.filter((r) => r.kind !== "break").length,
+    breaks: eventRows.filter((r) => r.kind === "break").length,
   };
   console.log("Seed complete:", counts);
 }

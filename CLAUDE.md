@@ -33,9 +33,9 @@ Rules a future edit must respect:
    it's easy to miss.
 2. **The date wire format is a strict dual-shape contract — the most fragile edit in
    the repo.** `pwa/lib/queries.ts` emits event `startsAt`/`endsAt` via
-   `.toISOString()` → `2026-07-08T15:30:00.000Z` (UTC, fractional seconds, `Z`),
+   `.toISOString()` → `2026-08-21T15:30:00.000Z` (UTC, fractional seconds, `Z`),
    while `pwa/lib/festival.ts` stores the festival window as `+02:00`-offset literals
-   (`2026-07-08T12:00:00+02:00`). `JSONDecoder.manas` in `Models.swift` tolerates
+   (`2026-08-20T12:00:00+02:00`). `JSONDecoder.manas` in `Models.swift` tolerates
    **exactly those two ISO-8601 shapes and hard-fails the whole decode on anything
    else.** Never change date serialization on the web side without updating the Swift
    decoder.
@@ -69,15 +69,16 @@ Rules a future edit must respect:
   (`group.ai.torma.manas.2026`, `ManasKit/AppState.swift` `SharedDefaults`; the apps
   mirror `manas.locale` there and reload timelines on change), falling back to
   device language until the app sets one.
-- **All stages are shown by default on every client.** Bowl was hidden by default
-  until its poster shipped; both defaults were then flipped together —
-  `pwa/components/settings/SettingsContext.tsx` `hidden: []` and
-  `ManasKit/AppState.swift` `?? []`. Note: this only changes *new* installs/visitors;
-  users who already persisted `hidden: ["bowl"]` keep it until they toggle it back.
-- **Stage `slug`** (`portal`, `field`, `bowl`, `terrace`, `mandala`) is the stable
-  cross-platform key. Never repurpose a slug.
+- **The Yoga Terrace is hidden by default on every client**, because it has no
+  published programme yet. Both defaults must flip together when it gets one —
+  `pwa/components/settings/SettingsContext.tsx` `hidden: ["terrace"]` and
+  `ManasKit/AppState.swift` `?? ["terrace"]`. Note: a default change only reaches
+  *new* installs/visitors; anyone who already persisted a hidden set keeps it
+  until they toggle it in settings.
+- **Stage `slug`** (`oasis`, `wadi`, `terrace`) is the stable cross-platform key.
+  Never repurpose a slug.
 - **Event `slug` is the favorites key on every client** — event serial ids renumber
-  on every re-seed and must never be persisted. Slugs (`portal-liquid-soul-0709`)
+  on every re-seed and must never be persisted. Slugs (`wadi-josefina-tapia-0823`)
   are generated + uniqueness-asserted by `pwa/scripts/seed.ts`: `stage-title-MMDD`,
   a pure function of the event's own fields (never a positional counter — other
   entries' edits must not shift it); only a same-title-same-stage-same-day group

@@ -71,13 +71,13 @@ xcrun simctl install "$UDID" "$DD/Build/Products/Debug-iphonesimulator/Manas.app
 # Inject QA state via launch args (NSArgumentDomain), DEBUG/TestFlight only:
 xcrun simctl launch "$UDID" ai.torma.manas.2026 \
   -manas.disclaimerSeen 1 -manas.locale hu -manas.startView timetable \
-  -manas.debugNow '2026-07-10T10:30:00+02:00' -manas.debugCoord '46.67379,17.65908'
+  -manas.debugNow '2026-08-21T15:30:00+02:00' -manas.debugCoord '46.67611,17.66146'
 xcrun simctl io "$UDID" screenshot /tmp/shot.png
 ```
 
 Bundle ids: iOS `ai.torma.manas.2026`, watch `ai.torma.manas.2026.watchkitapp`
 (watch `.app` is `Debug-watchsimulator/ManasWatch.app`). `-manas.debugCoord` sets the
-geofence so the watch jumps to the nearest stage (here Mandala). Skip the first-run
+geofence so the watch jumps to the nearest stage (here Wadi). Skip the first-run
 disclaimer with `-manas.disclaimerSeen 1`.
 
 ## Conventions
@@ -181,7 +181,7 @@ disclaimer with `-manas.disclaimerSeen 1`.
   `appStoreReceiptURL` check) and compiled out of App Store builds. Drive it from
   the simulator:
   ```bash
-  xcrun simctl spawn <udid> defaults write ai.torma.manas.2026 manas.debugNow '2026-07-09T15:30:00+02:00'
+  xcrun simctl spawn <udid> defaults write ai.torma.manas.2026 manas.debugNow '2026-08-21T15:30:00+02:00'
   xcrun simctl spawn <udid> defaults write ai.torma.manas.2026 manas.debugCoord '47.5,17.5'
   ```
 - **Screenshot generator:** `screenshots/make_screenshots.py` + `screenshots.yaml`
@@ -198,7 +198,7 @@ disclaimer with `-manas.disclaimerSeen 1`.
   `manas.startFavFilter` (turn on the timetable favorites dim-filter — pair with
   `manas.startFavorites`), and `manas.startWidgetPreview` (render widget card(s)
   full-screen — watch: one stage slug; iPhone: `"medium,small"` slugs, e.g.
-  `bowl,terrace`, for the two home-widget
+  `oasis,wadi`, for the two home-widget
   sizes). The widget shots reuse the real widget views (`ManasKit/NowWidgetCard.swift`
   and `ManasKit/HomeWidgetCard.swift`, so the apps + the WidgetKit extensions share
   them). The extension honours the QA
