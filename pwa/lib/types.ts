@@ -64,33 +64,3 @@ export type ScheduleData = {
   events: EventDTO[];
 };
 
-export type CategoryGroup = "facility" | "integration" | "stage" | "area";
-
-export type CategoryDTO = {
-  id: number;
-  slug: string;
-  name: I18nText;
-  group: CategoryGroup;
-  icon: string | null;
-  color: string;
-  sortOrder: number;
-};
-
-export type LocationDTO = {
-  id: number;
-  categoryId: number;
-  categorySlug: string;
-  name: I18nText | null;
-  x: number;
-  y: number;
-  lat: number | null;
-  lng: number | null;
-  refCode: string | null;
-  requiresRegistration: boolean;
-  description: I18nText | null;
-};
-
-export type LocationsData = {
-  categories: CategoryDTO[];
-  locations: LocationDTO[];
-};

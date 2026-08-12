@@ -116,7 +116,7 @@ disclaimer with `-manas.disclaimerSeen 1`.
   (per-stage now-playing / up-next / pre-festival countdown) + a `ShareView` tab
   ("Add tovább") — a QR encoding `AppLinks.qr` (web `/get`) plus a native
   `ShareLink` handing out `AppLinks.share` (`/app`), mirroring the web `/share`
-  page. Map is intentionally omitted. Tapping a timetable block toggles its
+  page. Tapping a timetable block toggles its
   favorite — the always-red heart is inlined before the title as part of its
   text run (`titleText`, mirrors web + the watch widget; deliberately no border
   change); a header heart — visible once any favorite exists — dims
@@ -165,8 +165,8 @@ disclaimer with `-manas.disclaimerSeen 1`.
   hard-fails on any date shape outside the two the API emits. See `../CLAUDE.md` §2
   before any date-related edit.
 - **Schedule endpoint only.** `APIClient.baseURL` is `…/api` and the only call is
-  `schedule`. There is no locations/map code here — don't add an apple `/api/locations`
-  consumer without a deliberate reason.
+  `schedule` — the web app serves no other endpoint (the map feature was removed
+  repo-wide).
 - **Offline cache lives in Application Support** (not Caches) so the OS won't purge it
   under storage pressure — important for watch offline-after-first-load. All four
   targets are entitled to the App Group, so it sits in the **group container**

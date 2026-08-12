@@ -1,5 +1,5 @@
 /**
- * Seed the Manas 2026 schedule + map data into Neon.
+ * Seed the Manas 2026 schedule into Neon.
  *
  * Data transcribed from the printed PORTAL, FIELD and BOWL timetable posters.
  * Times are festival-local (Europe/Budapest = CEST = UTC+02:00 in July).
@@ -23,7 +23,7 @@ try {
   /* rely on ambient env */
 }
 
-const { stages, events, locationCategories, locations } = schema;
+const { stages, events } = schema;
 
 /** Festival-local datetime (CEST). */
 const bp = (date: string, time: string) =>
@@ -437,133 +437,6 @@ const MANDALA: Entry[] = [
   { d: "2026-07-12", s: "19:00", e: "19:30", title: w("Sand-mandala dissolution ceremony", "Homokmandala elmúlás szertartása"), a: "Fáy Nóra", kind: "ceremony", lang: "both" },
 ];
 
-// ───────────────────────────────────────────── MAP LOCATION CATEGORIES ──
-type Cat = {
-  slug: string;
-  name: I18nText;
-  group: "facility" | "integration" | "stage" | "area";
-  icon: string;
-  color: string;
-};
-const CATEGORIES: Cat[] = [
-  // Facilities
-  { slug: "stage", name: { en: "Stage", hu: "Színpad" }, group: "stage", icon: "music", color: "#e8a04c" },
-  { slug: "art-gallery", name: { en: "Art Gallery", hu: "Galéria" }, group: "facility", icon: "image", color: "#c98a5e" },
-  { slug: "bar", name: { en: "Bar", hu: "Bár" }, group: "facility", icon: "wine", color: "#b5532f" },
-  { slug: "camping-car", name: { en: "Camping – Car and Caravan", hu: "Autós és Lakóautó Kemping" }, group: "area", icon: "caravan", color: "#9aa857" },
-  { slug: "camping-pedestrian", name: { en: "Camping – Pedestrian", hu: "Gyalogos Kemping" }, group: "area", icon: "tent", color: "#7f9c64" },
-  { slug: "charging", name: { en: "Charging Station", hu: "Töltőállomás" }, group: "facility", icon: "battery-charging", color: "#d8c4a0" },
-  { slug: "kitchen", name: { en: "Community Kitchen", hu: "Közösségi Konyha" }, group: "facility", icon: "cooking-pot", color: "#c98a5e" },
-  { slug: "water", name: { en: "Drinking Water", hu: "Ivóvíz" }, group: "facility", icon: "droplet", color: "#5b8aa6" },
-  { slug: "jugglers-beach", name: { en: "Jugglers Beach", hu: "Zsonglőr Part" }, group: "facility", icon: "palmtree", color: "#5b8aa6" },
-  { slug: "first-aid", name: { en: "First Aid Tent", hu: "Elsősegély" }, group: "facility", icon: "cross", color: "#cc4444" },
-  { slug: "food", name: { en: "Food Court", hu: "Étkezés" }, group: "facility", icon: "utensils", color: "#c98a5e" },
-  { slug: "tipi-forest", name: { en: "Forest Tipi Camp", hu: "Erdei Tipi Camp" }, group: "area", icon: "tent-tree", color: "#5f7e44" },
-  { slug: "tipi-main", name: { en: "Main Tipi Camp", hu: "Fő Tipi Camp" }, group: "area", icon: "tent-tree", color: "#5f7e44" },
-  { slug: "info", name: { en: "Info Booth", hu: "Info Pult" }, group: "facility", icon: "info", color: "#5b8aa6" },
-  { slug: "market", name: { en: "Market and Creative Hub", hu: "Árusok és Alkotótér" }, group: "facility", icon: "shopping-bag", color: "#c98a5e" },
-  { slug: "parking", name: { en: "Parking", hu: "Parkolás" }, group: "area", icon: "square-parking", color: "#8c8160" },
-  { slug: "security", name: { en: "Security Center", hu: "Biztonsági Szolgálat Központ" }, group: "facility", icon: "shield", color: "#9a8d77" },
-  { slug: "showers", name: { en: "Showers", hu: "Zuhanyzó" }, group: "facility", icon: "shower-head", color: "#5b8aa6" },
-  { slug: "storage", name: { en: "Storage", hu: "Értékmegőrző" }, group: "facility", icon: "package", color: "#9a8d77" },
-  { slug: "toilet", name: { en: "Toilet / WC", hu: "WC" }, group: "facility", icon: "toilet", color: "#9a8d77" },
-  { slug: "entrance", name: { en: "Entrance", hu: "Bejárat" }, group: "facility", icon: "log-in", color: "#cc4444" },
-  // Integration spaces
-  { slug: "workshop-kiosk", name: { en: "Workshop Registration Kiosk", hu: "Workshop regisztrációs Kiosk" }, group: "integration", icon: "clipboard-list", color: "#a06fb0" },
-  { slug: "meeting-point", name: { en: "Meeting Point", hu: "Gyülekező pont" }, group: "integration", icon: "users", color: "#a06fb0" },
-  { slug: "sound-bath", name: { en: "Sound Bath", hu: "Hangfürdő" }, group: "integration", icon: "audio-lines", color: "#a06fb0" },
-  { slug: "mind-space", name: { en: "Mind Space", hu: "Tudattér" }, group: "integration", icon: "brain", color: "#a06fb0" },
-  { slug: "kids-corner", name: { en: "Kids' Corner", hu: "Gyerek Sarok" }, group: "integration", icon: "baby", color: "#a06fb0" },
-  { slug: "library", name: { en: "Library", hu: "Könyvtár" }, group: "integration", icon: "book-open", color: "#a06fb0" },
-  { slug: "relax", name: { en: "Relax Space", hu: "Relax Tér" }, group: "integration", icon: "armchair", color: "#a06fb0" },
-  { slug: "integration", name: { en: "Integration Space", hu: "Integrációs Helyszín" }, group: "integration", icon: "sparkles", color: "#a06fb0" },
-  // Areas
-  { slug: "swale", name: { en: "Swale", hu: "Övárok" }, group: "area", icon: "waves", color: "#3a3a2a" },
-  { slug: "soil-regen", name: { en: "Soil Regeneration Area", hu: "Talajregenerációs Terület" }, group: "area", icon: "sprout", color: "#7a6a4a" },
-  { slug: "forest", name: { en: "Forest", hu: "Erdő" }, group: "area", icon: "trees", color: "#3f5e3a" },
-  { slug: "lake", name: { en: "Lake", hu: "Tó" }, group: "area", icon: "waves", color: "#3a6a8a" },
-];
-
-// ─────────────────────────────────────────── MAP LOCATIONS (schematic) ──
-// Coordinates are in the map SVG's viewBox space (see lib/mapConfig.ts:
-// MAP_W x MAP_H = 1000 x 1300). Placement is schematic, matching the
-// uploaded site map's rough layout; fully editable in the DB.
-type Loc = {
-  cat: string;
-  x: number;
-  y: number;
-  name?: I18nText;
-  refCode?: string;
-  reg?: boolean;
-};
-const L = (
-  cat: string,
-  x: number,
-  y: number,
-  name?: I18nText,
-  refCode?: string,
-  reg?: boolean,
-): Loc => ({ cat, x, y, name, refCode, reg });
-
-// Coordinates are in the GPS-calibrated projected space (lib/mapConfig.ts).
-// Parking / camping / tipi camps are drawn as coloured AREAS in MapBaseArt, so
-// they are NOT point markers here.
-const LOCATIONS: Loc[] = [
-  // Stages (Mandala = exact GPS; others read from the reference map)
-  L("stage", 580, 755, { en: "Portal", hu: "Portal" }),
-  L("stage", 355, 235, { en: "Field", hu: "Field" }),
-  L("stage", 525, 175, { en: "Bowl", hu: "Bowl" }),
-  L("stage", 700, 575, { en: "Terrace", hu: "Terasz" }),
-  L("stage", 286, 504, { en: "Mandala", hu: "Mandala" }),
-  // Entrances
-  L("entrance", 146, 904, { en: "Pedestrian Entrance", hu: "Gyalogos bejárat" }),
-  L("entrance", 800, 1255, { en: "Car Entrance", hu: "Autós bejárat" }),
-  // Core facilities (arc north & NW of the lake, on land S of Main Tipi Camp)
-  L("charging", 415, 500),
-  L("storage", 452, 506),
-  L("info", 430, 545),
-  L("market", 385, 552),
-  L("food", 472, 548),
-  L("first-aid", 515, 545),
-  L("kitchen", 360, 580),
-  L("art-gallery", 398, 585),
-  L("security", 448, 585),
-  L("bar", 400, 625),
-  L("bar", 628, 628),
-  L("jugglers-beach", 648, 730),
-  // Water / toilets / showers (spread around the grounds)
-  L("water", 430, 468),
-  L("water", 660, 660),
-  L("water", 470, 880),
-  L("toilet", 350, 545),
-  L("toilet", 640, 555),
-  L("toilet", 560, 870),
-  L("toilet", 718, 690),
-  L("showers", 345, 505),
-  L("showers", 690, 720),
-  // Integration spaces (icon-based, north of the lake)
-  L("workshop-kiosk", 548, 545),
-  L("meeting-point", 505, 578),
-  L("sound-bath", 530, 562),
-  L("mind-space", 560, 580),
-  L("kids-corner", 522, 605),
-  L("library", 490, 615),
-  L("relax", 552, 608),
-  // Integration spaces (numbered; 1–6 require registration) — W shore strip
-  L("integration", 408, 648, { en: "12 Sided", hu: "12 Szög" }, "1", true),
-  L("integration", 448, 648, { en: "Straw Bale", hu: "Szalmabála" }, "2", true),
-  L("integration", 408, 672, { en: "The Yurt", hu: "A Jurta" }, "3", true),
-  L("integration", 448, 672, { en: "Turquoise Pagoda", hu: "Türkíz Pagoda" }, "4", true),
-  L("integration", 408, 696, { en: "Beige Pagoda", hu: "Bézs Pagoda" }, "5", true),
-  L("integration", 448, 696, { en: "The Little One", hu: "A Kicsi" }, "6", true),
-  L("integration", 408, 720, { en: "Massage Row", hu: "Masszázs Sor" }, "7"),
-  L("integration", 448, 720, { en: "Body Rocking", hu: "Ringatás" }, "8"),
-  L("integration", 408, 744, { en: "Body Sculpting", hu: "Testszobrászat" }, "9"),
-  L("integration", 448, 744, { en: "Sauna", hu: "Szauna" }, "10"),
-  L("integration", 420, 766, { en: "Labyrinth", hu: "Labirintus" }, "11"),
-  L("integration", 458, 766, { en: "Grove", hu: "Fűzkupola" }, "12"),
-];
-
 async function main() {
   // Build + validate every event row up front — a slug collision must abort
   // while the DB still holds the previous dataset, not after the wipe.
@@ -577,9 +450,7 @@ async function main() {
 
   console.log("Wiping existing rows…");
   await db.delete(events);
-  await db.delete(locations);
   await db.delete(stages);
-  await db.delete(locationCategories);
 
   console.log("Inserting stages…");
   const [portal, field, bowl, terrace, mandala] = await db
@@ -655,39 +526,6 @@ async function main() {
     })),
   );
 
-  console.log("Inserting location categories…");
-  const catRows = await db
-    .insert(locationCategories)
-    .values(
-      CATEGORIES.map((c, i) => ({
-        slug: c.slug,
-        name: c.name,
-        group: c.group,
-        icon: c.icon,
-        color: c.color,
-        sortOrder: i,
-      })),
-    )
-    .returning();
-  const catId = new Map(catRows.map((c) => [c.slug, c.id]));
-
-  console.log("Inserting locations…");
-  await db.insert(locations).values(
-    LOCATIONS.map((l, i) => {
-      const categoryId = catId.get(l.cat);
-      if (!categoryId) throw new Error(`Unknown category slug: ${l.cat}`);
-      return {
-        categoryId,
-        name: l.name ?? null,
-        svgX: l.x,
-        svgY: l.y,
-        refCode: l.refCode ?? null,
-        requiresRegistration: l.reg ?? false,
-        sortOrder: i,
-      };
-    }),
-  );
-
   const counts = {
     stages: 5,
     portalEvents: PORTAL.length,
@@ -695,8 +533,6 @@ async function main() {
     bowlEvents: BOWL.length,
     terraceEvents: TERRACE.length,
     mandalaEvents: MANDALA.length,
-    categories: CATEGORIES.length,
-    locations: LOCATIONS.length,
   };
   console.log("Seed complete:", counts);
 }

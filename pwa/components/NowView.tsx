@@ -2,14 +2,13 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowUpRight, Heart, MapPin, Sunset, Waves } from "lucide-react";
+import { Heart, MapPin, Sunset } from "lucide-react";
 import { EVENT_ICONS, eventIconKey } from "@/lib/eventIcon";
 import { useSchedule } from "@/lib/useSchedule";
 import { useNow } from "@/lib/useNow";
 import { useNearestStage } from "@/lib/useNearestStage";
 import { hhmm, tx } from "@/lib/format";
 import { orderedVisibleStages } from "@/lib/stageSettings";
-import { GROUNDING } from "@/lib/grounding";
 import type { EventDTO, StageDTO } from "@/lib/types";
 import { StatusBar } from "./StatusBar";
 import { useFavorites } from "./favorites/FavoritesContext";
@@ -191,14 +190,6 @@ export function NowView() {
         nearestSlug={nearestSlug}
       />
     );
-  }
-
-  // Post-festival GROUNDING window overrides both the live grid and the
-  // "see you next year" screen — it runs from the last act into 15 Jul.
-  const gStart = new Date(GROUNDING.startsAt).getTime();
-  const gEnd = new Date(GROUNDING.endsAt).getTime();
-  if (nowMs >= gStart && nowMs < gEnd) {
-    return <GroundingCard offline={offline} />;
   }
 
   if (nowMs >= end) {
@@ -619,40 +610,5 @@ function TentArt() {
         <path className="flag-wave" d="M110 28 L128 32 L110 36 Z" fill="var(--color-ember)" />
       </g>
     </svg>
-  );
-}
-
-/** Post-festival GROUNDING Days link with a few words about it (no card). */
-function GroundingCard({ offline }: { offline: boolean }) {
-  const t = useTranslations("now.grounding");
-  return (
-    <div className="flex flex-col">
-      {offline && <StatusBar kind="offline" />}
-      <div className="mx-auto max-w-md px-6 py-14 text-center">
-        <div className="flex items-center justify-center gap-2 text-teal">
-          <Waves size={16} className="shrink-0" />
-          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.22em]">
-            {t("eyebrow")}
-          </span>
-        </div>
-        <h2 className="mt-3 font-display text-3xl font-extrabold leading-tight text-cream">
-          {t("title")}
-        </h2>
-        <p className="mt-2 text-sm font-medium text-cream-dim">{t("when")}</p>
-        <p className="mt-5 text-[0.95rem] leading-relaxed text-cream-dim">
-          {t("body")}
-        </p>
-        <a
-          href={GROUNDING.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-sun px-6 py-3 font-display text-sm font-bold text-ink transition active:scale-[0.98]"
-        >
-          {t("cta")}
-          <ArrowUpRight size={17} className="shrink-0" />
-        </a>
-        <p className="mt-3 text-xs text-cream-faint">grounding.manasfestival.eu</p>
-      </div>
-    </div>
   );
 }

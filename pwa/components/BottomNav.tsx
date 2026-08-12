@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { CalendarRange, Disc3, QrCode } from "lucide-react";
 
-// Map route still exists at /map but is intentionally unlinked for now.
 // /share shows a QR code so festival-goers can hand the app to each other.
 const TABS = [
   { href: "/", key: "timetable", Icon: CalendarRange },

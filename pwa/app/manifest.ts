@@ -12,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
       { platform: "webapp", url: `${SITE_URL}/manifest.webmanifest` },
     ],
     description:
-      "Unofficial timetable, now-playing and map for the Manas 2026 gathering.",
+      "Unofficial timetable and now-playing view for the Manas 2026 gathering.",
     start_url: "/",
     scope: "/",
     display: "standalone",

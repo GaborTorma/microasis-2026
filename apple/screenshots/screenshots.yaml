@@ -100,11 +100,6 @@ shots:
     time: "2026-07-08 15:00"      # opening day: gates open, camp going up, Bowl already playing
     location: bowl                # "you are here" at the Bowl
 
-  - name: "08-now-grounding"
-    device: iphone
-    view: now
-    time: "2026-07-13 10:00"      # post-festival GROUNDING Days link screen
-
   # Home-screen widgets: medium (Bowl) + small (Terrace), both live with a
   # full up-next list at this time.
   - name: "09-widgets"

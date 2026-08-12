@@ -44,16 +44,6 @@ public enum AppLinks {
     }
 }
 
-/// Post-festival GROUNDING Days window + link. Web-only NowView parity (mirrors
-/// `pwa/lib/grounding.ts`); not part of the wire contract. Budapest +02:00
-/// literals — the window starts as the last acts end (12 Jul 19:00) and runs to
-/// 15 Jul 12:00, overriding both the live grid and the "ended" screen.
-public enum Grounding {
-    public static let url = URL(string: "https://grounding.manasfestival.eu")!
-    public static let start = Fmt.parseDateTime("2026-07-12T19:00:00+02:00")!
-    public static let end = Fmt.parseDateTime("2026-07-15T12:00:00+02:00")!
-}
-
 /// User preferences: stage order, hidden stages, language, and how many stage
 /// columns the timetable shows at once. Persisted locally (each device keeps
 /// its own — phone and watch are independent apps).

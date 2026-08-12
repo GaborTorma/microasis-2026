@@ -57,7 +57,7 @@ THE WHOLE PROGRAMME
 
 NOW VIEW
 - A "Now" screen shows what is playing right now and what is up next on each stage.
-- Before the gates open it counts down to the start; on opening day it welcomes you while the camp goes up, and after the closing act it points you to the GROUNDING days that follow.
+- Before the gates open it counts down to the start; on opening day it welcomes you while the camp goes up, and after the closing act it winds the festival down.
 
 YOUR FAVOURITES, EVERYWHERE
 - Tap an act to heart it — your picks stand out in the timetable and the Now view.
@@ -110,7 +110,7 @@ A TELJES PROGRAM
 
 MOST NÉZET
 - A „Most" képernyő megmutatja, mi szól éppen, és mi következik az egyes színpadokon.
-- A kapunyitás előtt visszaszámol a kezdésig; a nyitónapon a tábor épülése közben köszönt, a záró fellépő után pedig a GROUNDING Napokra irányít.
+- A kapunyitás előtt visszaszámol a kezdésig; a nyitónapon a tábor épülése közben köszönt, a záró fellépő után pedig lezárja a fesztivált.
 
 A KEDVENCEID, MINDENHOL
 - Koppints egy programra, és jelöld szívvel — a kedvenceid kiemelkednek az időrendben és a Most nézetben is.
@@ -222,7 +222,7 @@ Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszaje
 What's new in 1.1:
 
 - Share the app on the spot: a new Share tab with a QR code a friend can scan — App Store on iPhone, the web app on anything else — plus the system share sheet. On Apple Watch a share QR now lives in the toolbar.
-- The Now view comes alive around the edges of the festival: an opening-day welcome while the camp goes up, and a pointer to the GROUNDING days once the music ends.
+- The Now view comes alive around the edges of the festival: an opening-day welcome while the camp goes up, and a closing scene once the music ends.
 - Polish throughout, including a softer, festival-toned background.
 
 Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
@@ -232,7 +232,7 @@ Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome a
 Újdonságok az 1.1-ben:
 
 - Add tovább helyben: új Megosztás fül QR-kóddal, amit a barátod beolvasva azonnal megkapja az appot — iPhone-on az App Store, máson a webes verzió —, plusz a rendszer megosztási lapja. Apple Watch-on a megosztó QR mostantól az eszköztárban.
-- A Most nézet életre kel a fesztivál szélein: nyitónapi köszöntés a tábor építése közben, a zene után pedig irányítás a GROUNDING Napokra.
+- A Most nézet életre kel a fesztivál szélein: nyitónapi köszöntés a tábor építése közben, a zene után pedig záró jelenet.
 - Apróbb csiszolások, köztük egy lágyabb, fesztiválhangulatú háttér.
 
 Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.

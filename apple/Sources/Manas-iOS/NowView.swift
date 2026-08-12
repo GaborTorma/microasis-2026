@@ -21,9 +21,6 @@ struct NowView: View {
                     TentScene(data: data, openingStart: opening.startsAt,
                               now: now, locale: settings.locale,
                               nearestSlug: location.nearestSlug)
-                } else if now >= Grounding.start, now < Grounding.end {
-                    // Post-festival GROUNDING window overrides the grid and "ended".
-                    GroundingView(locale: settings.locale)
                 } else if now >= end {
                     EndedView(locale: settings.locale)
                 } else {
@@ -234,58 +231,6 @@ private struct OpeningRowView: View {
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-// MARK: - Post-festival GROUNDING link
-
-private struct GroundingView: View {
-    let locale: AppLocale
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Spacer(minLength: 0)
-            VStack(spacing: 0) {
-                HStack(spacing: 6) {
-                    Image(systemName: "water.waves").font(.system(size: 14, weight: .semibold))
-                    Text(L.t("now.grounding.eyebrow", locale).uppercased())
-                        .font(.system(size: 11, weight: .semibold)).tracking(3)
-                }
-                .foregroundStyle(Theme.teal)
-
-                Text(L.t("now.grounding.title", locale))
-                    .font(.system(.largeTitle, design: .rounded).weight(.heavy))
-                    .foregroundStyle(Theme.cream).padding(.top, 12)
-
-                Text(L.t("now.grounding.when", locale))
-                    .font(.subheadline.weight(.medium)).foregroundStyle(Theme.creamDim)
-                    .padding(.top, 8)
-
-                Text(L.t("now.grounding.body", locale))
-                    .font(.callout).foregroundStyle(Theme.creamDim)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 20)
-
-                Link(destination: Grounding.url) {
-                    HStack(spacing: 8) {
-                        Text(L.t("now.grounding.cta", locale)).font(.subheadline.bold())
-                        Image(systemName: "arrow.up.right").font(.system(size: 14, weight: .bold))
-                    }
-                    .foregroundStyle(Theme.ink)
-                    .padding(.horizontal, 24).padding(.vertical, 14)
-                    .background(Theme.sun, in: Capsule())
-                }
-                .padding(.top, 28)
-
-                Text("grounding.manasfestival.eu")
-                    .font(.caption).foregroundStyle(Theme.creamFaint).padding(.top, 12)
-            }
-            .padding(.horizontal, 28)
-            .frame(maxWidth: 420)
-            Spacer(minLength: 0)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

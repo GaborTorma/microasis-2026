@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { LocationsData, ScheduleData } from "./types";
+import type { ScheduleData } from "./types";
 
 type State<T> = {
   data: T | null;
@@ -118,7 +118,6 @@ function createResource<T>(url: string, key: string): Resource<T> {
 }
 
 const scheduleResource = createResource<ScheduleData>("/api/schedule", "manas-schedule-v2");
-const locationsResource = createResource<LocationsData>("/api/locations", "manas-locations-v1");
 
 function useResource<T>(resource: Resource<T>): State<T> {
   return useSyncExternalStore(
@@ -129,5 +128,3 @@ function useResource<T>(resource: Resource<T>): State<T> {
 }
 
 export const useSchedule = () => useResource(scheduleResource);
-
-export const useLocations = () => useResource(locationsResource);

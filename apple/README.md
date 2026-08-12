@@ -69,7 +69,7 @@ xcodebuild -project Manas.xcodeproj -scheme ManasWatch \
   "now" line.
 - **Now** tab: per-stage now-playing + up-next, with a pre-festival countdown.
 - **Settings**: drag to reorder stages, eye toggle to hide them.
-- HU/EN toggle (HU default). Map view is intentionally omitted (paused on web too).
+- HU/EN toggle (HU default).
 - **Home-screen widgets** (small / medium): per-stage now-playing. Both sizes
   show the same content — the watch card's "now" block (stage · time · artist
   · act), then a bottom-anchored up-next list (act · start time, as many rows

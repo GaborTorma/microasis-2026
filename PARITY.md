@@ -8,13 +8,12 @@
 | ---------------------------------------- | --- | --- | ------- | ---------------------------------------------------------------------------------------------------------- |
 | Timetable (idő-arányos rács)             | ✅  | ✅  | ❌      | watch: egy-színpad / act-böngészés a rács helyett (kis kijelző, HIG). `WatchRootView` swipe-navigáció.     |
 | Now / up-next nézet                      | ✅  | ✅  | ✅      | PWA `/now`, iOS `NowView` tab, watch root nézet = per-színpad now-playing live-jelzéssel.                   |
-| Térkép (fesztivál-terület)               | ✅  | ❌  | ❌      | Szándékosan web-only (lásd `../CLAUDE.md` §5 + `pwa/CLAUDE.md`: kalibráció törékeny). `/map` unlinked.      |
 | Megosztás (QR + share link)              | ✅  | ✅  | ✅      | PWA `/share`, iOS „Add tovább” tab, watch QR-sheet (pre-baked asset — watchOS-en nincs CoreImage).         |
 | „Töltsd le az appot” showcase (`/app`)   | ✅  | ➖  | ➖      | Web-only marketing landing; natív appoknál nem értelmezett (a Share tab a natív analóg).                    |
 | Nyelvváltó HU/EN                         | ✅  | ✅  | ✅      | Widget a watch-app nyelvét örökli App Group-on át (saját váltó nélkül).                                     |
 | Színpad elrejtés / sorrend               | ✅  | ✅  | ✅      | Beállítás mindhárom kliensen; eszközönként független perzisztencia (nincs iCloud/pairing).                  |
 | Timetable zoom (oszlopszám + szövegméret) | ✅  | ✅  | ➖      | watch: nincs rács → nem értelmezett. iOS `effectiveColumns` + `fontScale`, web `columns`+`scale` tükrözi.   |
-| Legközelebbi színpad (geolokáció)        | ✅  | ✅  | ✅      | PWA `useNearestStage` (Timetable+Now), iOS/watch `LocationStore` 150 m-es geofence.                         |
+| Legközelebbi színpad (geolokáció)        | ✅  | ✅  | ✅      | PWA `useNearestStage` (Timetable+Now), iOS/watch `LocationStore`; MicrOasis-on 50 m-es geofence.            |
 | Offline cache                            | ✅  | ✅  | ✅      | PWA SW + localStorage (ETag/304 revalidálás); iOS saját lemez-cache; watch app + widget közös App Group cache (<6 h friss → widget fetch nélkül).     |
 | PWA install / Add to Home                | ✅  | ➖  | ➖      | `InstallPrompt`/`AddToHomeButton`; natív appnál nem értelmezett.                                            |
 | Privacy / Support oldal                  | ✅  | ✅  | ❌      | PWA route-ok; iOS Settings linkel ki (`manas.torma.ai/privacy` `/support`); watch Settings nem linkel.     |

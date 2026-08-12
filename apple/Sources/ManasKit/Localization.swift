@@ -34,14 +34,6 @@ public enum L {
         "now.tent.body": (
             "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel a megnyitóra!",
             "Find yourself a good spot, pitch your tent and get ready for the opening!"),
-        // Post-festival GROUNDING Days link.
-        "now.grounding.eyebrow": ("Fesztivál után", "After the festival"),
-        "now.grounding.title": ("GROUNDING Napok", "GROUNDING Days"),
-        "now.grounding.when": ("Júl 12. 19:00 – Júl 15. 12:00", "Jul 12, 19:00 – Jul 15, 12:00"),
-        "now.grounding.body": (
-            "A fesztivál véget ért, de a folyamat még tart. A GROUNDING Napok lassú, 2,5 napos földet érés: integrációs műhelyek, pihenés, közös csend és feltöltődés, mielőtt hazaindulsz.",
-            "The festival is over, but the process isn't. GROUNDING Days is a slow, 2.5-day landing — integration workshops, rest, shared stillness and recovery before you head home."),
-        "now.grounding.cta": ("Részletek", "Details"),
         "time.days": ("nap", "days"),
         "time.hours": ("óra", "hrs"),
         "time.minutes": ("perc", "min"),

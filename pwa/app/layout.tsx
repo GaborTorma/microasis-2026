@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://manas.torma.ai"),
   title: "Guide for MANAS 2026",
   description:
-    "Unofficial timetable, now-playing and map for the Manas 2026 gathering. Not affiliated with the festival.",
+    "Unofficial timetable and now-playing view for the Manas 2026 gathering. Not affiliated with the festival.",
   applicationName: "Guide for MANAS 2026",
   manifest: "/manifest.webmanifest",
   openGraph: {
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "Guide for MANAS 2026",
     title: "Guide for MANAS 2026",
     description:
-      "Unofficial timetable, now-playing and map for the Manas 2026 gathering.",
+      "Unofficial timetable and now-playing view for the Manas 2026 gathering.",
     images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "MANAS 2026" }],
   },
   appleWebApp: {

@@ -7,7 +7,6 @@
   "nav": {
     "timetable": "Időrend",
     "now": "Most",
-    "map": "Térkép",
     "share": "Megosztás"
   },
   "common": {
@@ -48,35 +47,7 @@
     "tent": {
       "title": "Épül a tábor",
       "body": "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel a megnyitóra!"
-    },
-    "grounding": {
-      "eyebrow": "Fesztivál után",
-      "title": "GROUNDING Napok",
-      "when": "Júl 12. 19:00 – Júl 15. 12:00",
-      "body": "A fesztivál véget ért, de a folyamat még tart. A GROUNDING Napok lassú, 2,5 napos földet érés: integrációs műhelyek, pihenés, közös csend és feltöltődés, mielőtt hazaindulsz.",
-      "cta": "Részletek"
     }
-  },
-  "map": {
-    "title": "Térkép",
-    "locate": "Hol vagyok",
-    "locating": "Keresés…",
-    "saveTent": "Sátram mentése",
-    "tentSaved": "Sátor elmentve",
-    "findTent": "Sátram megkeresése",
-    "clearTent": "Sátor törlése",
-    "you": "Te",
-    "tent": "A sátram",
-    "legend": "Jelmagyarázat",
-    "registration": "Regisztráció szükséges",
-    "outsideArea": "Úgy tűnik, a fesztivál területén kívül vagy",
-    "noGeo": "A helymeghatározás nem elérhető ezen az eszközön"
-  },
-  "groups": {
-    "stage": "Színpadok",
-    "facility": "Szolgáltatások",
-    "integration": "Integrációs helyszínek",
-    "area": "Területek"
   },
   "lang": {
     "switch": "Nyelv",

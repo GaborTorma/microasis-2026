@@ -47,11 +47,10 @@ Rules a future edit must respect:
    raw `String` for forward-compat; web narrows to unions (`EventKind`,
    `LangAvailability`). Adding a new `kind` won't crash the apps but won't render
    (icon/chip fall through to defaults) until Swift handles it.
-5. **`/api/locations` is web-only.** The map feature exists only on web. The apple
-   apps hit **`/api/schedule` and nothing else** — there is no `LocationsData` in
-   `Models.swift` and no map/locations code under `apple/Sources`. Don't assume an
-   apple consumer when touching locations.
-6. **Both endpoints are conditional GETs.** The API sends an `ETag` (payload hash,
+5. **`/api/schedule` is the only endpoint.** There is no map/locations feature on
+   any client (removed for MicrOasis — the festival has no site map), so every
+   client reads exactly one URL.
+6. **The endpoint is a conditional GET.** The API sends an `ETag` (payload hash,
    `pwa/lib/etag.ts`); the web hook (`pwa/lib/useSchedule.ts`) and `APIClient.swift`
    send `If-None-Match` and treat a bodyless 304 as "serve the cached copy". Keep
    304 handling intact on both clients when touching the fetch layer; clients that
