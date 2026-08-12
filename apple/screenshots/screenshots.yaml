@@ -25,7 +25,9 @@ languages: [hu, en]                               # every shot is captured in ea
 # Logical devices referenced by each shot's `device:` key.
 devices:
   iphone:
-    name: "iPhone 14 Plus"                        # 6.5" App Store slot (1284×2778)
+    name: "iPhone 17 Pro Max"                     # 6.9" App Store slot (1320×2868) —
+                                                  # the size App Store Connect now
+                                                  # requires; 6.5" alone is rejected
     platform: ios
     scheme: MicrOasis
     bundle: ai.torma.microasis.2026

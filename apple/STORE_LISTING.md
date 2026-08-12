@@ -6,6 +6,26 @@ limits. The privacy/support URLs point at the deployed pwa.
 > **Unofficial fan app.** Keep all wording referential ("guide for"); never imply
 > it is the official festival app. See `../CLAUDE.md` and the in-app disclaimer.
 
+## Submission gotchas (learned the hard way on 1.0)
+
+The API reports "appStoreVersions … is not in valid state" for *every* missing
+piece, without saying which. What actually blocked 1.0, in the order found:
+
+1. **App availability was never set** — a brand-new app record has no territories
+   at all (`GET /v2/appAvailabilities/<id>` → 404). Set it before anything else.
+2. **Content rights declaration was empty** — app-level
+   `contentRightsDeclaration`, not part of any version.
+3. **Screenshots must be 6.9" (1320×2868)** for the `APP_IPHONE_67` slot. A 6.5"
+   capture (1284×2778) *uploads fine* and only fails minutes later, asynchronously:
+   `assetDeliveryState.state = FAILED, IMAGE_INCORRECT_DIMENSIONS`. Always re-read
+   the state after uploading. 6.5" alone does not satisfy the requirement.
+   `screenshots.yaml` now captures on an iPhone 17 Pro Max for this reason.
+4. **Age rating: `socialMedia` and `userGeneratedContent`** must be answered, but
+   the API's "missing required attribute" error does *not* list `socialMedia` —
+   only the web questionnaire shows it. Check both after a PATCH.
+
+The watch slot `APP_WATCH_ULTRA` does accept the Ultra 3's 422×514 captures.
+
 ## URLs
 - **Privacy Policy URL:** https://microasis.torma.ai/privacy
 - **Support URL:** https://microasis.torma.ai/support
