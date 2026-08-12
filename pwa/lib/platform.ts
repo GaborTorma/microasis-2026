@@ -6,7 +6,12 @@
 // hand out (share, QR, metadata) so it reads as our own domain, not the Vercel host.
 export const SITE_URL = "https://microasis.torma.ai";
 
-export const APP_STORE_URL = "https://apps.apple.com/app/id6782099675";
+// App Store listing, once the app ships. null until then — the previous value
+// was the Manas app's id, which would have sent visitors to the wrong app.
+// Set this to "https://apps.apple.com/app/id<APPLE_ID>" after the first
+// App Store Connect submission; every consumer already handles null by
+// falling back to the web app.
+export const APP_STORE_URL: string | null = null;
 
 // The native share sheet hands out the /app showcase landing page; the QR (and the
 // printed/copied link beneath it) use /get, which routes the scanner: iPhone → App

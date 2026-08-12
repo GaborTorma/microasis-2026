@@ -14,19 +14,21 @@ export function GetRedirect() {
   const t = useTranslations("get");
 
   useEffect(() => {
-    window.location.replace(isIOS() ? APP_STORE_URL : "/");
+    window.location.replace(APP_STORE_URL && isIOS() ? APP_STORE_URL : "/");
   }, []);
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-5 p-8 text-center">
       <p className="text-cream-dim">{t("redirecting")}</p>
       <div className="flex w-56 flex-col gap-3">
-        <a
-          href={APP_STORE_URL}
-          className="w-full rounded-full bg-sun px-5 py-2.5 text-center font-display font-bold text-ink"
-        >
-          App Store
-        </a>
+        {APP_STORE_URL && (
+          <a
+            href={APP_STORE_URL}
+            className="w-full rounded-full bg-sun px-5 py-2.5 text-center font-display font-bold text-ink"
+          >
+            App Store
+          </a>
+        )}
         <Link
           href="/"
           className="w-full rounded-full border border-line/70 px-5 py-2.5 text-center font-semibold text-cream"
