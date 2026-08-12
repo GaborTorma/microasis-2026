@@ -10,7 +10,7 @@ See `../CLAUDE.md` for the web ↔ apple wire contract before editing any DTO or
 
 - **Package manager is `pnpm`** (only `pnpm-lock.yaml` exists — never run `npm`/`yarn`).
 - Next.js 16, React 19, Tailwind CSS **v4** (`@theme` in `app/globals.css`, no
-  `tailwind.config`), `next-intl`, Drizzle ORM + `@neondatabase/serverless`, `zod`.
+  `tailwind.config`), `next-intl`, Drizzle ORM + `@neondatabase/serverless`.
 - Strict TS, `@/*` path alias to project root.
 
 ```
