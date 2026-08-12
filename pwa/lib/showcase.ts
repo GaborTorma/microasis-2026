@@ -21,18 +21,18 @@ export const PHONE_SHOTS = {
   timetableThu: "iphone-01-timetable-thursday",
   timetableFri: "iphone-02-timetable-friday",
   now: "iphone-03-now-friday",
-  terrace: "iphone-04-timetable-terrace",
+  wadi: "iphone-04-timetable-wadi",
   settings: "iphone-05-settings",
   widgets: "iphone-09-widgets",
   favorites: "iphone-10-favorites",
 } as const;
 
 export const WATCH_SHOTS = {
-  nowPortal: "watch-01-now-portal",
-  nowTerrace: "watch-02-now-terrace",
-  nowMandala: "watch-03-now-mandala",
-  widgetPortal: "watch-04-widget-portal",
-  widgetField: "watch-05-widget-field",
+  nowOasis: "watch-01-now-oasis",
+  nowWadi: "watch-02-now-wadi",
+  nowQuiet: "watch-03-now-quiet",
+  widgetOasis: "watch-04-widget-oasis",
+  widgetWadi: "watch-05-widget-wadi",
 } as const;
 
 export type PhoneShot = keyof typeof PHONE_SHOTS;
@@ -56,9 +56,7 @@ export function framedHero(locale: Locale): string {
 // Stage slug → the exact DB accent color from scripts/seed.ts — used for the
 // faint per-stage glow on the watch widget cards.
 export const STAGE_ACCENTS: Record<string, string> = {
-  portal: "#e8a04c",
-  field: "#4fb3a6",
-  bowl: "#d98c3a",
+  oasis: "#c89468",
+  wadi: "#8fa69b",
   terrace: "#93c06a",
-  mandala: "#b79be0",
 };

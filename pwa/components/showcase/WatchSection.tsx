@@ -26,21 +26,21 @@ export function WatchSection() {
           <Reveal className="flex items-center justify-center">
             <Framed
               kind="watch"
-              src={framedWatch(locale, "nowTerrace")}
+              src={framedWatch(locale, "nowWadi")}
               alt="Apple Watch — Terrace"
               className="z-0 w-[30vw] max-w-[124px] -rotate-[14deg] translate-y-4 opacity-75"
               sizes="124px"
             />
             <Framed
               kind="watch"
-              src={framedWatch(locale, "nowPortal")}
+              src={framedWatch(locale, "nowOasis")}
               alt="Apple Watch — Portal"
               className="z-10 -mx-6 w-[42vw] max-w-[176px]"
               sizes="(max-width: 640px) 42vw, 176px"
             />
             <Framed
               kind="watch"
-              src={framedWatch(locale, "nowMandala")}
+              src={framedWatch(locale, "nowQuiet")}
               alt="Apple Watch — Mandala"
               className="z-0 w-[30vw] max-w-[124px] rotate-[14deg] translate-y-4 opacity-75"
               sizes="124px"
@@ -61,7 +61,7 @@ export function WatchSection() {
           <Reveal className="flex items-center justify-center sm:order-2">
             <Framed
               kind="watch"
-              src={framedWatch(locale, "widgetField")}
+              src={framedWatch(locale, "widgetWadi")}
               alt="Smart Stack widget — Field"
               className="z-0 w-[32vw] max-w-[140px] -rotate-[10deg] translate-y-3 opacity-80"
               glow={field}
@@ -69,7 +69,7 @@ export function WatchSection() {
             />
             <Framed
               kind="watch"
-              src={framedWatch(locale, "widgetPortal")}
+              src={framedWatch(locale, "widgetOasis")}
               alt="Smart Stack widget — Portal"
               className="z-10 -ml-6 w-[42vw] max-w-[176px]"
               glow={portal}

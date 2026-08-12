@@ -15,7 +15,7 @@ pip3 install pyyaml && python3 make_screenshots.py
 ```
 
 Output lands in `hu/` and `en/` sub-folders, named `iphone-01-timetable-thursday.png`,
-`watch-01-now-portal.png`, etc.
+`watch-01-now-oasis.png`, etc.
 
 Flags: `--no-build` (reuse the app already on the sim — much faster while tuning
 the config), `--lang hu`, `--only 05` (substring-match shot names), `--keep-status-bar`.

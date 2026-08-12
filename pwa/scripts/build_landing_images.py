@@ -62,22 +62,22 @@ SHARP = PWA / "node_modules" / "sharp"
 IPHONE_FRAME, IPHONE_SIZE = "iPhone 15 Pro - Black Titanium - Portrait", [1419, 2796]
 IPHONE_SHOTS = [
     "iphone-01-timetable-thursday", "iphone-02-timetable-friday",
-    "iphone-03-now-friday", "iphone-04-timetable-terrace", "iphone-05-settings",
+    "iphone-03-now-friday", "iphone-04-timetable-wadi", "iphone-05-settings",
     "iphone-09-widgets", "iphone-10-favorites",
 ]
 WATCH_SHOTS = [
-    "watch-01-now-portal", "watch-02-now-terrace", "watch-03-now-mandala",
-    "watch-04-widget-portal", "watch-05-widget-field",
+    "watch-01-now-oasis", "watch-02-now-wadi", "watch-03-now-quiet",
+    "watch-04-widget-oasis", "watch-05-widget-wadi",
 ]
 IPHONE_OUT_W = 720
 HERO_PHONE = "iphone-01-timetable-thursday"
-HERO_WATCH = "watch-01-now-portal"
+HERO_WATCH = "watch-01-now-oasis"
 
-CREAM = (237, 244, 236)
-CREAM_DIM = (174, 200, 182)
-TEAL = (70, 179, 163)
-SUN = (94, 201, 138)
-INK = (12, 22, 17)
+CREAM = (242, 231, 216)      # --color-cream  #f2e7d8
+CREAM_DIM = (194, 171, 152)  # --color-cream-dim  #c2ab98
+TEAL = (143, 166, 155)       # --color-teal  #8fa69b
+SUN = (200, 148, 104)        # --color-sun  #c89468
+INK = (23, 12, 11)           # --color-ink  #170c0b
 
 
 def save_webp(im: Image.Image, dst: Path) -> None:
@@ -200,15 +200,15 @@ def smooth_glow(size, color, alpha, blur):
 
 
 def gradient_bg() -> Image.Image:
-    # smooth top→bottom forest ramp + ONE big soft top-left glow (a second glow
+    # smooth top→bottom earth ramp + ONE big soft top-left glow (a second glow
     # near the right read as a vertical seam) + fine noise dither to kill banding.
-    top, bot = (21, 40, 29), (9, 16, 13)
+    top, bot = (43, 26, 21), (18, 10, 9)
     ramp = Image.new("RGB", (1, 630))
     for y in range(630):
         t = y / 629
         ramp.putpixel((0, y), tuple(round(top[i] * (1 - t) + bot[i] * t) for i in range(3)))
     base = ramp.resize((1200, 630)).convert("RGBA")
-    base.alpha_composite(smooth_glow((1700, 1300), (46, 107, 74), 52, 340), (-260, -360))
+    base.alpha_composite(smooth_glow((1700, 1300), (100, 81, 69), 52, 340), (-260, -360))
     noise = Image.effect_noise((1200, 630), 7).convert("L")
     return Image.alpha_composite(base, Image.merge("RGBA", (noise, noise, noise, noise.point(lambda v: 7))))
 
@@ -407,9 +407,9 @@ def build_og() -> None:
     # equal geometry looked bigger — undersizing evens them out to the eye.
     base.alpha_composite(android_badge(46), (x + badge.width + 14, BADGE_Y + 2))
     chips(base, x, CHIPS_BOTTOM,
-          [("Ingyenes", "gift", "#5ec98a"),
-           ("Regisztráció nélkül", "user-x", "#46b3a3"),
-           ("Reklámmentes", "ban", "#e0913f")],
+          [("Ingyenes", "gift", "#c89468"),
+           ("Regisztráció nélkül", "user-x", "#8fa69b"),
+           ("Reklámmentes", "ban", "#b5764a")],
           font("Inter-Regular.ttf", 15))
 
     OG_OUT.parent.mkdir(parents=True, exist_ok=True)
