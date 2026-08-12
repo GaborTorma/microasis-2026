@@ -8,7 +8,7 @@ once into the watch asset catalog and the watch just displays the image.
 KEEP IN SYNC: `URL` below must equal `AppLinks.qr` in
 `Sources/OasisKit/AppState.swift` (https://microasis.torma.ai/get). If that link ever
 changes, re-run this script. Colours + error-correction match the iOS `QRCode` enum
-(ink #0c1611 modules on cream #edf4ec, correction level M) so both clients look alike.
+(ink #170c0b modules on cream #f2e7d8, correction level M) so both clients look alike.
 
 Usage (from `apple/`):
     python3 -m venv .venv && .venv/bin/pip install 'qrcode[pil]'
@@ -20,8 +20,8 @@ import qrcode
 from qrcode.constants import ERROR_CORRECT_M
 
 URL = "https://microasis.torma.ai/get"  # == AppLinks.qr
-INK = "#0c1611"   # dark modules
-CREAM = "#edf4ec"  # light field
+INK = "#170c0b"   # dark modules
+CREAM = "#f2e7d8"  # light field
 OUT = Path(__file__).resolve().parent.parent / (
     "Sources/MicrOasis-watch/Assets.xcassets/ShareQR.imageset/share-qr.png"
 )

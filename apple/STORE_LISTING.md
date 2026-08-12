@@ -47,10 +47,10 @@ Nem hivatalos rajongói kalauz a MicrOasis 2026-hoz: teljes időrend, élő Most
 
 This is an unofficial, fan-made guide. It is not affiliated with, endorsed by, or sponsored by the MicrOasis festival or its organizers.
 
-Guide for MicrOasis 2026 is an independent companion app for visitors to the MicrOasis 2026 festival in Hungary (July 2026). It puts the full programme in your pocket — on iPhone and on your wrist — so you always know what is on, where, and when.
+Guide for MicrOasis 2026 is an independent companion app for visitors to the MicrOasis 2026 festival in Hungary (August 2026). It puts the full programme in your pocket — on iPhone and on your wrist — so you always know what is on, where, and when.
 
 THE WHOLE PROGRAMME
-- Browse the complete timetable across every stage: Portal, Field, Bowl, Terrace and Mandala.
+- Browse the complete timetable across every stage: Oasis, Wadi and the Yoga Terrace.
 - A time-proportional grid on iPhone lays the day out to scale, so overlaps and gaps are easy to see at a glance.
 - Every act shows its performer and a type icon — live music, ceremonies, sound baths, drums, yoga, workshops and more — so the day is easy to read.
 - Scroll horizontally between stages and tap any act for the details.
@@ -100,10 +100,10 @@ Questions or feedback? Email microasis2026@torma.ai
 
 Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MicrOasis fesztivállal vagy annak szervezőivel, azok nem támogatják és nem szponzorálják.
 
-A Guide for MicrOasis 2026 egy független kísérőalkalmazás a magyarországi MicrOasis 2026 fesztivál látogatóinak (2026. július). A teljes programot a zsebedbe teszi — iPhone-on és a csuklódon is —, hogy mindig tudd, mi, hol és mikor zajlik.
+A Guide for MicrOasis 2026 egy független kísérőalkalmazás a magyarországi MicrOasis 2026 fesztivál látogatóinak (2026. augusztus). A teljes programot a zsebedbe teszi — iPhone-on és a csuklódon is —, hogy mindig tudd, mi, hol és mikor zajlik.
 
 A TELJES PROGRAM
-- Böngészd a teljes időrendet minden színpadon: Portal, Field, Bowl, Terrace és Mandala.
+- Böngészd a teljes időrendet minden színpadon: Oasis, Wadi és a Yoga Terrace.
 - iPhone-on idő-arányos rács mutatja a napot, így az átfedések és a szünetek egy pillantással átláthatók.
 - Minden programnál ott a fellépő neve és egy típus-ikon — élő zene, szertartások, hangfürdő, dobok, jóga, workshopok és még több —, így a nap könnyen olvasható.
 - Görgess vízszintesen a színpadok között, és koppints bármelyik fellépőre a részletekért.
@@ -243,7 +243,7 @@ Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszaje
 
 First release.
 
-- Full festival timetable across all stages (Portal, Field, Bowl, Terrace, Mandala) on a time-proportional grid.
+- Full festival timetable across all stages (Oasis, Wadi, Yoga Terrace) on a time-proportional grid.
 - "Now" view: playing now, up next, and a pre-festival countdown.
 - Apple Watch app to browse one stage at a time, plus Smart Stack widgets and complications.
 - Works offline after the first load.
@@ -256,7 +256,7 @@ This is an unofficial, fan-made guide, not affiliated with the festival. Feedbac
 
 Első kiadás.
 
-- Teljes fesztiválidőrend minden színpadon (Portal, Field, Bowl, Terrace, Mandala) idő-arányos rácson.
+- Teljes fesztiválidőrend minden színpadon (Oasis, Wadi, Yoga Terrace) idő-arányos rácson.
 - „Most" nézet: mi szól éppen, mi következik, és visszaszámlálás a fesztivál kezdetéig.
 - Apple Watch-alkalmazás egy színpad böngészéséhez, valamint Smart Stack widgetek és óraszámlap-kiegészítők.
 - Az első betöltés után offline is működik.
@@ -267,7 +267,7 @@ Ez egy nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. V
 
 ## Notes for Review
 
-Unofficial, fan-made companion guide for the MicrOasis 2026 music festival (Hungary, July 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MicrOasis 2026" is used referentially to indicate which festival this guide covers.
+Unofficial, fan-made companion guide for the MicrOasis 2026 music festival (Hungary, August 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MicrOasis 2026" is used referentially to indicate which festival this guide covers.
 
 New in this version (1.4): favourites and iPhone home-screen widgets. Favourites are hearts the user taps onto acts; they are stored locally on the device and synced directly between the user's own iPhone and Apple Watch via Apple's WatchConnectivity framework — nothing is sent to any server, there is no account, and no data is collected. The home-screen widgets (WidgetKit, small/medium) show the same public schedule as the app for a chosen stage. No new permissions; the App Privacy answers are unchanged.
 

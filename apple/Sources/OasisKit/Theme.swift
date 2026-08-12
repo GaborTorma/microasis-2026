@@ -236,6 +236,7 @@ public enum Theme {
     public static let creamDim = Color(hex: "#c2ab98")
     public static let creamFaint = Color(hex: "#8d7767")
     public static let sun = Color(hex: "#c89468") // primary sand accent
+    public static let ember = Color(hex: "#b5764a") // deeper terracotta
     public static let leaf = Color(hex: "#7e9187")
     public static let teal = Color(hex: "#8fa69b")
     public static let now = Color(hex: "#ff5d6c")

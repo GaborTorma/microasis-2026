@@ -46,7 +46,7 @@ struct ShareView: View {
                         .padding(.horizontal, 30)
                         .padding(.vertical, 15)
                         .background(
-                            LinearGradient(colors: [Theme.sun, Theme.teal],
+                            LinearGradient(colors: [Theme.sun, Theme.ember],
                                            startPoint: .topLeading, endPoint: .bottomTrailing),
                             in: Capsule())
                         .overlay(RunningBorder())

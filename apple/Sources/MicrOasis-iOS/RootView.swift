@@ -117,7 +117,7 @@ struct DisclaimerSheet: View {
                 Text(L.t("app.title", settings.locale).uppercased())
                     .font(.system(size: 26, weight: .heavy, design: .rounded))
                     .foregroundStyle(
-                        LinearGradient(colors: [Theme.cream, Theme.sun, Theme.teal],
+                        LinearGradient(colors: [Theme.cream, Theme.sun, Theme.ember],
                                        startPoint: .leading, endPoint: .trailing))
                 Text(L.t("disclaimer.title", settings.locale).uppercased())
                     .font(.system(size: 11, weight: .semibold))
@@ -189,7 +189,7 @@ struct HeaderBar: View {
                 Text(L.t("app.title", settings.locale).uppercased())
                     .font(.system(size: 22, weight: .heavy, design: .rounded))
                     .foregroundStyle(
-                        LinearGradient(colors: [Theme.cream, Theme.sun, Theme.teal],
+                        LinearGradient(colors: [Theme.cream, Theme.sun, Theme.ember],
                                        startPoint: .leading, endPoint: .trailing)
                     )
                     .lineLimit(1).minimumScaleFactor(0.6)

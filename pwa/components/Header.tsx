@@ -40,7 +40,7 @@ export function Header() {
           <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-cream/75">
             {t("guidefor")}
           </p>
-          <h1 className="truncate bg-gradient-to-r from-cream via-sun to-teal bg-clip-text font-display text-2xl font-extrabold leading-none tracking-wide text-transparent">
+          <h1 className="truncate bg-gradient-to-r from-cream via-sun to-ember bg-clip-text font-display text-2xl font-extrabold leading-none tracking-wide text-transparent">
             {t("title")}
           </h1>
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.22em] text-sun/80">

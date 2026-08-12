@@ -12,7 +12,7 @@ export function Wordmark() {
       <p className="text-[0.55rem] font-bold uppercase tracking-[0.2em] text-cream/75">
         {t("guidefor")}
       </p>
-      <p className="bg-gradient-to-r from-cream via-sun to-teal bg-clip-text font-display text-lg font-extrabold tracking-wide text-transparent">
+      <p className="bg-gradient-to-r from-cream via-sun to-ember bg-clip-text font-display text-lg font-extrabold tracking-wide text-transparent">
         {t("title")}
       </p>
     </div>

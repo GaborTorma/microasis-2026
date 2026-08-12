@@ -40,7 +40,7 @@ devices:
 #                                                  watch: one stage's Smart Stack card;
 #                                                  iPhone: medium + small home widget)
 # stage:    stage slug, required for view: widget -> microasis.startWidgetPreview
-#           (iPhone takes "medium,small" slugs, e.g. "bowl,terrace")
+#           (iPhone takes "medium,small" slugs, e.g. "oasis,wadi")
 # time:     "yyyy-MM-dd HH:mm" Budapest-local -> microasis.debugNow
 # location: stage slug -> that stage's lat,lng -> microasis.debugCoord (selects the
 #           nearest stage: left column on iPhone, shown stage on watch). Omit for
@@ -60,31 +60,31 @@ shots:
   - name: "01-timetable-thursday"
     device: iphone
     view: timetable
-    time: "2026-07-09 01:06"
-    columns: 3
+    time: "2026-08-20 18:40"      # opening evening, both stages running
+    columns: 2
     font: 2
-    favorites: "portal-volcano-on-mars-0709,field-modul-0709,bowl-chiodan-0709"
+    favorites: "oasis-glev-rosalcodo-0820,wadi-borish-szoa-0820"
 
   - name: "02-timetable-friday"
     device: iphone
     view: timetable
-    time: "2026-07-10 17:36"
-    columns: 5
+    time: "2026-08-21 21:10"
+    columns: 2
     font: 1
 
   - name: "03-now-friday"
     device: iphone
     view: now
-    time: "2026-07-10 17:14"
-    location: field
-    favorites: "field-angorang-0710,portal-ritmo-0710"
+    time: "2026-08-21 21:00"      # Lukea (Oasis) + Pau Perez (Wadi) both live
+    location: oasis
+    favorites: "oasis-lukea-0821"
 
-  - name: "04-timetable-terrace"
+  - name: "04-timetable-wadi"
     device: iphone
     view: timetable
-    time: "2026-07-11 12:32"
+    time: "2026-08-22 16:45"
     columns: 1
-    location: terrace
+    location: wadi
 
   - name: "05-settings"
     device: iphone
@@ -97,56 +97,58 @@ shots:
   - name: "07-now-camp"
     device: iphone
     view: now
-    time: "2026-07-08 15:00"      # opening day: gates open, camp going up, Bowl already playing
-    location: bowl                # "you are here" at the Bowl
+    time: "2026-08-20 13:00"      # gates open, camp going up, first acts teased
 
-  # Home-screen widgets: medium (Bowl) + small (Terrace), both live with a
+  # Home-screen widgets: medium (Oasis) + small (Wadi), both live with a
   # full up-next list at this time.
   - name: "09-widgets"
     device: iphone
     view: widget
-    stage: "bowl,terrace"
-    time: "2026-07-10 20:30"
-    favorites: "bowl-zsom-0710,bowl-sumiruna-0710"
+    stage: "oasis,wadi"
+    time: "2026-08-22 20:30"
+    favorites: "oasis-electricano-0822,wadi-maron-0822"
 
   # Saturday night with the favorites dim-filter on: the hearted acts pop,
   # everything else fades — the landing page's favorites section.
   - name: "10-favorites"
     device: iphone
     view: timetable
-    time: "2026-07-11 21:47"
-    columns: 3
+    time: "2026-08-22 20:15"
+    columns: 2
     font: 2
-    favorites: "portal-faders-0711,portal-electric-universe-0711,field-korai-electric-0711,bowl-mary-yuzovskaya-0711"
+    favorites: "oasis-barac-0822,oasis-electricano-0822,wadi-tolo-0822,wadi-jaffa-surfa-0822"
     favfilter: true
 
-  - name: "01-now-portal"
+  - name: "01-now-oasis"
     device: watch
-    time: "2026-07-09 02:30"
-    location: portal
-    favorites: "portal-mercuroid-0709"
+    time: "2026-08-22 20:15"
+    location: oasis
+    favorites: "oasis-barac-0822"
 
-  - name: "02-now-terrace"
+  - name: "02-now-wadi"
     device: watch
-    time: "2026-07-10 10:30"
-    location: terrace
+    time: "2026-08-21 21:30"
+    location: wadi
 
-  - name: "03-now-mandala"
+  # The Wadi's long Sunday daytime break — a real "nothing on right now" card.
+  # (The Yoga Terrace would be the other candidate, but it is hidden by default
+  # on every client, so it cannot be the shown stage.)
+  - name: "03-now-quiet"
     device: watch
-    time: "2026-07-12 02:00"
-    location: mandala
-    empty: true                 # force the "nothing on" card (microasis.startNoProgram)
+    time: "2026-08-23 12:00"
+    location: wadi
+    empty: true
 
   # Smart Stack "now playing" widget cards, rendered full-screen for marketing.
-  - name: "04-widget-portal"
+  - name: "04-widget-oasis"
     device: watch
     view: widget
-    stage: portal
-    time: "2026-07-09 02:30"
+    stage: oasis
+    time: "2026-08-22 20:15"
 
-  - name: "05-widget-field"
+  - name: "05-widget-wadi"
     device: watch
     view: widget
-    stage: field
-    time: "2026-07-10 17:14"
-    favorites: "field-angorang-0710"
+    stage: wadi
+    time: "2026-08-21 21:00"
+    favorites: "wadi-pau-perez-0821"

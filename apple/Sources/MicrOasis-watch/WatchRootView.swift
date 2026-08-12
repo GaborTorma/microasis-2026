@@ -413,7 +413,7 @@ struct WatchDisclaimerSheet: View {
                     Text(L.t("app.title", settings.locale).uppercased())
                         .font(.system(size: 19, weight: .heavy, design: .rounded))
                         .foregroundStyle(
-                            LinearGradient(colors: [Theme.cream, Theme.sun, Theme.teal],
+                            LinearGradient(colors: [Theme.cream, Theme.sun, Theme.ember],
                                            startPoint: .leading, endPoint: .trailing))
                     Text(L.t("disclaimer.title", settings.locale).uppercased())
                         .font(.system(size: 8, weight: .semibold))
