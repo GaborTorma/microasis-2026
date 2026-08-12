@@ -32,8 +32,13 @@ public enum L {
         // Opening-day camp scene (festival start → Mandala opening ceremony).
         "now.tent.title": ("Épül a tábor", "Setting up camp"),
         "now.tent.body": (
-            "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel a megnyitóra!",
-            "Find yourself a good spot, pitch your tent and get ready for the opening!"),
+            "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel az első szettre!",
+            "Find yourself a good spot, pitch your tent and get ready for the first set!"),
+        // Closing camp scene (last act → festival end).
+        "now.teardown.title": ("Bontjuk a tábort", "Breaking camp"),
+        "now.teardown.body": (
+            "Az utolsó szett is lement. Szedd össze a cuccod, hagyd magad után tisztán a helyet — és köszönjük, hogy itt voltál!",
+            "The last set is over. Pack up, leave your spot as clean as you found it — and thank you for being here!"),
         "time.days": ("nap", "days"),
         "time.hours": ("óra", "hrs"),
         "time.minutes": ("perc", "min"),

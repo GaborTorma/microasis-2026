@@ -177,12 +177,13 @@ struct WatchRootView: View {
             }
 
             if showsNoProgram, let t = (screenshotEmpty ? Fmt.now : anchorTime) {
-                if store.data?.campSceneWindow?.contains(t) == true {
-                    // Opening day, before the Mandala ceremony (Jul 8, 12:00–18:30):
-                    // the camp is still being set up and this stage has nothing on,
-                    // so pitch the tent instead of the empty "nothing on" card. The
-                    // brand, stage name and stage dots stay; the tent fills the rest.
-                    TentArt()
+                if store.data?.campSceneWindow?.contains(t) == true
+                    || store.data?.teardownWindow?.contains(t) == true {
+                    // Before the first act, or after the last one: the camp is going
+                    // up (or coming down) and this stage has nothing on, so show the
+                    // tent instead of the empty "nothing on" card. The brand, stage
+                    // name and stage dots stay; the tent fills the rest.
+                    TentArt(mode: store.data?.teardownWindow?.contains(t) == true ? .strike : .pitch)
                         .aspectRatio(220.0 / 150.0, contentMode: .fit)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(.vertical, 4)
@@ -380,11 +381,13 @@ struct WatchRootView: View {
         // finished act); otherwise anchor on the shown (upcoming) act's start.
         anchorTime = currentEvent.map { $0.isLive(at: now) ? now : $0.startsAt } ?? now
         noProgramAtAnchor = false
-        // Opening-day camp window (Jul 8, 12:00–18:30): a stage with nothing live
-        // or starting within the near-window pitches the tent — anchored on now —
-        // instead of teasing an act hours away. Mirrors the iOS/web opening-day
-        // camp scene, per stage. A vertical swipe still reveals the next act.
-        if store.data?.campSceneWindow?.contains(now) == true,
+        // Camp windows (before the first act / after the last): a stage with
+        // nothing live or starting within the near-window shows the tent —
+        // anchored on now — instead of teasing an act hours away. Mirrors the
+        // iOS/web camp scenes, per stage. A vertical swipe still reveals the
+        // next act.
+        if (store.data?.campSceneWindow?.contains(now) == true
+            || store.data?.teardownWindow?.contains(now) == true),
            !stageEvents.contains(where: { $0.isLive(at: now)
                || ($0.startsAt >= now && $0.startsAt.timeIntervalSince(now) <= nearWindow) }) {
             noProgramAtAnchor = true

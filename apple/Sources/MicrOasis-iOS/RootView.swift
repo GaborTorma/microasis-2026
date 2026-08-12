@@ -274,16 +274,16 @@ private extension View {
     }
 }
 
-/// Flat ink base with soft green/teal corner glows — mirrors the PWA's body
+/// Flat ink base with soft earthy corner glows — mirrors the PWA's body
 /// radial-gradients (`pwa/app/globals.css`). Fills the whole window behind the
 /// tabs (the PWA's are `background-attachment: fixed`, i.e. viewport-anchored).
 struct AppBackground: View {
     var body: some View {
         Theme.ink
-            .overlay(glow(Color(hex: "#2e6b4a"), 0.24, .init(x: 0.16, y: 0.05), 0.78))  // top-left green
-            .overlay(glow(Theme.teal, 0.16, .init(x: 0.92, y: 0.10), 0.68))             // top-right teal
-            .overlay(glow(Color(hex: "#1e523c"), 0.30, .init(x: 0.50, y: 1.04), 0.95))  // bottom green
-            .overlay(glow(Theme.sun, 0.09, .init(x: 0.90, y: 0.82), 0.55))              // bottom-right sun
+            .overlay(glow(Theme.line, 0.50, .init(x: 0.16, y: 0.05), 0.78))   // top-left clay
+            .overlay(glow(Theme.leaf, 0.16, .init(x: 0.92, y: 0.10), 0.68))   // top-right cool
+            .overlay(glow(Theme.ink3, 0.85, .init(x: 0.50, y: 1.04), 0.95))   // bottom deep brown
+            .overlay(glow(Theme.sun, 0.12, .init(x: 0.90, y: 0.82), 0.55))    // bottom-right sand
             .ignoresSafeArea(edges: .bottom)
     }
 

@@ -8,6 +8,7 @@
 | ---------------------------------------- | --- | --- | ------- | ---------------------------------------------------------------------------------------------------------- |
 | Timetable (idő-arányos rács)             | ✅  | ✅  | ❌      | watch: egy-színpad / act-böngészés a rács helyett (kis kijelző, HIG). `WatchRootView` swipe-navigáció.     |
 | Now / up-next nézet                      | ✅  | ✅  | ✅      | PWA `/now`, iOS `NowView` tab, watch root nézet = per-színpad now-playing live-jelzéssel.                   |
+| Tábor-jelenetek (nyitás / bontás)        | ✅  | ✅  | ✅      | Első act előtt sátorállítás, utolsó act után sátorbontás (visszaszámláló nélkül), utána „vége". Ablakok adatból: `campSceneWindow` / `teardownWindow`. Watch: a sátor az üres „nincs műsor" kártya helyén. |
 | Megosztás (QR + share link)              | ✅  | ✅  | ✅      | PWA `/share`, iOS „Add tovább” tab, watch QR-sheet (pre-baked asset — watchOS-en nincs CoreImage).         |
 | „Töltsd le az appot” showcase (`/app`)   | ✅  | ➖  | ➖      | Web-only marketing landing; natív appoknál nem értelmezett (a Share tab a natív analóg).                    |
 | Nyelvváltó HU/EN                         | ✅  | ✅  | ✅      | Widget a watch-app nyelvét örökli App Group-on át (saját váltó nélkül).                                     |

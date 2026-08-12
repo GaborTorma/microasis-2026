@@ -127,60 +127,27 @@ export function NowView() {
     );
   }
 
-  // Opening day camp scene: from the festival start (12:00) until the Mandala
-  // opening ceremony (18:30) the normal grid is replaced by the tent, with the
-  // live Bowl set and the next Mandala rituals teased below it. No schema flag
-  // marks the opening, so match the Mandala stage's opening-titled event; the
-  // whole scene falls back to the normal grid if it can't be found.
-  const mandala = data.stages.find((s) => s.slug === "mandala") ?? null;
-  const opening =
-    data.events.find(
-      (e) =>
-        e.stageSlug === "mandala" &&
-        /nyit|opening/i.test(`${e.title.hu} ${e.title.en}`),
-    ) ?? null;
-  const openingStart = opening ? new Date(opening.startsAt).getTime() : null;
-  if (openingStart != null && nowMs < openingStart) {
-    const bowlStage = data.stages.find((s) => s.slug === "bowl") ?? null;
-    // Bowl row: the set playing right now, or — before the first set begins —
-    // that set shown as "up next". Once the first set has ended the Bowl card
-    // drops out entirely (no row).
-    const bowlLive =
-      data.events.find(
-        (e) =>
-          e.stageSlug === "bowl" &&
-          e.kind !== "break" &&
-          new Date(e.startsAt).getTime() <= nowMs &&
-          !!e.endsAt &&
-          new Date(e.endsAt).getTime() > nowMs,
-      ) ?? null;
-    const firstBowlSet = data.events.find(
-      (e) => e.stageSlug === "bowl" && e.kind !== "break",
-    );
-    const bowlRow: OpeningRow | null = bowlLive
-      ? { event: bowlLive, live: true }
-      : firstBowlSet && new Date(firstBowlSet.startsAt).getTime() > nowMs
-        ? { event: firstBowlSet, live: false }
-        : null;
-    // Mandala: the opening ceremony and the ritual right before it (sound bath),
-    // each dropped once it has ended — at most two rows.
-    const mandalaRows = data.events
-      .filter(
-        (e) =>
-          e.stageSlug === "mandala" &&
-          new Date(e.startsAt).getTime() <= openingStart &&
-          (e.endsAt
-            ? new Date(e.endsAt).getTime() > nowMs
-            : new Date(e.startsAt).getTime() > nowMs),
-      )
-      .slice(-2);
-    const cards: OpeningCard[] = [];
-    if (bowlStage && bowlRow) cards.push({ stage: bowlStage, rows: [bowlRow] });
-    if (mandala && mandalaRows.length)
-      cards.push({
-        stage: mandala,
-        rows: mandalaRows.map((e) => ({ event: e, live: isLive(e, nowMs) })),
-      });
+  // The two camp scenes bracket the music, and both are derived from the data
+  // rather than from any named event: gates open before the first act starts,
+  // and the site is packed up after the last one ends.
+  const acts = data.events.filter((e) => e.kind !== "break");
+  const actStarts = acts.map((e) => new Date(e.startsAt).getTime());
+  const actEnds = acts.map((e) =>
+    new Date(e.endsAt ?? e.startsAt).getTime(),
+  );
+  const firstActStart = actStarts.length ? Math.min(...actStarts) : null;
+  const lastActEnd = actEnds.length ? Math.max(...actEnds) : null;
+
+  // Opening: the camp goes up while the first acts are still teased below it.
+  if (firstActStart != null && nowMs < firstActStart) {
+    const cards: OpeningCard[] = stages
+      .map((stage) => {
+        const first = acts.find((e) => e.stageSlug === stage.slug);
+        return first
+          ? { stage, rows: [{ event: first, live: isLive(first, nowMs) }] }
+          : null;
+      })
+      .filter((c): c is OpeningCard => c !== null);
     return (
       <TentBuilding
         cards={cards}
@@ -190,6 +157,13 @@ export function NowView() {
         nearestSlug={nearestSlug}
       />
     );
+  }
+
+  // Teardown: the last set is over but the festival window is still open —
+  // the camp comes down instead of the grid. No countdown: when it's over,
+  // it's over.
+  if (lastActEnd != null && nowMs >= lastActEnd && nowMs < end) {
+    return <TentStriking offline={offline} />;
   }
 
   if (nowMs >= end) {
@@ -432,8 +406,8 @@ function Countdown({ msLeft }: { msLeft: number }) {
   );
 }
 
-/** Opening-day scene: a tent pitches itself while the camp fills up, with the
- *  live Bowl set and the next Mandala rituals teased below it. */
+/** Opening-day scene: a tent pitches itself while the camp fills up, with each
+ *  stage's first act teased below it. */
 function TentBuilding({
   cards,
   nowMs,
@@ -468,6 +442,27 @@ function TentBuilding({
             near={nearestSlug === c.stage.slug}
           />
         ))}
+      </div>
+    </div>
+  );
+}
+
+/** Closing scene: the last act is done, so the tent comes back down. Runs until
+ *  the festival window closes — deliberately with no countdown, because what it
+ *  would count down to is nothing. */
+function TentStriking({ offline }: { offline: boolean }) {
+  const t = useTranslations("now.teardown");
+  return (
+    <div className="flex flex-col">
+      {offline && <StatusBar kind="offline" />}
+      <div className="flex flex-col items-center px-6 py-12 text-center">
+        <TentArt mode="strike" />
+        <h2 className="mt-7 font-display text-2xl font-bold text-cream">
+          {t("title")}
+        </h2>
+        <p className="mt-2 max-w-xs text-sm leading-relaxed text-cream-dim">
+          {t("body")}
+        </p>
       </div>
     </div>
   );
@@ -568,8 +563,11 @@ function OpeningStageCard({
   );
 }
 
-/** Minimal line-art tent that pitches up and resets in a slow loop. */
-function TentArt() {
+/** Minimal line-art tent, looping in a slow cycle: `pitch` raises it (gates
+ *  open), `strike` drops it back down (the site is packed up). The flag only
+ *  flies while the camp is going up. */
+function TentArt({ mode = "pitch" }: { mode?: "pitch" | "strike" }) {
+  const striking = mode === "strike";
   return (
     <svg
       viewBox="0 0 220 150"
@@ -593,8 +591,8 @@ function TentArt() {
         <path d="M34 121 q-1 -7 -4 -10 M34 121 q1 -6 4 -9" />
         <path d="M188 121 q-1 -7 -4 -10 M188 121 q1 -6 4 -9" />
       </g>
-      {/* the tent rises from the base, then resets */}
-      <g className="tent-pitch">
+      {/* the tent rises from (or folds back into) the base, then resets */}
+      <g className={striking ? "tent-strike" : "tent-pitch"}>
         <path d="M110 44 L74 120 L110 120 Z" fill="var(--color-leaf)" opacity="0.85" />
         <path d="M110 44 L146 120 L110 120 Z" fill="var(--color-ink-3)" />
         <path d="M110 60 L99 120 L121 120 Z" fill="var(--color-ink)" />
@@ -607,7 +605,9 @@ function TentArt() {
           strokeLinecap="round"
         />
         <line x1="110" y1="44" x2="110" y2="27" stroke="var(--color-sun)" strokeWidth="2.4" strokeLinecap="round" />
-        <path className="flag-wave" d="M110 28 L128 32 L110 36 Z" fill="var(--color-ember)" />
+        {!striking && (
+          <path className="flag-wave" d="M110 28 L128 32 L110 36 Z" fill="var(--color-ember)" />
+        )}
       </g>
     </svg>
   );

@@ -1,45 +1,52 @@
 import SwiftUI
 
-// MARK: - Opening-day camp-scene window
+// MARK: - Camp-scene windows
 
 public extension ScheduleData {
-    /// The Mandala opening ceremony — the festival's ceremonial start and the
-    /// end of the opening-day camp scene. No schema flag marks it, so match the
-    /// first Mandala event whose title reads "opening"/"nyit" (nil ⇒ the camp
-    /// scene never shows). Shared by the iOS Now view and the watch card.
-    var openingCeremony: EventDTO? {
-        events
-            .filter { $0.stageSlug == "mandala" }
-            .sorted { $0.startsAt < $1.startsAt }
-            .first { e in
-                let s = (e.title.hu + " " + e.title.en).lowercased()
-                return s.contains("nyit") || s.contains("opening")
-            }
+    /// Every playable act (breaks are scenery, not programme).
+    private var acts: [EventDTO] { events.filter { $0.kind != "break" } }
+
+    /// Gates-open window: festival start until the first act begins. Derived
+    /// from the data — no named ceremony to match — so it holds for any lineup.
+    /// nil when there are no acts, or the first one starts before the gates.
+    var campSceneWindow: Range<Date>? {
+        guard let first = acts.map(\.startsAt).min(),
+              festival.startsAt < first else { return nil }
+        return festival.startsAt ..< first
     }
 
-    /// The opening-day camp-scene window: festival start (12:00) until the
-    /// Mandala opening ceremony (18:30). nil when there's no opening event, or
-    /// if the data is malformed (opening before the festival start).
-    var campSceneWindow: Range<Date>? {
-        guard let opening = openingCeremony,
-              festival.startsAt < opening.startsAt else { return nil }
-        return festival.startsAt ..< opening.startsAt
+    /// Teardown window: the last act's end until the festival window closes.
+    /// After that it is simply over — there is nothing to count down to.
+    var teardownWindow: Range<Date>? {
+        guard let last = acts.map({ $0.endsAt ?? $0.startsAt }).max(),
+              last < festival.endsAt else { return nil }
+        return last ..< festival.endsAt
     }
 }
 
 // MARK: - Tent art
 
-/// Minimal A-frame tent that pitches up and resets in a slow loop (static when
-/// Reduce Motion is on). Mirrors the web camp scene; self-scales to whatever
-/// frame it's given, so iOS (220×150) and the watch reuse the same drawing.
+/// Which way the tent animates: `pitch` raises it (gates open), `strike` folds
+/// it back down (the site is packed up). Mirrors the web `TentArt` mode.
+public enum TentMode {
+    case pitch, strike
+}
+
+/// Minimal A-frame tent that pitches up — or comes down — and resets in a slow
+/// loop (static when Reduce Motion is on). Mirrors the web camp scene;
+/// self-scales to whatever frame it's given, so iOS (220×150) and the watch
+/// reuse the same drawing.
 public struct TentArt: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let mode: TentMode
     // Render motionless for Reduce Motion — and for marketing captures: the
     // screenshot harness sets `microasis.hideTestUI`, so the tent shows fully
     // pitched instead of a random animation frame.
     private var still: Bool { reduceMotion || AppEnv.hideTestUI }
 
-    public init() {}
+    public init(mode: TentMode = .pitch) {
+        self.mode = mode
+    }
 
     private var tentGroup: some View {
         ZStack {
@@ -51,7 +58,8 @@ public struct TentArt: View {
                 .fill(Theme.ink)
             TentLines()
                 .stroke(Theme.sun, style: StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round))
-            TentFlag()
+            // The flag only flies while the camp is going up.
+            if mode == .pitch { TentFlag() }
         }
     }
 
@@ -76,11 +84,12 @@ public struct TentArt: View {
                 } else {
                     PhaseAnimator(TentPhase.allCases) { phase in
                         tentGroup
-                            // Pitch up from the tent base, which sits on the horizon
-                            // line (y≈122/150) — rises from the ground line, not below.
-                            .scaleEffect(x: 1, y: phase.scaleY, anchor: UnitPoint(x: 0.5, y: 0.8))
-                            .opacity(phase.opacity)
-                    } animation: { $0.animation }
+                            // Scale about the tent base, which sits on the horizon
+                            // line (y≈122/150) — it rises from (or folds into) the
+                            // ground line, not below it.
+                            .scaleEffect(x: 1, y: phase.scaleY(mode), anchor: UnitPoint(x: 0.5, y: 0.8))
+                            .opacity(phase.opacity(mode))
+                    } animation: { $0.animation(mode) }
                 }
             }
             .frame(width: w, height: h)
@@ -88,16 +97,34 @@ public struct TentArt: View {
     }
 }
 
+/// Four-beat loop, read differently per mode: pitching, the tent grows on
+/// `settle` and holds; striking, it arrives standing and folds on `hold`.
+/// Either way `start` is the invisible reset and `clear` fades out.
 private enum TentPhase: CaseIterable {
-    case seed, up, hold, gone
-    var scaleY: CGFloat { self == .seed ? 0.06 : 1 }
-    var opacity: Double { (self == .seed || self == .gone) ? 0 : 1 }
-    var animation: Animation {
-        switch self {
-        case .seed: return .linear(duration: 0.01)   // invisible reset
-        case .up:   return .easeOut(duration: 2.0)    // pitch up
-        case .hold: return .linear(duration: 2.3)     // hold
-        case .gone: return .easeIn(duration: 0.9)     // fade out
+    case start, settle, hold, clear
+
+    private var flat: CGFloat { 0.06 }
+
+    func scaleY(_ mode: TentMode) -> CGFloat {
+        switch mode {
+        case .pitch: return self == .start ? flat : 1
+        case .strike: return (self == .hold || self == .clear) ? flat : 1
+        }
+    }
+
+    func opacity(_ mode: TentMode) -> Double {
+        _ = mode
+        return (self == .start || self == .clear) ? 0 : 1
+    }
+
+    func animation(_ mode: TentMode) -> Animation {
+        switch (mode, self) {
+        case (_, .start): return .linear(duration: 0.01)    // invisible reset
+        case (.pitch, .settle): return .easeOut(duration: 2.0)  // pitch up
+        case (.pitch, .hold): return .linear(duration: 2.3)     // stand
+        case (.strike, .settle): return .easeOut(duration: 0.9) // fade in, standing
+        case (.strike, .hold): return .easeIn(duration: 2.0)    // fold down
+        case (_, .clear): return .easeIn(duration: 0.9)         // fade out
         }
     }
 }

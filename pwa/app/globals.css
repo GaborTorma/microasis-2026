@@ -143,6 +143,34 @@ body {
   transform-origin: 50% 100%;
   animation: tent-pitch 5.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
+/* The closing scene: the tent stands, then folds back down into the ground. */
+@keyframes tent-strike {
+  0% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.92;
+  }
+  34% {
+    transform: scaleY(1);
+    opacity: 0.92;
+  }
+  78%,
+  88% {
+    transform: scaleY(0.05);
+    opacity: 0.92;
+  }
+  100% {
+    transform: scaleY(0.05);
+    opacity: 0;
+  }
+}
+.tent-strike {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tent-strike 5.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
 @keyframes flag-wave {
   0%,
   100% {
@@ -159,6 +187,7 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .tent-pitch,
+  .tent-strike,
   .flag-wave {
     animation: none !important;
     transform: none;

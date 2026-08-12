@@ -12,15 +12,15 @@ struct NowView: View {
         Group {
             if let data = store.data {
                 let start = data.festival.startsAt, end = data.festival.endsAt
-                let opening = data.openingCeremony
                 if now < start {
                     Countdown(until: start, now: now)
-                } else if let opening, now < opening.startsAt {
-                    // Opening day: camp scene from the festival start (12:00) until
-                    // the Mandala opening ceremony (18:30) takes over the grid.
-                    TentScene(data: data, openingStart: opening.startsAt,
-                              now: now, locale: settings.locale,
+                } else if data.campSceneWindow?.contains(now) == true {
+                    // Gates open: the camp goes up until the first act starts.
+                    TentScene(data: data, now: now, locale: settings.locale,
                               nearestSlug: location.nearestSlug)
+                } else if data.teardownWindow?.contains(now) == true {
+                    // The last set is done: the camp comes down. No countdown.
+                    TeardownScene(locale: settings.locale)
                 } else if now >= end {
                     EndedView(locale: settings.locale)
                 } else {
@@ -85,7 +85,6 @@ private struct OpeningCard: Identifiable {
 
 private struct TentScene: View {
     let data: ScheduleData
-    let openingStart: Date
     let now: Date
     let locale: AppLocale
     let nearestSlug: String?
@@ -113,35 +112,15 @@ private struct TentScene: View {
         }
     }
 
-    /// Bowl (live set only, or the first set as "up next" before it begins) and
-    /// Mandala (the opening ceremony + the ritual before it, dropped once ended).
+    /// One card per visible stage, showing that stage's first act — live if it
+    /// somehow already started, otherwise as "up next".
     private func cards() -> [OpeningCard] {
-        var out: [OpeningCard] = []
-
-        if let bowl = data.stages.first(where: { $0.slug == "bowl" }) {
-            let sets = data.events
-                .filter { $0.stageSlug == "bowl" && $0.isPlayable }
-                .sorted { $0.startsAt < $1.startsAt }
-            if let live = sets.first(where: { $0.isLive(at: now) }) {
-                out.append(OpeningCard(stage: bowl, rows: [OpeningRow(event: live, live: true)]))
-            } else if let first = sets.first, first.startsAt > now {
-                out.append(OpeningCard(stage: bowl, rows: [OpeningRow(event: first, live: false)]))
-            }
+        data.stages.compactMap { stage in
+            guard let first = data.events
+                .filter({ $0.stageSlug == stage.slug && $0.isPlayable })
+                .min(by: { $0.startsAt < $1.startsAt }) else { return nil }
+            return OpeningCard(stage: stage, rows: [OpeningRow(event: first, live: first.isLive(at: now))])
         }
-
-        if let mandala = data.stages.first(where: { $0.slug == "mandala" }) {
-            let rows = data.events
-                .filter { $0.stageSlug == "mandala"
-                    && $0.startsAt <= openingStart
-                    && ($0.endsAt ?? $0.startsAt) > now }
-                .sorted { $0.startsAt < $1.startsAt }
-                .suffix(2)
-                .map { OpeningRow(event: $0, live: $0.isLive(at: now)) }
-            if !rows.isEmpty {
-                out.append(OpeningCard(stage: mandala, rows: rows))
-            }
-        }
-        return out
     }
 }
 
@@ -231,6 +210,33 @@ private struct OpeningRowView: View {
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+// MARK: - Teardown
+
+/// Closing scene: the last act is over but the festival window is still open,
+/// so the tent comes back down. Deliberately no countdown — mirrors the web.
+private struct TeardownScene: View {
+    let locale: AppLocale
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Spacer(minLength: 0)
+            TentArt(mode: .strike).frame(width: 220, height: 150)
+            VStack(spacing: 8) {
+                Text(L.t("now.teardown.title", locale))
+                    .font(.title.bold()).foregroundStyle(Theme.cream)
+                Text(L.t("now.teardown.body", locale))
+                    .font(.subheadline).foregroundStyle(Theme.creamDim)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: 300)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

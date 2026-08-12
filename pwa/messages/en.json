@@ -46,7 +46,11 @@
     "seconds": "sec",
     "tent": {
       "title": "Setting up camp",
-      "body": "Find yourself a good spot, pitch your tent and get ready for the opening!"
+      "body": "Find yourself a good spot, pitch your tent and get ready for the first set!"
+    },
+    "teardown": {
+      "title": "Breaking camp",
+      "body": "The last set is over. Pack up, leave your spot as clean as you found it — and thank you for being here!"
     }
   },
   "lang": {

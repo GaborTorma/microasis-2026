@@ -46,7 +46,11 @@
     "seconds": "mp",
     "tent": {
       "title": "Épül a tábor",
-      "body": "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel a megnyitóra!"
+      "body": "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel az első szettre!"
+    },
+    "teardown": {
+      "title": "Bontjuk a tábort",
+      "body": "Az utolsó szett is lement. Szedd össze a cuccod, hagyd magad után tisztán a helyet — és köszönjük, hogy itt voltál!"
     }
   },
   "lang": {
