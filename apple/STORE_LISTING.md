@@ -23,6 +23,13 @@ piece, without saying which. What actually blocked 1.0, in the order found:
 4. **Age rating: `socialMedia` and `userGeneratedContent`** must be answered, but
    the API's "missing required attribute" error does *not* list `socialMedia` —
    only the web questionnaire shows it. Check both after a PATCH.
+5. **The price must be picked explicitly** (Pricing and Availability → 0 / Free).
+   `appPriceSchedule` reports "present" on a fresh app even when no price has been
+   chosen, so the API cannot tell you this one is missing. This was the last
+   blocker on 1.0 — with it set, the version flipped to READY_FOR_REVIEW.
+
+App Privacy ("Data Not Collected") is web-only too: no API endpoint exists on
+this API version, and it must show **Published**, not just filled in.
 
 The watch slot `APP_WATCH_ULTRA` does accept the Ultra 3's 422×514 captures.
 
