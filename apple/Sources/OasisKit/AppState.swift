@@ -24,10 +24,8 @@ public enum SharedDefaults {
 /// showcase page); the QR encodes `qr` (`/get`), which routes the scanner: iPhone →
 /// App Store, anything else → the web app. Apple ID matches `apple/CLAUDE.md`.
 public enum AppLinks {
-    /// nil until the app ships — the id here used to be the Manas app's, which
-    /// would point at the wrong listing. Fill in after the first App Store
-    /// Connect submission (mirrors `APP_STORE_URL` in `pwa/lib/platform.ts`).
-    public static let appStore: URL? = nil
+    /// Apple ID 6800753437 (mirrors `APP_STORE_URL` in `pwa/lib/platform.ts`).
+    public static let appStore: URL? = URL(string: "https://apps.apple.com/app/id6800753437")
     public static let share = URL(string: "https://microasis.torma.ai/app")!
     // Baked into the watch share asset (Sources/MicrOasis-watch/Assets.xcassets/ShareQR…)
     // since watchOS has no CoreImage. Change this → re-run apple/scripts/build_share_qr.py.
