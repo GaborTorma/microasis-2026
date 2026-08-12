@@ -223,27 +223,30 @@ public func madeByCredit(_ locale: AppLocale) -> AttributedString {
     return prefix + name
 }
 
-/// MicrOasis palette, mirroring the web app's CSS tokens.
+/// MicrOasis palette, mirroring the web app's CSS tokens
+/// (`pwa/app/globals.css` `@theme`) — keep the two in sync. The ink/line
+/// values are the festival's own site colours; the accents come from the
+/// printed OASIS and WADI posters.
 public enum Theme {
-    public static let ink = Color(hex: "#0c1611")
-    public static let ink2 = Color(hex: "#122017")
-    public static let ink3 = Color(hex: "#1a2e22")
-    public static let line = Color(hex: "#2b4736")
-    public static let cream = Color(hex: "#edf4ec")
-    public static let creamDim = Color(hex: "#aec8b6")
-    public static let creamFaint = Color(hex: "#6d8c79")
-    public static let sun = Color(hex: "#5ec98a") // primary green
-    public static let leaf = Color(hex: "#3f9d6a")
-    public static let teal = Color(hex: "#46b3a3")
+    public static let ink = Color(hex: "#170c0b")
+    public static let ink2 = Color(hex: "#1f1412")
+    public static let ink3 = Color(hex: "#261613")
+    public static let line = Color(hex: "#645145")
+    public static let cream = Color(hex: "#f2e7d8")
+    public static let creamDim = Color(hex: "#c2ab98")
+    public static let creamFaint = Color(hex: "#8d7767")
+    public static let sun = Color(hex: "#c89468") // primary sand accent
+    public static let leaf = Color(hex: "#7e9187")
+    public static let teal = Color(hex: "#8fa69b")
     public static let now = Color(hex: "#ff5d6c")
 
-    /// Language chip colours, matching the printed poster legend.
+    /// Language chip colours. Unused by the all-music programme, kept wired.
     public static func chip(_ lang: String?) -> (bg: Color, fg: Color, label: String) {
         switch lang {
-        case "both": return (Color(hex: "#e0b93a"), Color(hex: "#160c08"), "EN+HU")
+        case "both": return (Color(hex: "#e0b93a"), Color(hex: "#170c0b"), "EN+HU")
         case "en": return (Color(hex: "#9d6fc4"), .white, "EN")
-        case "hu": return (Color(hex: "#46b3a3"), Color(hex: "#0c1611"), "HU")
-        default: return (Color(hex: "#5e6b63"), Color(hex: "#e9efe9"), "Ø")
+        case "hu": return (Color(hex: "#8fa69b"), Color(hex: "#170c0b"), "HU")
+        default: return (Color(hex: "#6b5a4e"), Color(hex: "#f2e7d8"), "Ø")
         }
     }
 }

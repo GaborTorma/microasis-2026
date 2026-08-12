@@ -60,7 +60,7 @@ export function ShareView() {
       </p>
 
       <div className="mt-6 rounded-3xl bg-cream p-5 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
-        <QRCodeSVG value={url} size={248} bgColor="#edf4ec" fgColor="#0c1611" level="M" />
+        <QRCodeSVG value={url} size={248} bgColor="#f2e7d8" fgColor="#170c0b" level="M" />
       </div>
 
       {canShare ? (

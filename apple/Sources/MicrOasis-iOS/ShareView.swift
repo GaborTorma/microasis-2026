@@ -133,8 +133,8 @@ enum QRCode {
         guard let base = generator.outputImage else { return nil }
         // CIFalseColor maps black modules → color0, the white field → color1.
         let recoloured = base.applyingFilter("CIFalseColor", parameters: [
-            "inputColor0": CIColor(red: 0.047, green: 0.086, blue: 0.067),  // #0c1611 ink
-            "inputColor1": CIColor(red: 0.929, green: 0.957, blue: 0.925),  // #edf4ec cream
+            "inputColor0": CIColor(red: 0.090, green: 0.047, blue: 0.043),  // #170c0b ink
+            "inputColor1": CIColor(red: 0.949, green: 0.906, blue: 0.847),  // #f2e7d8 cream
         ])
         let scaled = recoloured.transformed(by: CGAffineTransform(scaleX: 12, y: 12))
         guard let cg = context.createCGImage(scaled, from: scaled.extent) else { return nil }

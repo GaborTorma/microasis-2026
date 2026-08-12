@@ -20,8 +20,8 @@ Sources/
     Localization.swift   AppLocale (HU default) + baked-in ~47-key string table
     Formatting.swift     Fmt — Europe/Budapest formatters, festivalDay, debug clock
     Location.swift       Geo + LocationStore (nearest stage within radiusM / 150m)
-    Theme.swift          Color(hex:), green palette, kind icon, language chip colors
-    OasisMark.swift      vector flower mark (SwiftUI shapes — works in complications)
+    Theme.swift          Color(hex:), earthy palette (mirrors globals.css), kind icon
+    OasisMark.swift      vector oasis mark (SwiftUI shapes — works in complications)
   MicrOasis-iOS/             MicrOasisApp, RootView, TimetableView, NowView, SettingsView
   MicrOasis-watch/           MicrOasisWatchApp, WatchRootView, WatchSettingsView
   MicrOasis-widget-shared/   compiled into BOTH widget extensions: NowWidget (provider +

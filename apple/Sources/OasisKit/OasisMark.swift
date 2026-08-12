@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// The MicrOasis mark, drawn with plain SwiftUI shapes (mirrors the petal
-/// geometry of `pwa/public/icon.svg`, minus the dark square background).
+/// The MicrOasis mark, drawn with plain SwiftUI shapes (mirrors the geometry of
+/// `pwa/public/icon.svg`, minus the dark square background): a spring seen from
+/// above — a solid core ringed by broken ripples.
 ///
 /// Drawn rather than shipped as a raster image because a full-colour PNG does
 /// **not** render inside watchOS accessory complications — those expect
@@ -13,36 +14,35 @@ public struct OasisMark: View {
     public var body: some View {
         GeometryReader { geo in
             let side = min(geo.size.width, geo.size.height)
-            petals
+            mark
                 .frame(width: 512, height: 512)        // SVG viewBox space
                 .scaleEffect(side / 512)
                 .frame(width: geo.size.width, height: geo.size.height)  // centre
         }
     }
 
-    private var petals: some View {
+    private var mark: some View {
         ZStack {
-            ring(start: 15, rx: 17, ry: 52, cy: -108, hex: "#7a2e2e")   // back, dark red
-            ring(start: 0,  rx: 21, ry: 64, cy: -120, hex: "#b5532f")   // main, orange
-            ring(start: 15, rx: 12, ry: 30, cy: -86,  hex: "#e8a04c")   // inner, yellow
-            disc(116, "#7a2e2e")
-            disc(80,  "#e8a04c")
-            disc(30,  "#160c08")   // centre dot
+            ripple(r: 198, width: 9, hex: "#645145", segments: 5, gapDeg: 13, rotate: 8, opacity: 0.75)
+            ripple(r: 154, width: 12, hex: "#8fa69b", segments: 4, gapDeg: 15, rotate: -34, opacity: 0.7)
+            ripple(r: 110, width: 15, hex: "#b5764a", segments: 3, gapDeg: 17, rotate: 21, opacity: 0.95)
+            Circle().fill(Color(hex: "#c89468")).frame(width: 112, height: 112)
         }
     }
 
-    /// Twelve radial petals, each an ellipse offset from the centre then orbited.
-    private func ring(start: Double, rx: CGFloat, ry: CGFloat, cy: CGFloat, hex: String) -> some View {
-        ForEach(0..<12, id: \.self) { i in
-            Ellipse()
-                .fill(Color(hex: hex))
-                .frame(width: rx * 2, height: ry * 2)
-                .offset(y: cy)
-                .rotationEffect(.degrees(start + Double(i) * 30))
+    /// One broken ripple: `segments` equal arcs separated by `gapDeg` gaps.
+    /// `trim` works in fractions of the circumference, so the gap converts to
+    /// gapDeg/360 — the same arithmetic as the SVG generator's dash array.
+    private func ripple(r: CGFloat, width: CGFloat, hex: String, segments: Int, gapDeg: Double, rotate: Double, opacity: Double) -> some View {
+        let step = 1.0 / Double(segments)
+        let gap = gapDeg / 360
+        return ForEach(0..<segments, id: \.self) { i in
+            Circle()
+                .trim(from: Double(i) * step, to: Double(i) * step + step - gap)
+                .stroke(Color(hex: hex), style: StrokeStyle(lineWidth: width, lineCap: .round))
+                .frame(width: r * 2, height: r * 2)
+                .rotationEffect(.degrees(rotate))
+                .opacity(opacity)
         }
-    }
-
-    private func disc(_ d: CGFloat, _ hex: String) -> some View {
-        Circle().fill(Color(hex: hex)).frame(width: d, height: d)
     }
 }

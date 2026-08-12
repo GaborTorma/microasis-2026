@@ -34,13 +34,13 @@ const festivalDay = (d: Date) => dayFmt.format(d);
 const floorHour = (ms: number) => Math.floor(ms / HOUR) * HOUR;
 const ceilHour = (ms: number) => Math.ceil(ms / HOUR) * HOUR;
 
-// Language coding, matching the printed poster's legend colours:
-// both = yellow (EN+HU), English only = purple, Hungarian only = turquoise.
-// Shown only when a language is set (no neutral Ø badge).
+// Language coding for talk-like events. Unused by the current all-music
+// programme (langAvailability is null everywhere) but kept wired, so a future
+// Yoga Terrace workshop only needs the seed field set.
 const LANG_CHIPS: Record<string, { labels: string[]; bg: string; fg: string }> = {
-  both: { labels: ["EN+HU"], bg: "#e0b93a", fg: "#160c08" },
+  both: { labels: ["EN+HU"], bg: "#e0b93a", fg: "#170c0b" },
   en: { labels: ["EN"], bg: "#9d6fc4", fg: "#ffffff" },
-  hu: { labels: ["HU"], bg: "#46b3a3", fg: "#0c1611" },
+  hu: { labels: ["HU"], bg: "#8fa69b", fg: "#170c0b" },
 };
 
 const startMs = (e: EventDTO) => new Date(e.startsAt).getTime();

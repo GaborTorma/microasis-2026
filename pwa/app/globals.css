@@ -1,25 +1,27 @@
 @import "tailwindcss";
 
 /*
-  MicrOasis 2026 — green is the festival's signature colour. Deep forest base,
-  living-green accent, teal and warm-ember secondary pops. Per-stage tints
-  (Portal / Field / Bowl) still come from the DB so each column reads distinct.
+  MicrOasis 2026 — the festival's own dark, earthy palette. The four ink/line
+  values are lifted straight from microasis.eu (#170C0B, #1F1412, #261613,
+  #645145); the warm sand accents and the cool secondary come from the printed
+  OASIS and WADI posters. Per-stage tints still come from the DB so each column
+  reads distinct.
 */
 @theme {
-  --color-ink: #0c1611;
-  --color-ink-2: #122017;
-  --color-ink-3: #1a2e22;
-  --color-line: #2b4736;
-  --color-cream: #edf4ec;
-  --color-cream-dim: #aec8b6;
-  --color-cream-faint: #6d8c79;
-  --color-sun: #5ec98a;
-  --color-leaf: #3f9d6a;
-  --color-teal: #46b3a3;
+  --color-ink: #170c0b;
+  --color-ink-2: #1f1412;
+  --color-ink-3: #261613;
+  --color-line: #645145;
+  --color-cream: #f2e7d8;
+  --color-cream-dim: #c2ab98;
+  --color-cream-faint: #8d7767;
+  --color-sun: #c89468;
+  --color-leaf: #7e9187;
+  --color-teal: #8fa69b;
   --color-now: #ff5d6c;
-  --color-ember: #e0913f;
-  --color-clay: #c9742f;
-  --color-plum: #7a5b9e;
+  --color-ember: #b5764a;
+  --color-clay: #a2603a;
+  --color-plum: #8a6f5c;
 
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display), var(--font-body), sans-serif;
@@ -42,10 +44,10 @@ body {
 body {
   background-color: var(--color-ink);
   background-image:
-    radial-gradient(60% 48% at 16% 6%, rgba(46, 107, 74, 0.55), transparent 70%),
-    radial-gradient(52% 42% at 90% 12%, rgba(70, 179, 163, 0.32), transparent 70%),
-    radial-gradient(82% 60% at 50% 106%, rgba(30, 82, 56, 0.6), transparent 72%),
-    radial-gradient(40% 30% at 90% 84%, rgba(94, 201, 138, 0.14), transparent 70%);
+    radial-gradient(60% 48% at 16% 6%, rgba(100, 81, 69, 0.5), transparent 70%),
+    radial-gradient(52% 42% at 90% 12%, rgba(126, 145, 135, 0.16), transparent 70%),
+    radial-gradient(82% 60% at 50% 106%, rgba(38, 22, 19, 0.85), transparent 72%),
+    radial-gradient(40% 30% at 90% 84%, rgba(200, 148, 104, 0.12), transparent 70%);
   background-attachment: fixed;
   color: var(--color-cream);
   font-family: var(--font-sans);

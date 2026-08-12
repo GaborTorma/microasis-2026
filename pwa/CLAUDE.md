@@ -70,7 +70,7 @@ pnpm db:generate         # Drizzle migration from schema.ts changes
 pnpm db:push             # apply to Neon (needs DATABASE_URL in .env.local)
 pnpm db:studio           # Drizzle Studio
 pnpm db:seed             # WIPE + re-insert all data from scripts/seed.ts (see gotcha)
-pnpm icons               # regenerate PWA icons (mandala SVG → public/icons/*.png)
+pnpm icons               # regenerate every icon from the oasis mark (web + apple)
 ```
 
 `DATABASE_URL` must be in `.env.local`: the Drizzle CLI loads it via
