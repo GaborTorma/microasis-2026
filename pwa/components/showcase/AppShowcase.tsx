@@ -65,7 +65,7 @@ export function AppShowcase() {
           className="absolute inset-0 -z-10"
           style={{
             background:
-              "radial-gradient(48% 40% at 16% 6%, rgba(94,201,138,0.18), transparent 70%), radial-gradient(46% 38% at 90% 14%, rgba(70,179,163,0.15), transparent 70%)",
+              "radial-gradient(48% 40% at 16% 6%, rgba(200,148,104,0.18), transparent 70%), radial-gradient(46% 38% at 90% 14%, rgba(143,166,155,0.15), transparent 70%)",
           }}
         />
         <div className="mx-auto grid w-full max-w-5xl grid-cols-1 items-center gap-12 md:grid-cols-2">

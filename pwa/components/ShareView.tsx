@@ -8,7 +8,7 @@ import { QR_URL, SHARE_URL } from "@/lib/platform";
 
 // Refined pill shared by the share / copy primary actions.
 const PRIMARY_BTN =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-sun to-leaf px-6 py-2.5 font-display text-sm font-bold text-ink shadow-[0_8px_24px_-6px_rgba(94,201,138,0.55)] transition active:scale-95";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-b from-sun to-ember px-6 py-2.5 font-display text-sm font-bold text-ink shadow-[0_8px_24px_-6px_rgba(200,148,104,0.55)] transition active:scale-95";
 
 // The /share page: a big QR a friend just points their phone at. The QR (and the
 // printed/copied link) encodes /get, which routes the scanner: iPhone → App Store,

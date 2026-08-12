@@ -29,7 +29,7 @@ export function GetRedirect() {
         </a>
         <Link
           href="/"
-          className="w-full rounded-full border border-leaf/40 px-5 py-2.5 text-center font-semibold text-cream"
+          className="w-full rounded-full border border-line/70 px-5 py-2.5 text-center font-semibold text-cream"
         >
           Web
         </Link>

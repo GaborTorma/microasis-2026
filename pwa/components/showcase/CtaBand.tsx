@@ -27,7 +27,7 @@ export function CtaBand() {
         className="absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(55% 60% at 50% 100%, rgba(94,201,138,0.22), transparent 72%)",
+            "radial-gradient(55% 60% at 50% 100%, rgba(200,148,104,0.22), transparent 72%)",
         }}
       />
       <Reveal className="mx-auto flex w-full max-w-2xl flex-col items-center text-center">

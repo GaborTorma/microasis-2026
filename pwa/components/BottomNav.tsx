@@ -21,7 +21,7 @@ export function BottomNav() {
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center"
       style={{ paddingBottom: "calc(var(--safe-bottom) + 0.6rem)" }}
     >
-      <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-leaf/40 bg-ink/85 p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+      <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-line/70 bg-ink/85 p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-xl">
         {TABS.map(({ href, key, Icon }) => {
           const active =
             href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
@@ -32,7 +32,7 @@ export function BottomNav() {
               aria-current={active ? "page" : undefined}
               className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 active
-                  ? "bg-sun/15 text-sun shadow-[inset_0_0_0_1px_rgba(94,201,138,0.35)]"
+                  ? "bg-sun/15 text-sun shadow-[inset_0_0_0_1px_rgba(200,148,104,0.35)]"
                   : "text-cream-faint hover:text-cream-dim"
               }`}
             >

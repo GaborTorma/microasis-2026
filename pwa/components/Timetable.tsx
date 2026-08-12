@@ -484,7 +484,7 @@ export function Timetable() {
                 <div
                   key={i}
                   className="absolute inset-x-0 h-px"
-                  style={{ top: d.y, borderTop: "1px dashed rgba(94,201,138,0.55)" }}
+                  style={{ top: d.y, borderTop: "1px dashed rgba(200,148,104,0.55)" }}
                 />
               ))}
             </div>
