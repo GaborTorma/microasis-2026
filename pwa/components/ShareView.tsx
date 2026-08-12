@@ -44,7 +44,7 @@ export function ShareView() {
 
   const share = async () => {
     try {
-      await navigator.share({ title: "MANAS 2026", text: t("invite"), url: SHARE_URL });
+      await navigator.share({ title: "MicrOasis 2026", text: t("invite"), url: SHARE_URL });
     } catch {
       /* user cancelled, or share unsupported for this payload */
     }

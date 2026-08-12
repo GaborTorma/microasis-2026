@@ -25,25 +25,25 @@ export const metadata: Metadata = {
   // Absolute base so og:image (and other relative URLs) resolve on prod, which is
   // what link-preview fetchers (iOS share sheet, iMessage, Telegram, Messenger)
   // read to show the app icon when a link is shared.
-  metadataBase: new URL("https://manas.torma.ai"),
-  title: "Guide for MANAS 2026",
+  metadataBase: new URL("https://microasis.torma.ai"),
+  title: "Guide for MicrOasis 2026",
   description:
-    "Unofficial timetable and now-playing view for the Manas 2026 gathering. Not affiliated with the festival.",
-  applicationName: "Guide for MANAS 2026",
+    "Unofficial timetable and now-playing view for the MicrOasis 2026 gathering. Not affiliated with the festival.",
+  applicationName: "Guide for MicrOasis 2026",
   manifest: "/manifest.webmanifest",
   openGraph: {
     type: "website",
-    siteName: "Guide for MANAS 2026",
-    title: "Guide for MANAS 2026",
+    siteName: "Guide for MicrOasis 2026",
+    title: "Guide for MicrOasis 2026",
     description:
-      "Unofficial timetable and now-playing view for the Manas 2026 gathering.",
-    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "MANAS 2026" }],
+      "Unofficial timetable and now-playing view for the MicrOasis 2026 gathering.",
+    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "MicrOasis 2026" }],
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     // Home-screen label for an installed PWA — short so it doesn't truncate.
-    title: "MANAS 2026",
+    title: "MicrOasis 2026",
   },
   // Apple Smart App Banner: native "open in App Store" strip Safari shows on iOS.
   // Covers real Safari; InstallPrompt covers the in-app / non-Safari iOS cases.

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 
 // First-visit disclaimer the festival organizers required. Shown once and must be
 // acknowledged; the flag persists in localStorage (bumped if the wording changes).
-const KEY = "manas-disclaimer-v1";
+const KEY = "microasis-disclaimer-v1";
 
 export function DisclaimerGate() {
   const t = useTranslations();

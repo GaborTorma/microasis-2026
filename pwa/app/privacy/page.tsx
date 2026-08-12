@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { privacyContent as c } from "@/lib/legal-content";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Guide for MANAS 2026",
+  title: "Privacy Policy — Guide for MicrOasis 2026",
   description:
-    "Privacy policy for the unofficial Guide for MANAS 2026 app. No personal data is collected; location is used on-device only and never transmitted.",
+    "Privacy policy for the unofficial Guide for MicrOasis 2026 app. No personal data is collected; location is used on-device only and never transmitted.",
 };
 
 type Doc = {

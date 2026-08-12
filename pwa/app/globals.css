@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
-  Manas 2026 — green is the festival's signature colour. Deep forest base,
+  MicrOasis 2026 — green is the festival's signature colour. Deep forest base,
   living-green accent, teal and warm-ember secondary pops. Per-stage tints
   (Portal / Field / Bowl) still come from the DB so each column reads distinct.
 */
@@ -100,7 +100,7 @@ body {
 }
 
 /* Subtle pulsing dot for the live/now indicator. */
-@keyframes manas-pulse {
+@keyframes microasis-pulse {
   0%,
   100% {
     opacity: 1;
@@ -112,7 +112,7 @@ body {
   }
 }
 .pulse-dot {
-  animation: manas-pulse 1.8s ease-in-out infinite;
+  animation: microasis-pulse 1.8s ease-in-out infinite;
 }
 
 /* ── Now view: opening-day camp build ──

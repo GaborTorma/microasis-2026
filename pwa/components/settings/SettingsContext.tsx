@@ -19,7 +19,7 @@ type Settings = {
 // sync with ManasKit/AppState.swift — see ../CLAUDE.md). Users can show it, and
 // any other stage, in settings.
 const DEFAULT: Settings = { order: [], hidden: ["terrace"], scale: 1, columns: 3 };
-const KEY = "manas-settings-v1";
+const KEY = "microasis-settings-v1";
 
 /** Timetable text/width zoom levels (−25% … +50%, 25% steps). */
 export const SCALE_LEVELS = [0.75, 1, 1.25, 1.5] as const;

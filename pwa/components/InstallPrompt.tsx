@@ -8,7 +8,7 @@ import { APP_STORE_URL, isAndroid, isIOS, isIOSSafari, isStandalone } from "@/li
 import { useInstallPrompt } from "@/lib/useInstallPrompt";
 
 // Dismissed once, hidden for good (bump the key if the wording changes).
-const KEY = "manas-install-v2";
+const KEY = "microasis-install-v1";
 
 type Mode = "ios" | "android" | null;
 

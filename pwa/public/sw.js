@@ -1,9 +1,9 @@
-/* Manas 2026 — minimal offline service worker (Turbopack-friendly, no build step).
+/* MicrOasis 2026 — minimal offline service worker (Turbopack-friendly, no build step).
    - /api/*        : network-first (always fresh online, cached copy offline)
    - navigations   : network-first, fall back to cached page (or "/")
    - static assets : cache-first
 */
-const VERSION = "manas-v19";
+const VERSION = "microasis-v1";
 const SHELL = `${VERSION}-shell`;
 const API = `${VERSION}-api`;
 

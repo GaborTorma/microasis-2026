@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { supportContent as c } from "@/lib/legal-content";
 
 export const metadata: Metadata = {
-  title: "Support — Guide for MANAS 2026",
+  title: "Support — Guide for MicrOasis 2026",
   description:
-    "Help and contact for the unofficial Guide for MANAS 2026 app: how to use the timetable, the Now view, the Apple Watch app, offline use and the nearest-stage location feature.",
+    "Help and contact for the unofficial Guide for MicrOasis 2026 app: how to use the timetable, the Now view, the Apple Watch app, offline use and the nearest-stage location feature.",
 };
 
 type Doc = {

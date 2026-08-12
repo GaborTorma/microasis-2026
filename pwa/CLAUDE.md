@@ -1,4 +1,4 @@
-# web — Manas 2026 PWA + API
+# web — MicrOasis 2026 PWA + API
 
 Next.js 16 (App Router) + React 19 PWA. Two views (timetable, now), one JSON
 API endpoint, Neon Postgres via Drizzle ORM, bilingual HU/EN, offline-first.
@@ -20,7 +20,7 @@ app/
   page.tsx          /      → <Timetable/>
   now/page.tsx      /now   → <NowView/>
   api/schedule/     GET, ETag/304 + 60s payload memo, getSchedule()  (web + apple)
-  actions/locale.ts setLocale() server action → sets manas-locale cookie
+  actions/locale.ts setLocale() server action → sets microasis-locale cookie
   manifest.ts       PWA manifest        globals.css  Tailwind v4 @theme + utilities
 components/         Timetable / NowView (+ settings/, favorites/, showcase/), Header, BottomNav
 lib/                db/ (schema + client), queries, types, format, festival, geo,
@@ -46,10 +46,10 @@ public/             sw.js, icons/       scripts/  seed.ts, icons.ts
   cache is shown silently.
 - **Settings** (stage order/visibility, text scale, column count) and **favorites**
   (event-slug list, `components/favorites/FavoritesContext.tsx`, key
-  `manas-favorites-v1`) live in React context + `localStorage`, never server-side.
+  `microasis-favorites-v1`) live in React context + `localStorage`, never server-side.
   Favorites are keyed on the seed-generated event `slug` — see `../CLAUDE.md`.
 - **i18n is cookie-based, no middleware, no locale path segments.** There is no
-  `middleware.ts` and no `/hu`/`/en` routes. `i18n/request.ts`: cookie `manas-locale`
+  `middleware.ts` and no `/hu`/`/en` routes. `i18n/request.ts`: cookie `microasis-locale`
   > `Accept-Language` first tag (`hu*`→HU else EN) > HU default; cookie always wins.
 
 ## Data model (`lib/db/schema.ts`)
@@ -79,14 +79,14 @@ pnpm icons               # regenerate PWA icons (mandala SVG → public/icons/*.
 ## Gotchas / footguns
 
 - **Service worker cache versioning is manual.** `public/sw.js` keys everything off
-  `VERSION = "manas-vNN"` (currently v19). **Bump it after any deploy that changes cached assets** or
+  `VERSION = "microasis-vNN"` (currently v1). **Bump it after any deploy that changes cached assets** or
   returning PWA users get stale files — the #1 "my change isn't showing" trap.
 - **`pnpm db:seed` is destructive and idempotent:** it `db.delete()`s events, then
   stages, then re-inserts from the hardcoded arrays in
   `scripts/seed.ts` (transcribed from the printed posters). **Any data edited in the DB
   directly is lost on the next seed.** Seed is the source of truth for content.
-- **localStorage cache keys are hand-versioned:** `manas-schedule-v2`,
-  `manas-settings-v1`, `manas-favorites-v1` (+ `<key>:etag`
+- **localStorage cache keys are hand-versioned:** `microasis-schedule-v1`,
+  `microasis-settings-v1`, `microasis-favorites-v1` (+ `<key>:etag`
   sidecars for the conditional refetch). Bump on DTO changes or stale cache can
   feed malformed data.
 - **Payload memo = 60s:** DB edits take up to a minute (plus client cache) to appear.

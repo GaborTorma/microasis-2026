@@ -36,7 +36,7 @@ export function Header() {
       <div className="flex items-center justify-between gap-2 px-4 pb-2.5 pt-3">
         <div className="min-w-0 leading-none">
           {/* Referential "Guide for" kicker so the wordmark reads as a unit —
-              "Guide for MANAS 2026". English in both locales (matches iOS). */}
+              "Guide for MicrOasis 2026". English in both locales (matches iOS). */}
           <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-cream/75">
             {t("guidefor")}
           </p>

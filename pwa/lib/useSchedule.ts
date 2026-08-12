@@ -117,7 +117,7 @@ function createResource<T>(url: string, key: string): Resource<T> {
   };
 }
 
-const scheduleResource = createResource<ScheduleData>("/api/schedule", "manas-schedule-v2");
+const scheduleResource = createResource<ScheduleData>("/api/schedule", "microasis-schedule-v1");
 
 function useResource<T>(resource: Resource<T>): State<T> {
   return useSyncExternalStore(

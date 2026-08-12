@@ -10,9 +10,9 @@ import { LANDING_IMG_V } from "@/lib/landing-version";
 // card is regenerated — same trick lib/showcase.ts uses for the framed shots.
 const OG_IMG = `/landing/og.png?v=${LANDING_IMG_V}`;
 
-const title = "Guide for MANAS 2026 — iOS, watchOS, WebApp (Android)";
+const title = "Guide for MicrOasis 2026 — iOS, watchOS, WebApp (Android)";
 const description =
-  "The unofficial Guide for MANAS 2026 native app: the full festival timetable across every stage, a live Now view and Apple Watch widgets. On iPhone and on your wrist — free, no sign-up.";
+  "The unofficial Guide for MicrOasis 2026 native app: the full festival timetable across every stage, a live Now view and Apple Watch widgets. On iPhone and on your wrist — free, no sign-up.";
 
 export const metadata: Metadata = {
   title,
@@ -20,11 +20,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/app" },
   openGraph: {
     type: "website",
-    siteName: "Guide for MANAS 2026",
+    siteName: "Guide for MicrOasis 2026",
     title,
     description,
     url: "/app",
-    images: [{ url: OG_IMG, width: 1200, height: 630, alt: "Guide for MANAS 2026" }],
+    images: [{ url: OG_IMG, width: 1200, height: 630, alt: "Guide for MicrOasis 2026" }],
   },
   twitter: {
     card: "summary_large_image",

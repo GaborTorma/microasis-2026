@@ -14,8 +14,8 @@ import {
 export type I18nText = { en: string; hu: string };
 
 /**
- * Stages / floors. slug is the stable identifier used by all clients
- * (portal, field, bowl). lat/lng/radiusM let the watchOS app pick the
+ * Stages. slug is the stable identifier used by all clients
+ * (oasis, wadi, terrace). lat/lng/radiusM let the apps pick the
  * nearest stage from GPS; null = no geofence yet (falls back to default).
  */
 export const stages = pgTable("stages", {
@@ -56,7 +56,7 @@ export type EventKind =
   | "mind"
   | "build"
   | "handpan";
-/** Field-stage language availability badge: both / english only / hungarian only. */
+/** Spoken-language badge for talk-like events: both / english only / hungarian only. */
 export type LangAvailability = "both" | "en" | "hu";
 
 export const events = pgTable(
@@ -72,7 +72,7 @@ export const events = pgTable(
      *  the seed runs). */
     slug: text("slug").notNull().default(""),
     /** Performer / facilitator. Language-neutral proper noun; null where the
-     *  act name already is the title (Portal/Bowl) or there is no performer. */
+     *  act name already is the title (as it is for every DJ set). */
     artist: text("artist"),
     startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
     endsAt: timestamp("ends_at", { withTimezone: true }),

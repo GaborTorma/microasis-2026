@@ -362,8 +362,8 @@ def build_og() -> None:
     TEXT_X = 80          # left column x
     ICON_Y = 54          # app icon top
     GUIDE_Y = 150        # "GUIDE FOR"
-    MANAS_Y = 165        # "MANAS 2026"
-    LINE1_Y = 252        # 1st small line under MANAS (unofficial)
+    NAME_Y = 165         # "MicrOasis 2026"
+    LINE1_Y = 252        # 1st small line under the name (unofficial)
     LINE2_Y = 285        # 2nd small line (platforms)
     SUB_Y = 320          # value-prop sentence (first line)
     BADGE_Y = 440        # App Store badge top
@@ -387,8 +387,8 @@ def build_og() -> None:
     tracked(d, (x + 2, GUIDE_Y), "GUIDE FOR", font("Inter-SemiBold.ttf", 16), CREAM_DIM, 4)
     mfont = font("Baloo2-ExtraBold.ttf", 66)
     mx = x
-    for part, col in (("MANAS ", CREAM), ("2026", SUN)):
-        d.text((mx, MANAS_Y), part, font=mfont, fill=col)
+    for part, col in (("MicrOasis ", CREAM), ("2026", SUN)):
+        d.text((mx, NAME_Y), part, font=mfont, fill=col)
         mx += d.textlength(part, font=mfont)
     tracked(d, (x + 2, LINE1_Y), "UNOFFICIAL · NEM HIVATALOS", font("Inter-SemiBold.ttf", 12), (140, 142, 140), 2)
     tracked(d, (x + 2, LINE2_Y), "iPhone · Apple Watch · WebApp (Android)", font("Inter-SemiBold.ttf", 16), CREAM, 1)

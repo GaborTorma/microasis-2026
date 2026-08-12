@@ -2,9 +2,9 @@
 // SSR-safe (returns false on the server) so it can be called from "use client"
 // components without guarding each call site.
 
-// Canonical public origin (CNAME → manas2026.vercel.app). Use this for any URL we
+// Canonical public origin (CNAME → the Vercel project). Use this for any URL we
 // hand out (share, QR, metadata) so it reads as our own domain, not the Vercel host.
-export const SITE_URL = "https://manas.torma.ai";
+export const SITE_URL = "https://microasis.torma.ai";
 
 export const APP_STORE_URL = "https://apps.apple.com/app/id6782099675";
 

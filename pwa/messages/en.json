@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "MANAS 2026",
+    "title": "MicrOasis 2026",
     "guidefor": "Guide for",
     "unofficial": "Unofficial"
   },
@@ -64,7 +64,7 @@
     "hide": "Hide",
     "done": "Done",
     "about": "About",
-    "disclaimer": "This is an unofficial app made by an enthusiastic festival-goer — not the official software or product of the MANAS Festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it.",
+    "disclaimer": "This is an unofficial app made by an enthusiastic festival-goer — not the official software or product of the MicrOasis festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it.",
     "privacy": "Privacy Policy",
     "support": "Support",
     "madeprefix": "Made by",
@@ -77,12 +77,12 @@
   "install": {
     "ios": {
       "title": "Get the app",
-      "body": "Install MANAS 2026 from the App Store for the best experience.",
+      "body": "Install MicrOasis 2026 from the App Store for the best experience.",
       "cta": "App Store"
     },
     "android": {
       "title": "Install on Android",
-      "body": "Install MANAS 2026 — full-screen and works offline.",
+      "body": "Install MicrOasis 2026 — full-screen and works offline.",
       "cta": "Install"
     },
     "sheet": {
@@ -100,7 +100,7 @@
     "title": "Pass it on!",
     "body": "Let a friend scan this code,\nand you've shared the app.",
     "share": "Share",
-    "invite": "Check out the MANAS 2026 schedule 🎶",
+    "invite": "Check out the MicrOasis 2026 schedule 🎶",
     "copy": "Copy link",
     "copied": "Copied"
   },
@@ -112,11 +112,11 @@
       "days": "days",
       "hours": "hrs",
       "mins": "min",
-      "live": "Manas 2026 is happening now"
+      "live": "MicrOasis 2026 is happening now"
     },
     "hero": {
       "eyebrow": "iPhone · Apple Watch · Web app (Android)",
-      "headline": "The whole of Manas 2026, in your pocket",
+      "headline": "The whole of MicrOasis 2026, in your pocket",
       "sub": "The full timetable for every stage, a live NOW view and Apple Watch widgets, so you always know when each act starts.",
       "webSchedule": "Open the web version instead"
     },
@@ -180,7 +180,7 @@
     },
     "cta": {
       "title": "Take the whole programme with you",
-      "body": "Download it free and every stage of Manas 2026 is in your pocket and on your wrist — offline, too.",
+      "body": "Download it free and every stage of MicrOasis 2026 is in your pocket and on your wrist — offline, too.",
       "web": "Open the web version instead"
     },
     "footer": {

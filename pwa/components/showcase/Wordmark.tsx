@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-// The "Guide for / MANAS 2026" lockup for the showcase top bar, reusing the
+// The "Guide for / MicrOasis 2026" lockup for the showcase top bar, reusing the
 // Header's gradient wordmark treatment so the showcase reads as the same brand
 // as the PWA.
 export function Wordmark() {

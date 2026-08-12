@@ -3,8 +3,8 @@ import { SITE_URL } from "@/lib/platform";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Guide for MANAS 2026",
-    short_name: "MANAS 2026",
+    name: "Guide for MicrOasis 2026",
+    short_name: "MicrOasis 2026",
     // Lets navigator.getInstalledRelatedApps() report the installed WebAPK, so
     // the install CTAs can flip to a "Telepítve" state across sessions. Note:
     // no prefer_related_applications — this must NOT suppress the install prompt.
@@ -12,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
       { platform: "webapp", url: `${SITE_URL}/manifest.webmanifest` },
     ],
     description:
-      "Unofficial timetable and now-playing view for the Manas 2026 gathering.",
+      "Unofficial timetable and now-playing view for the MicrOasis 2026 gathering.",
     start_url: "/",
     scope: "/",
     display: "standalone",

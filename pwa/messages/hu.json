@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "MANAS 2026",
+    "title": "MicrOasis 2026",
     "guidefor": "Guide for",
     "unofficial": "Nem hivatalos"
   },
@@ -64,7 +64,7 @@
     "hide": "Elrejt",
     "done": "Kész",
     "about": "Névjegy",
-    "disclaimer": "Ez egy nem hivatalos, csak egy lelkes fesztiválozó által készített app — nem a MANAS Fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
+    "disclaimer": "Ez egy nem hivatalos, csak egy lelkes fesztiválozó által készített app — nem a MicrOasis fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
     "privacy": "Adatvédelem",
     "support": "Támogatás",
     "madeprefix": "Készítette:",
@@ -77,12 +77,12 @@
   "install": {
     "ios": {
       "title": "Töltsd le az appot",
-      "body": "Telepítsd a MANAS 2026 appot az App Store-ból a legjobb élményért.",
+      "body": "Telepítsd a MicrOasis 2026 appot az App Store-ból a legjobb élményért.",
       "cta": "App Store"
     },
     "android": {
       "title": "Telepítés Androidra",
-      "body": "Telepítsd a MANAS 2026-ot — teljes képernyő, offline is működik.",
+      "body": "Telepítsd a MicrOasis 2026-ot — teljes képernyő, offline is működik.",
       "cta": "Telepítés"
     },
     "sheet": {
@@ -100,7 +100,7 @@
     "title": "Add tovább!",
     "body": "Olvastasd be valakivel ezt a kódot,\nés már meg is osztottad az appot.",
     "share": "Megosztás",
-    "invite": "Nézd meg a MANAS 2026 programját 🎶",
+    "invite": "Nézd meg a MicrOasis 2026 programját 🎶",
     "copy": "Link másolása",
     "copied": "Másolva"
   },
@@ -112,11 +112,11 @@
       "days": "nap",
       "hours": "óra",
       "mins": "perc",
-      "live": "Most zajlik a Manas 2026"
+      "live": "Most zajlik a MicrOasis 2026"
     },
     "hero": {
       "eyebrow": "iPhone · Apple Watch · WebApp (Android)",
-      "headline": "Az egész Manas 2026 a zsebedben",
+      "headline": "Az egész MicrOasis 2026 a zsebedben",
       "sub": "Teljes időrend minden színpadról, élő MOST nézet és Apple Watch widgetek, hogy mindig tudd melyik program mikor kezdődik.",
       "webSchedule": "Inkább a böngészőben nézném"
     },
@@ -180,7 +180,7 @@
     },
     "cta": {
       "title": "Vidd magaddal a teljes programot",
-      "body": "Töltsd le ingyen, és a Manas 2026 minden színpada ott lesz a zsebedben és a csuklódon — még offline is.",
+      "body": "Töltsd le ingyen, és a MicrOasis 2026 minden színpada ott lesz a zsebedben és a csuklódon — még offline is.",
       "web": "Inkább a böngészőben nézném"
     },
     "footer": {

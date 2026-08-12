@@ -9,7 +9,7 @@ import {
 } from "react";
 
 // Stored value: plain string[] of event slugs (the cross-platform event key).
-const KEY = "manas-favorites-v1";
+const KEY = "microasis-favorites-v1";
 
 type Ctx = {
   favorites: Set<string>;
