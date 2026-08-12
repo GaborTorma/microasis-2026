@@ -40,11 +40,11 @@ export function Header() {
           <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-cream/75">
             {t("guidefor")}
           </p>
-          {/* "MicrOasis 2026" is long enough that on a phone, next to the zoom
-              controls, it truncated to "MicrOasis …". Drop a step at the
-              narrowest widths and tighten the tracking so the year survives. */}
-          <h1 className="truncate bg-gradient-to-r from-cream via-sun to-ember bg-clip-text font-display text-xl font-extrabold leading-none tracking-tight text-transparent sm:text-2xl sm:tracking-wide">
-            {t("title")}
+          {/* Short form in the app chrome: next to the zoom controls the year
+              only cost room and truncated the name. The full "MicrOasis 2026"
+              still shows where there is space — disclaimer, showcase, metadata. */}
+          <h1 className="truncate bg-gradient-to-r from-cream via-sun to-ember bg-clip-text font-display text-2xl font-extrabold leading-none tracking-wide text-transparent">
+            {t("short")}
           </h1>
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.22em] text-sun/80">
             {t("unofficial")}

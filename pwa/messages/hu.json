@@ -1,6 +1,7 @@
 {
   "app": {
     "title": "MicrOasis 2026",
+    "short": "MicrOasis",
     "guidefor": "Guide for",
     "unofficial": "Nem hivatalos"
   },
