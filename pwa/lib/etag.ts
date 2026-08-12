@@ -4,9 +4,8 @@ type Payload = { body: string; etag: string };
 
 /**
  * Serialize + hash an API payload, memoized per warm server instance. The
- * routes are dynamic (they read If-None-Match, which ISR route caching can't
- * see), so this memo is what keeps Neon reads at the ~once-per-minute rate
- * the old `revalidate = 60` gave.
+ * routes are dynamic (they read If-None-Match, which route caching can't
+ * see), so this memo is what keeps Neon reads down to roughly one a minute.
  */
 export function etagPayload(load: () => Promise<unknown>, ttlMs = 60_000) {
   let memo: { at: number; value: Promise<Payload> } | null = null;
@@ -27,8 +26,8 @@ export function etagPayload(load: () => Promise<unknown>, ttlMs = 60_000) {
       if (memo === entry) memo = null;
     });
     memo = entry;
-    // Serve the last good payload over a transient DB failure (what the old
-    // ISR cache did); only surface the error when there is nothing to serve.
+    // Serve the last good payload over a transient DB failure; only surface
+    // the error when there is nothing to serve.
     return entry.value.catch((err) => {
       if (lastGood) return lastGood;
       throw err;

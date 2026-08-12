@@ -22,25 +22,15 @@ public struct StageDTO: Codable, Identifiable, Hashable, Sendable {
 }
 
 /// Event kinds are kept as raw strings for forward-compatibility with the API.
-/// Structural kinds (music / ceremony / break) plus the workshop *categories*
-/// the seed refines workshops into — each drives the per-cell icon. Mirrors
-/// `pwa/lib/types.ts` EventKind. New values decode fine (raw String).
+/// `music` is a DJ set or live act and `break` is a marked gap; the rest are
+/// there for anything the Yoga Terrace eventually programmes. Mirrors
+/// `pwa/lib/types.ts` EventKind — new values decode fine (raw String).
 public enum EventKind {
     public static let music = "music"
-    public static let ceremony = "ceremony"
     public static let breakGap = "break"
     public static let workshop = "workshop"
-    // Workshop categories
-    public static let soundBath = "sound-bath"
-    public static let voice = "voice"
-    public static let drum = "drum"
     public static let yoga = "yoga"
-    public static let wind = "wind"
-    public static let dance = "dance"
-    public static let drama = "drama"
-    public static let mind = "mind"
-    public static let build = "build"
-    public static let handpan = "handpan"
+    public static let ceremony = "ceremony"
 }
 
 public struct EventDTO: Codable, Identifiable, Hashable, Sendable {
@@ -90,7 +80,7 @@ public struct ScheduleData: Codable, Hashable, Sendable {
 
 public extension JSONDecoder {
     /// Decoder tolerant of the two ISO-8601 shapes the API emits:
-    /// `2026-07-08T15:30:00.000Z` (events) and `2026-07-08T18:30:00+02:00`
+    /// `2026-08-21T15:30:00.000Z` (events) and `2026-08-20T12:00:00+02:00`
     /// (festival window). Built once — the two formatters live in the closure.
     static let microasis: JSONDecoder = {
         let decoder = JSONDecoder()

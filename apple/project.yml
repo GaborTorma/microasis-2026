@@ -173,9 +173,9 @@ targets:
         PRODUCT_NAME: MicrOasisWatchWidget
 
 # Shared schemes, declared so `xcodegen generate` emits them deterministically —
-# XcodeGen does not create schemes on its own, and the previously-present ones were
-# an Xcode-created artifact that didn't survive a clean regenerate. Without these,
-# headless `xcodebuild -scheme …` and the screenshot harness have nothing to build.
+# XcodeGen does not create schemes on its own, so they are declared here.
+# Without them, headless `xcodebuild -scheme …` and the screenshot harness have
+# nothing to build.
 schemes:
   MicrOasis:
     build:

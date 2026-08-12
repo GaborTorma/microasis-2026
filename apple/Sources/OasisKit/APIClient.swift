@@ -37,8 +37,8 @@ public struct APIClient: Sendable {
         if http.statusCode == 304 {
             if let cached = Self.readCache(name), let value = try? JSONDecoder.microasis.decode(T.self, from: cached) {
                 // Revalidated = fresh: rewrite so the file's modification date
-                // re-arms maxAge readers (the widget's shared-cache window) —
-                // and a body read from the legacy path migrates to the group.
+                // re-arms maxAge readers (the widget's shared-cache window), and
+                // a body read from the per-process path lands in the group.
                 Self.writeCache(cached, name: name)
                 return value
             }
@@ -81,9 +81,9 @@ public struct APIClient: Sendable {
         return dir.appendingPathComponent("microasis-\(name)")
     }
 
-    /// The pre-App-Group location (each process's own container) — still the
-    /// home for targets without the entitlement, and read as a fallback so an
-    /// updated watch app keeps its offline copy until the first fresh fetch.
+    /// Per-process fallback (the target's own container), used when the App
+    /// Group container is unavailable. Also read on the way in, so a copy
+    /// written before the group was reachable is still served.
     private static func legacyCacheURL(_ name: String) -> URL? {
         try? FileManager.default
             .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MicrOasis 2026 — PWA + API
 
-## Getting Started
+The web app and the only backend: a Next.js 16 (App Router) PWA that renders the
+festival timetable, and the `/api/schedule` JSON endpoint the iOS and watchOS
+apps read. Neon Postgres via Drizzle, bilingual HU/EN, works offline.
 
-First, run the development server:
+See [`CLAUDE.md`](CLAUDE.md) for the architecture and the gotchas, and
+[`../CLAUDE.md`](../CLAUDE.md) for the web ↔ apple wire contract.
+
+## Getting started
+
+Package manager is **pnpm** (only `pnpm-lock.yaml` exists).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.example .env.local     # then fill in DATABASE_URL
+pnpm db:push                   # create the schema
+pnpm db:seed                   # load the programme from scripts/seed.ts
+pnpm dev                       # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`DATABASE_URL` is the only secret. The Drizzle CLI reads it from `.env.local`
+via `process.loadEnvFile()` (see `drizzle.config.ts`); Next loads it on its own.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| path            | what                                                        |
+| --------------- | ----------------------------------------------------------- |
+| `/`             | timetable — time-proportional grid, one column per stage     |
+| `/now`          | what's playing now, up next, and the countdown / camp scenes |
+| `/share`        | QR code + share sheet for passing the app on                 |
+| `/app`, `/get`  | showcase landing and the scan-me redirect                    |
+| `/privacy`, `/support` | the pages the App Store listing links to             |
+| `/api/schedule` | the JSON every client reads (ETag + 304)                     |
 
-## Learn More
+## Commands
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm dev                 # dev server on :3000
+pnpm build && pnpm start # production build
+pnpm lint                # ESLint
+pnpm db:push             # apply schema.ts to the database
+pnpm db:seed             # WIPE + re-insert the programme (seed is the source of truth)
+pnpm db:studio           # Drizzle Studio
+pnpm icons               # regenerate every icon from the oasis mark (web + apple)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Production deploys are manual, from this directory:
 
-## Deploy on Vercel
+```bash
+vercel --prod
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Functions are pinned to `fra1` (`vercel.json`) to sit next to the database.
+After a deploy that changes cached assets, bump `VERSION` in `public/sw.js` or
+returning PWA users keep the previously cached files.

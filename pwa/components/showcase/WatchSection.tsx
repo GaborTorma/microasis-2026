@@ -7,8 +7,8 @@ import { SectionHeading } from "./SectionHeading";
 import { Framed } from "./Framed";
 import { Reveal } from "./Reveal";
 
-const portal = STAGE_ACCENTS.portal;
-const field = STAGE_ACCENTS.field;
+const oasis = STAGE_ACCENTS.oasis;
+const wadi = STAGE_ACCENTS.wadi;
 
 // The Apple Watch chapter. Band-less watches (no strap), no background band.
 // Swipe row = a 3-watch fan; widget row = two overlapping Smart Stack cards.
@@ -27,21 +27,21 @@ export function WatchSection() {
             <Framed
               kind="watch"
               src={framedWatch(locale, "nowWadi")}
-              alt="Apple Watch — Terrace"
+              alt="Apple Watch — Wadi"
               className="z-0 w-[30vw] max-w-[124px] -rotate-[14deg] translate-y-4 opacity-75"
               sizes="124px"
             />
             <Framed
               kind="watch"
               src={framedWatch(locale, "nowOasis")}
-              alt="Apple Watch — Portal"
+              alt="Apple Watch — Oasis"
               className="z-10 -mx-6 w-[42vw] max-w-[176px]"
               sizes="(max-width: 640px) 42vw, 176px"
             />
             <Framed
               kind="watch"
               src={framedWatch(locale, "nowQuiet")}
-              alt="Apple Watch — Mandala"
+              alt="Apple Watch — quiet stage"
               className="z-0 w-[30vw] max-w-[124px] rotate-[14deg] translate-y-4 opacity-75"
               sizes="124px"
             />
@@ -62,17 +62,17 @@ export function WatchSection() {
             <Framed
               kind="watch"
               src={framedWatch(locale, "widgetWadi")}
-              alt="Smart Stack widget — Field"
+              alt="Smart Stack widget — Wadi"
               className="z-0 w-[32vw] max-w-[140px] -rotate-[10deg] translate-y-3 opacity-80"
-              glow={field}
+              glow={wadi}
               sizes="140px"
             />
             <Framed
               kind="watch"
               src={framedWatch(locale, "widgetOasis")}
-              alt="Smart Stack widget — Portal"
+              alt="Smart Stack widget — Oasis"
               className="z-10 -ml-6 w-[42vw] max-w-[176px]"
-              glow={portal}
+              glow={oasis}
               sizes="(max-width: 640px) 42vw, 176px"
             />
           </Reveal>

@@ -13,16 +13,13 @@
     "loading": "Betöltés…",
     "offline": "Offline — mentett adatok",
     "error": "Nem sikerült betölteni",
-    "retry": "Újra",
     "break": "Szünet",
     "allStages": "Összes színpad",
     "today": "Ma",
     "youAreHere": "Itt vagy"
   },
   "timetable": {
-    "title": "Időrend",
-    "empty": "Az időrend hamarosan",
-    "tba": "A fellépők hamarosan"
+    "title": "Időrend"
   },
   "favorites": {
     "filter": "Csak kedvencek",

@@ -40,7 +40,7 @@ public enum Fmt {
     }
 
     /// Current instant. In DEBUG it can be overridden for simulator testing:
-    ///   xcrun simctl spawn <udid> defaults write <bundle> microasis.debugNow "2026-07-09 00:15"
+    ///   xcrun simctl spawn <udid> defaults write <bundle> microasis.debugNow "2026-08-21 00:15"
     /// (also accepts a full ISO-8601 string). Compiled out of release builds.
     public static var now: Date {
         if AppEnv.debugToolsEnabled,
@@ -53,7 +53,7 @@ public enum Fmt {
 
     /// Parse the debug clock value: a full ISO-8601 instant (what the in-app
     /// picker stores, and the recommended simctl form, e.g.
-    /// "2026-07-09T00:15:00+02:00"), or a friendly Budapest-local
+    /// "2026-08-21T00:15:00+02:00"), or a friendly Budapest-local
     /// "yyyy-MM-dd HH:mm". The `T` check keeps ISO from mis-reading the space
     /// form as a date-only value.
     public static func parseDateTime(_ s: String) -> Date? {
@@ -83,7 +83,7 @@ public enum Fmt {
         return d.addingTimeInterval(12 * 3600)
     }
 
-    /// "07.08" from a "YYYY-MM-DD" day string.
+    /// "08.20" from a "YYYY-MM-DD" day string.
     public static func mmdd(_ dayString: String) -> String {
         let parts = dayString.split(separator: "-")
         guard parts.count == 3 else { return dayString }

@@ -20,12 +20,12 @@ export function hhmm(iso: string, locale: string): string {
   });
 }
 
-/** "YYYY-MM-DD" → "MM.DD" (e.g. "07.08"). */
+/** "YYYY-MM-DD" → "MM.DD" (e.g. "08.20"). */
 export function mmdd(day: string): string {
   return `${day.slice(5, 7)}.${day.slice(8, 10)}`;
 }
 
-/** Full, capitalised weekday name, e.g. "Wednesday" / "Szerda". */
+/** Full, capitalised weekday name, e.g. "Thursday" / "Csütörtök". */
 export function weekdayLong(day: string, locale: string): string {
   const s = new Date(`${day}T12:00:00+02:00`).toLocaleDateString(
     intlLocale(locale),

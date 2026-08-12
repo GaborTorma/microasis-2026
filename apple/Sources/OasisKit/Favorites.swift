@@ -115,7 +115,7 @@ public final class FavoritesStore: ObservableObject {
     /// process via the App Group (the widget never instantiates this store).
     private func mirrorForWidget() {
         SharedDefaults.suite.set(Array(favorites).sorted(), forKey: SharedDefaults.favoritesKey)
-        // Both apps host a widget extension now (watch Smart Stack + iOS home
+        // Both apps host a widget extension (watch Smart Stack + iOS home
         // screen) — reload so the hearts repaint right after a toggle.
         WidgetCenter.shared.reloadAllTimelines()
     }

@@ -14,21 +14,7 @@ export type StageDTO = {
   radiusM: number | null;
 };
 
-export type EventKind =
-  | "music"
-  | "ceremony"
-  | "break"
-  | "workshop"
-  | "sound-bath"
-  | "voice"
-  | "drum"
-  | "yoga"
-  | "wind"
-  | "dance"
-  | "drama"
-  | "mind"
-  | "build"
-  | "handpan";
+export type EventKind = "music" | "break" | "workshop" | "yoga" | "ceremony";
 export type LangAvailability = "both" | "en" | "hu" | null;
 
 export type EventDTO = {

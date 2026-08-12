@@ -104,9 +104,9 @@ function createResource<T>(url: string, key: string): Resource<T> {
     subscribe(listener) {
       listeners.add(listener);
       if (!started) start();
-      // A consumer (re)mounting after a failure is the old per-mount retry
-      // moment — without this, an error/offline state would only ever recover
-      // on a visibilitychange.
+      // A consumer (re)mounting after a failure is a natural retry point —
+      // without this, an error/offline state would only ever recover on a
+      // visibilitychange.
       else if (state.error || state.offline) refetch();
       return () => {
         listeners.delete(listener);

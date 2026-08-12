@@ -23,30 +23,20 @@ public extension Color {
     }
 }
 
-/// SF Symbol name per kind. `sound-bath` & `drum` have no native SF glyph —
-/// they're drawn by `KindIcon`'s custom shapes; the names here are only a
-/// fallback. Mirrors the PWA's lucide kind→icon map.
+/// SF Symbol name per kind. `yoga` has no fitting native glyph, so `KindIcon`
+/// draws it; the name here is only a fallback. Mirrors the PWA's icon map.
 public func kindSymbol(_ kind: String) -> String {
     switch kind {
-    case EventKind.voice: return "mic.fill"
-    case EventKind.yoga: return "figure.stand"
-    case EventKind.wind: return "wind"
-    case EventKind.dance: return "shoeprints.fill"
-    case EventKind.drama: return "theatermasks.fill"
-    case EventKind.mind: return "brain.head.profile"
-    case EventKind.build: return "hammer.fill"
-    case EventKind.handpan: return "opticaldisc"
     case EventKind.breakGap: return "cup.and.saucer.fill"
     case EventKind.ceremony, EventKind.workshop: return "sparkles"
-    case EventKind.soundBath: return "waveform" // fallback only
-    case EventKind.drum: return "metronome.fill" // fallback only
+    case EventKind.yoga: return "figure.stand" // fallback only
     default: return "speaker.wave.2.fill" // music + anything unknown
     }
 }
 
-/// Per-category event icon, mirroring the PWA's lucide set. `sound-bath` (singing
-/// bowl), `drum`, `handpan` and `yoga` (seated figure) are drawn as custom vector
-/// shapes; everything else uses its SF Symbol. Sized by `size`, tinted by `color`.
+/// Per-kind event icon, mirroring the PWA's lucide set. `yoga` (seated figure) is
+/// drawn as a custom vector shape; everything else uses its SF Symbol. Sized by
+/// `size`, tinted by `color`.
 public struct KindIcon: View {
     public let kind: String
     public let size: CGFloat
@@ -61,12 +51,6 @@ public struct KindIcon: View {
     }
     public var body: some View {
         switch kind {
-        case EventKind.soundBath:
-            SingingBowlShape().stroke(color, style: stroke).frame(width: size, height: size)
-        case EventKind.drum:
-            DrumShape().stroke(color, style: stroke).frame(width: size, height: size)
-        case EventKind.handpan:
-            HandpanShape().stroke(color, style: stroke).frame(width: size, height: size)
         case EventKind.yoga:
             MeditationShape().stroke(color, style: stroke).frame(width: size, height: size)
         default:
@@ -78,45 +62,6 @@ public struct KindIcon: View {
     }
 }
 
-/// Singing bowl ("hangtál") with mallet, matching the PWA SVG (298×266 design
-/// space fit into the frame).
-struct SingingBowlShape: Shape {
-    func path(in r: CGRect) -> Path {
-        let s = min(r.width / 298, r.height / 266)
-        let ox = r.minX + (r.width - 298 * s) / 2
-        let oy = r.minY + (r.height - 266 * s) / 2
-        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: ox + x * s, y: oy + y * s) }
-        var path = Path()
-        // Bowl outer contour
-        path.move(to: p(30, 121))
-        path.addCurve(to: p(148, 97), control1: p(43, 98), control2: p(78, 96))
-        path.addCurve(to: p(268, 121), control1: p(219, 96), control2: p(253, 98))
-        path.addCurve(to: p(261, 205), control1: p(285, 147), control2: p(284, 180))
-        path.addCurve(to: p(149, 248), control1: p(236, 231), control2: p(196, 246))
-        path.addCurve(to: p(37, 205), control1: p(102, 247), control2: p(61, 230))
-        path.addCurve(to: p(30, 121), control1: p(14, 180), control2: p(14, 147))
-        path.closeSubpath()
-        // Top rim
-        path.move(to: p(30, 121))
-        path.addCurve(to: p(148, 156), control1: p(44, 143), control2: p(88, 156))
-        path.addCurve(to: p(268, 121), control1: p(208, 156), control2: p(253, 142))
-        // Inner rim ellipse
-        path.move(to: p(48, 111))
-        path.addCurve(to: p(148, 97), control1: p(71, 98), control2: p(103, 97))
-        path.addCurve(to: p(251, 111), control1: p(194, 97), control2: p(235, 98))
-        path.addCurve(to: p(149, 129), control1: p(233, 124), control2: p(195, 129))
-        path.addCurve(to: p(48, 111), control1: p(104, 129), control2: p(67, 124))
-        path.closeSubpath()
-        // Bottom decorative arc
-        path.move(to: p(50, 208))
-        path.addCurve(to: p(149, 221), control1: p(75, 217), control2: p(109, 221))
-        path.addCurve(to: p(248, 208), control1: p(189, 221), control2: p(223, 217))
-        // Mallet (chopstick)
-        path.move(to: p(174, 124)); path.addLine(to: p(229, 18))
-        path.addLine(to: p(253, 32)); path.addLine(to: p(198, 126)); path.closeSubpath()
-        return path
-    }
-}
 
 /// Seated meditation / yoga figure, matching the PWA SVG (24-unit design space).
 struct MeditationShape: Shape {
@@ -157,60 +102,8 @@ struct MeditationShape: Shape {
     }
 }
 
-/// Handpan seen from above — rim, profile arc + tone fields, matching the PWA
-/// SVG (530-unit design space).
-struct HandpanShape: Shape {
-    func path(in r: CGRect) -> Path {
-        let s = min(r.width, r.height) / 530
-        let ox = r.minX + (r.width - 530 * s) / 2
-        let oy = r.minY + (r.height - 530 * s) / 2
-        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: ox + x * s, y: oy + y * s) }
-        func circle(_ cx: CGFloat, _ cy: CGFloat, _ rad: CGFloat) -> CGRect {
-            CGRect(x: ox + (cx - rad) * s, y: oy + (cy - rad) * s, width: 2 * rad * s, height: 2 * rad * s)
-        }
-        var path = Path()
-        path.addEllipse(in: circle(265, 265, 242))   // rim
-        // Inner profile arc (open at the top)
-        path.move(to: p(404, 108))
-        path.addCurve(to: p(264, 55), control1: p(361, 70), control2: p(314, 55))
-        path.addCurve(to: p(49, 270), control1: p(140, 55), control2: p(49, 149))
-        path.addCurve(to: p(264, 485), control1: p(49, 390), control2: p(144, 485))
-        path.addCurve(to: p(480, 270), control1: p(383, 485), control2: p(480, 389))
-        path.addCurve(to: p(428, 131), control1: p(480, 219), control2: p(462, 171))
-        // Tone fields
-        path.addEllipse(in: circle(265, 145, 28))
-        path.addEllipse(in: circle(144, 232, 28))
-        path.addEllipse(in: circle(385, 232, 28))
-        path.addEllipse(in: circle(265, 271, 38))
-        path.addEllipse(in: circle(340, 374, 28))
-        // Open tone field (lower-left)
-        path.move(to: p(194, 401))
-        path.addCurve(to: p(164.49, 386.20), control1: p(181.99, 403.01), control2: p(170.06, 397.03))
-        path.addCurve(to: p(169.58, 353.58), control1: p(158.92, 375.38), control2: p(160.98, 362.19))
-        path.addCurve(to: p(202.20, 348.49), control1: p(178.19, 344.98), control2: p(191.38, 342.92))
-        path.addCurve(to: p(217, 378), control1: p(213.03, 354.06), control2: p(219.01, 365.99))
-        return path
-    }
-}
 
 /// lucide-style drum, matching the PWA drum glyph.
-struct DrumShape: Shape {
-    func path(in r: CGRect) -> Path {
-        let s = min(r.width, r.height) / 24
-        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: r.minX + x * s, y: r.minY + y * s) }
-        var path = Path()
-        path.move(to: p(2, 2)); path.addLine(to: p(10, 10))                         // left stick
-        path.move(to: p(22, 2)); path.addLine(to: p(14, 10))                        // right stick
-        path.addEllipse(in: CGRect(x: p(2, 4).x, y: p(2, 4).y, width: 20 * s, height: 10 * s)) // top rim
-        path.move(to: p(7, 13.4)); path.addLine(to: p(7, 21.3))                     // tension lines
-        path.move(to: p(12, 14)); path.addLine(to: p(12, 22))
-        path.move(to: p(17, 13.4)); path.addLine(to: p(17, 21.3))
-        path.move(to: p(2, 9)); path.addLine(to: p(2, 17))                          // body left wall
-        path.addQuadCurve(to: p(22, 17), control: p(12, 27))                        // body bottom
-        path.addLine(to: p(22, 9))                                                  // body right wall
-        return path
-    }
-}
 
 /// "Made by <name>" credit where only the maker's name is a tappable link to
 /// `AppLinks.maker`. Shared by the iOS and watch settings "About" sections.

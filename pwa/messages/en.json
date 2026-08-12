@@ -13,16 +13,13 @@
     "loading": "Loading…",
     "offline": "Offline — showing saved data",
     "error": "Couldn't load data",
-    "retry": "Retry",
     "break": "Break",
     "allStages": "All stages",
     "today": "Today",
     "youAreHere": "You are here"
   },
   "timetable": {
-    "title": "Timetable",
-    "empty": "Schedule coming soon",
-    "tba": "Line-up to be announced"
+    "title": "Timetable"
   },
   "favorites": {
     "filter": "Favorites only",

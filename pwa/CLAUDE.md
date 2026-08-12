@@ -35,9 +35,9 @@ public/             sw.js, icons/       scripts/  seed.ts, icons.ts
 - **DB → API → client.** `lib/queries.ts` reads Drizzle/Neon and shapes rows into the
   DTOs in `lib/types.ts`. `/api/schedule` is GET-only, no params, a
   dynamic conditional GET via `lib/etag.ts`: the payload is serialized + hashed once
-  per 60s (in-memory memo per warm instance — this replaces the old ISR
-  `revalidate = 60`), sent with an `ETag`, and a matching `If-None-Match` gets a
-  bodyless 304.
+  per 60s (in-memory memo per warm instance, so Neon is read at most once a minute —
+  the route is dynamic because it reads `If-None-Match`, which route caching cannot
+  see), sent with an `ETag`, and a matching `If-None-Match` gets a bodyless 304.
 - **All views are `"use client"`** and fetch through `useSchedule()`
   (`lib/useSchedule.ts`): one module-level shared store per endpoint (any number of
   subscribed components share a single request), hydrate from `localStorage`, fetch
@@ -91,8 +91,9 @@ pnpm icons               # regenerate every icon from the oasis mark (web + appl
   feed malformed data.
 - **Payload memo = 60s:** DB edits take up to a minute (plus client cache) to appear.
   No realtime.
-- **There is no map feature.** MicrOasis has no site map; the `/map` route, the
-  `locations` tables and `/api/locations` were removed wholesale. `lib/geo.ts` +
-  `lib/useNearestStage.ts` survive — they only do the per-stage GPS geofence.
+- **There is no map feature and no `locations` data.** `/api/schedule` is the only
+  endpoint. `lib/geo.ts` + `lib/useNearestStage.ts` are not map code — they only
+  resolve which stage the device is standing at, from the stage rows' own
+  `lat/lng/radiusM`.
 - **Date serialization is a cross-platform contract** — see `../CLAUDE.md` §2 before
   touching `.toISOString()` in `queries.ts` or the offset literals in `festival.ts`.

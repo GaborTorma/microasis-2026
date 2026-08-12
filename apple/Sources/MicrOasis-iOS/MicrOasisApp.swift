@@ -36,7 +36,7 @@ struct MicrOasisApp: App {
 
     /// Screenshot-only (DEBUG/TestFlight): render the home-screen widgets
     /// full-screen so the harness can capture a marketing shot of them. Set
-    /// `microasis.startWidgetPreview` to one or two stage slugs ("bowl,terrace":
+    /// `microasis.startWidgetPreview` to one or two stage slugs ("oasis,wadi":
     /// medium gets the first, small the second). No-op in App Store builds.
     private var widgetPreviewSlugs: [String]? {
         guard AppEnv.debugToolsEnabled,

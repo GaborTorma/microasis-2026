@@ -88,10 +88,10 @@ private enum StageDirectory {
 /// configuration persistence (SpringBoard stored empty parameters), and a
 /// duplicate entity name broke deserialization in the widget process
 /// ("StageEntity is not a registered AppEntity identifier" → stage always
-/// nil). watchOS keeps the shipped `StageSelectionIntent`/`StageEntity`/
-/// `StageQuery` names (renaming would reset users' configured complications);
-/// iOS gets `Home`-prefixed twins, typealiased so shared code compiles
-/// against `StageEntity`/`StageIntent` on both platforms.
+/// nil). watchOS owns the plain `StageSelectionIntent`/`StageEntity`/
+/// `StageQuery` names — never rename them, that resets every configured
+/// complication — and iOS gets `Home`-prefixed twins, typealiased so shared
+/// code compiles against `StageEntity`/`StageIntent` on both platforms.
 #if os(watchOS)
 /// A festival stage the user can pin a widget instance to. `id` is the slug.
 struct StageEntity: AppEntity {

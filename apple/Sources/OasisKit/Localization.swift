@@ -21,7 +21,6 @@ public enum L {
         "nav.timetable": ("Időrend", "Timetable"),
         "nav.now": ("Most", "Now"),
         "nav.share": ("Megosztás", "Share"),
-        "now.live": ("Most", "Live"),
         "now.playingNow": ("Most játszik", "Playing now"),
         "now.upNext": ("Következik", "Up next"),
         "now.until": ("eddig", "until"),
@@ -29,7 +28,7 @@ public enum L {
         "now.ended": ("Jövőre újra találkozunk", "See you again next year"),
         "now.endedEyebrow": ("A fesztiválnak vége", "The festival is over"),
         "now.countdown": ("Visszaszámlálás", "Countdown"),
-        // Opening-day camp scene (festival start → Mandala opening ceremony).
+        // Opening-day camp scene (festival start → the first act).
         "now.tent.title": ("Épül a tábor", "Setting up camp"),
         "now.tent.body": (
             "Keress magadnak egy jó helyet, verd fel a sátrad és készülj fel az első szettre!",
@@ -50,7 +49,6 @@ public enum L {
         "settings.title": ("Beállítások", "Settings"),
         "settings.stages": ("Színpadok", "Stages"),
         "settings.language": ("Nyelv", "Language"),
-        "settings.reorderHint": ("Húzd a sorrend módosításához", "Drag to reorder"),
         "settings.done": ("Kész", "Done"),
         "settings.about": ("Névjegy", "About"),
         "settings.privacy": ("Adatvédelem", "Privacy Policy"),
@@ -73,7 +71,6 @@ public enum L {
         "settings.testTime": ("Teszt idő", "Test time"),
         "settings.testLocation": ("Teszt hely", "Test location"),
         "settings.testLocationFar": ("Távol", "Far away"),
-        "days.short": ("nap", "day"),
         "watch.noEvents": ("Nincs program ezen a színpadon", "No programme on this stage"),
         "watch.noProgram": ("Ekkor nincs program", "Nothing on at this time"),
         // Favorites (tap-to-toggle labels + the timetable dim-filter).

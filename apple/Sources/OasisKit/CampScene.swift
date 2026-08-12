@@ -7,8 +7,8 @@ public extension ScheduleData {
     private var acts: [EventDTO] { events.filter { $0.kind != "break" } }
 
     /// Gates-open window: festival start until the first act begins. Derived
-    /// from the data — no named ceremony to match — so it holds for any lineup.
-    /// nil when there are no acts, or the first one starts before the gates.
+    /// from the schedule itself, so it holds for any lineup. nil when there are
+    /// no acts, or the first one starts before the gates.
     var campSceneWindow: Range<Date>? {
         guard let first = acts.map(\.startsAt).min(),
               festival.startsAt < first else { return nil }

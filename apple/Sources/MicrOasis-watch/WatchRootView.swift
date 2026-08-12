@@ -75,7 +75,7 @@ struct WatchRootView: View {
                 e.slug.map { L.t(favorites.isFavorite($0) ? "fav.remove" : "fav.add", settings.locale) }
             } ?? "")
             // Settings (leading) + the share QR (trailing) live in the system bottom
-            // bar, so they never overlap the card's stage dots or its workshop chip the
+            // bar, so they never overlap the card's stage dots or its language chip the
             // way a bottom-corner overlay would. One bottomBar item with an HStack +
             // Spacer splits them to the corners; a multi-item ToolbarItemGroup doesn't
             // honour Spacer on watchOS, so both would clump in the middle.

@@ -6,9 +6,8 @@
 // hand out (share, QR, metadata) so it reads as our own domain, not the Vercel host.
 export const SITE_URL = "https://microasis.torma.ai";
 
-// App Store listing (Apple ID 6800753437). Consumers still handle null, which is
-// what this was before the app record existed — see AppLinks.appStore for the
-// Swift twin.
+// App Store listing (Apple ID 6800753437). Typed nullable so every call site
+// keeps its guard — see `AppLinks.appStore` in OasisKit for the Swift twin.
 export const APP_STORE_URL: string | null = "https://apps.apple.com/app/id6800753437";
 
 // The native share sheet hands out the /app showcase landing page; the QR (and the
@@ -38,9 +37,6 @@ export function isAndroid(): boolean {
 // only non-Apple installable devices get the PWA "Add to Home Screen" button. A
 // real Mac reports a "Macintosh" UA with 0 touch points, so isIOS() alone misses
 // it and Chrome-on-Mac (which fires beforeinstallprompt) wrongly got the PWA CTA.
-export function isApple(): boolean {
-  return isIOS() || /macintosh|mac os x/i.test(ua());
-}
 
 // Running as an installed PWA (home-screen), not in a browser tab.
 export function isStandalone(): boolean {

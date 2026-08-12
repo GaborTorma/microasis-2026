@@ -78,8 +78,7 @@ export function InstallPrompt({
   // standalone) — an install banner would be noise.
   if (mode === "android" && installed) return null;
   const iosMode = mode === "ios";
-  // The iOS banner's only action is the App Store; with no listing yet there is
-  // nothing to offer, so don't show it at all.
+  // The iOS banner's only action is the App Store, so it needs a listing URL.
   if (iosMode && !APP_STORE_URL) return null;
 
   return createPortal(

@@ -6,10 +6,10 @@ limits. The privacy/support URLs point at the deployed pwa.
 > **Unofficial fan app.** Keep all wording referential ("guide for"); never imply
 > it is the official festival app. See `../CLAUDE.md` and the in-app disclaimer.
 
-## Submission gotchas (learned the hard way on 1.0)
+## Submission checklist (the things the API cannot tell you are missing)
 
 The API reports "appStoreVersions … is not in valid state" for *every* missing
-piece, without saying which. What actually blocked 1.0, in the order found:
+piece, without saying which. Check these:
 
 1. **App availability was never set** — a brand-new app record has no territories
    at all (`GET /v2/appAvailabilities/<id>` → 404). Set it before anything else.
@@ -19,14 +19,14 @@ piece, without saying which. What actually blocked 1.0, in the order found:
    capture (1284×2778) *uploads fine* and only fails minutes later, asynchronously:
    `assetDeliveryState.state = FAILED, IMAGE_INCORRECT_DIMENSIONS`. Always re-read
    the state after uploading. 6.5" alone does not satisfy the requirement.
-   `screenshots.yaml` now captures on an iPhone 17 Pro Max for this reason.
+   `screenshots.yaml` captures on an iPhone 17 Pro Max for this reason.
 4. **Age rating: `socialMedia` and `userGeneratedContent`** must be answered, but
    the API's "missing required attribute" error does *not* list `socialMedia` —
    only the web questionnaire shows it. Check both after a PATCH.
 5. **The price must be picked explicitly** (Pricing and Availability → 0 / Free).
    `appPriceSchedule` reports "present" on a fresh app even when no price has been
-   chosen, so the API cannot tell you this one is missing. This was the last
-   blocker on 1.0 — with it set, the version flipped to READY_FOR_REVIEW.
+   chosen, so the API cannot tell you this one is missing. Without an explicit
+   price the version never reaches READY_FOR_REVIEW.
 
 App Privacy ("Data Not Collected") is web-only too: no API endpoint exists on
 this API version, and it must show **Published**, not just filled in.
@@ -179,16 +179,15 @@ Kérdés vagy visszajelzés? Írj a microasis2026@torma.ai címre.
 ## What's New
 
 1.0 is the first release, so App Store Connect does not accept a "What's New"
-text for it (the field is read-only until an update). Write one here when 1.1
-comes around; the entries the Manas app accumulated were removed, since none of
-them describe this app.
+text for it — the field is read-only until an update. Write one here when 1.1
+comes around.
 
 
 ## Notes for Review
 
 Unofficial, fan-made companion guide for the MicrOasis 2026 music festival (Hungary, August 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MicrOasis 2026" is used referentially to indicate which festival this guide covers.
 
-New in this version (1.4): favourites and iPhone home-screen widgets. Favourites are hearts the user taps onto acts; they are stored locally on the device and synced directly between the user's own iPhone and Apple Watch via Apple's WatchConnectivity framework — nothing is sent to any server, there is no account, and no data is collected. The home-screen widgets (WidgetKit, small/medium) show the same public schedule as the app for a chosen stage. No new permissions; the App Privacy answers are unchanged.
+Favourites are hearts the user taps onto acts; they are stored locally on the device and synced directly between the user's own iPhone and Apple Watch via Apple's WatchConnectivity framework — nothing is sent to any server, there is no account, and no data is collected. The home-screen widgets (WidgetKit, small/medium) show the same public schedule as the app for a chosen stage.
 
 No account or login required — no sign-up, no authentication of any kind. The app is free with no ads and no in-app purchases.
 
@@ -209,6 +208,6 @@ The submission includes an embedded watchOS app and watch widgets/complications 
 - **Export compliance:** already handled — `ITSAppUsesNonExemptEncryption=false` in
   the build (HTTPS-only, exempt). No "Missing Compliance".
 - **Pricing:** Free.
-- **Availability:** your choice (all countries, or restrict to Hungary).
-- **Build:** attach build 14 to the 1.4 version (live is 1.3).
-- **Version release:** Manual (recommended) so you control go-live timing.
+- **Availability:** must be set explicitly — a new app record has no territories.
+- **Build:** attach the processed build to the version before submitting.
+- **Version release:** automatic after approval, or manual if you want to control go-live timing.

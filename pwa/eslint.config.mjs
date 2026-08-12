@@ -7,8 +7,9 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
-      // We hydrate client-only state (localStorage settings, cached schedule,
-      // saved tent pin) inside an effect on mount — this is the SSR-safe
+      // We hydrate client-only state (settings, favorites, the cached schedule
+      // and the dismissed install/disclaimer flags) inside an effect on mount —
+      // this is the SSR-safe
       // pattern (localStorage is undefined on the server, so a lazy initializer
       // would crash). The synchronous setState there is intentional, so this
       // rule is a warning rather than a build-breaking error.

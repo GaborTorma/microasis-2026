@@ -24,9 +24,9 @@ export const stages = pgTable("stages", {
   name: text("name").notNull(),
   subtitle: jsonb("subtitle").$type<I18nText>(),
   /** Primary theme color (hex) drawn from the printed timetable poster. */
-  color: text("color").notNull().default("#b5532f"),
+  color: text("color").notNull().default("#4a3428"),
   /** Brighter accent color (hex) for now-playing / highlights. */
-  accent: text("accent").notNull().default("#e8a04c"),
+  accent: text("accent").notNull().default("#c89468"),
   sortOrder: integer("sort_order").notNull().default(0),
   isDefault: boolean("is_default").notNull().default(false),
   lat: real("lat"),
@@ -35,27 +35,12 @@ export const stages = pgTable("stages", {
 });
 
 /**
- * kind discriminates rendering. Structural kinds: music / ceremony / break.
- * Workshops carry their *category* as the kind (drives the per-cell icon):
- * sound-bath / voice / drum / yoga / wind / dance / drama / mind / build /
- * handpan, with "workshop" as the uncategorised fallback. Open string on the
- * wire (Swift keeps it raw) — widening needs no DB migration.
+ * kind discriminates rendering. `music` is a DJ set or live act, `break` is a
+ * gap the poster marks explicitly. The rest exist for anything the Yoga Terrace
+ * eventually programmes. Open string on the wire (Swift keeps it raw), so
+ * widening needs no DB migration.
  */
-export type EventKind =
-  | "music"
-  | "ceremony"
-  | "break"
-  | "workshop"
-  | "sound-bath"
-  | "voice"
-  | "drum"
-  | "yoga"
-  | "wind"
-  | "dance"
-  | "drama"
-  | "mind"
-  | "build"
-  | "handpan";
+export type EventKind = "music" | "break" | "workshop" | "yoga" | "ceremony";
 /** Spoken-language badge for talk-like events: both / english only / hungarian only. */
 export type LangAvailability = "both" | "en" | "hu";
 

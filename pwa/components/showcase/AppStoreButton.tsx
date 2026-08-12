@@ -15,7 +15,8 @@ export function AppStoreButton({
   pulse?: boolean;
 }) {
   const width = Math.round(height * BADGE_AR);
-  // No listing yet → no badge (Apple's artwork must not link anywhere else).
+  // Without a listing URL the badge must not render — Apple's artwork may
+  // not link anywhere else.
   if (!APP_STORE_URL) return null;
   return (
     <a

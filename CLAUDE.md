@@ -27,8 +27,9 @@ Rules a future edit must respect:
 1. **Field parity is manual.** Add/rename/retype a field in `types.ts` → mirror it in
    `Models.swift` (and vice-versa) in the same change. They are in sync today
    (incl. `radiusM: number|null` ↔ `Int?`, event `artist: string|null` ↔ `String?`,
-   and event `slug: string` ↔ `String?` — optional in Swift on purpose: pre-slug
-   payloads and old disk caches must keep decoding).
+   and event `slug: string` ↔ `String?` — optional in Swift on purpose, so a
+   payload or a disk cache missing the field degrades instead of failing the
+   whole decode).
    A mismatch silently breaks decoding on device — the web app keeps working, so
    it's easy to miss.
 2. **The date wire format is a strict dual-shape contract — the most fragile edit in
@@ -47,22 +48,21 @@ Rules a future edit must respect:
    raw `String` for forward-compat; web narrows to unions (`EventKind`,
    `LangAvailability`). Adding a new `kind` won't crash the apps but won't render
    (icon/chip fall through to defaults) until Swift handles it.
-5. **`/api/schedule` is the only endpoint.** There is no map/locations feature on
-   any client (removed for MicrOasis — the festival has no site map), so every
-   client reads exactly one URL.
+5. **`/api/schedule` is the only endpoint.** The API surface is deliberately one
+   URL: every client reads the same payload and nothing else.
 6. **The endpoint is a conditional GET.** The API sends an `ETag` (payload hash,
    `pwa/lib/etag.ts`); the web hook (`pwa/lib/useSchedule.ts`) and `APIClient.swift`
    send `If-None-Match` and treat a bodyless 304 as "serve the cached copy". Keep
-   304 handling intact on both clients when touching the fetch layer; clients that
-   never send the header (already-shipped app versions) still get full 200s.
+   304 handling intact on both clients when touching the fetch layer; a client
+   that sends no `If-None-Match` simply gets a full 200.
 
 ## Cross-platform invariants (keep both sides in sync)
 
 - **Hungarian is the default language.** First visit follows the browser/device:
   any declared Hungarian preference anywhere in `Accept-Language` → HU, otherwise
-  EN; no header/locale → HU. (Web checks the *whole* list, not just the first tag —
-  iOS Safari often lists English ahead of Hungarian on a Hungarian device, so
-  first-tag-only wrongly served EN.) A user's explicit toggle persists and always wins. Implemented independently in
+  EN; no header/locale → HU. (Web must check the *whole* list, not just the first
+  tag: iOS Safari often lists English ahead of Hungarian on a Hungarian device.)
+  A user's explicit toggle persists and always wins. Implemented independently in
   web (`pwa/i18n/request.ts`, `i18n/config.ts` `DEFAULT_LOCALE='hu'`) and apple
   (`OasisKit/AppState.swift` device default). The **widgets** (watch Smart Stack +
   iOS home screen) read their host app's chosen language through an **App Group**

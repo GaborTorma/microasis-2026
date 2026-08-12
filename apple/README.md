@@ -16,7 +16,7 @@ apple/
       AppState.swift          #   ScheduleStore + Settings (order/hidden/locale)
       Localization.swift      #   AppLocale (HU default) + UI strings
       Formatting.swift        #   Europe/Budapest date/time formatting
-      Theme.swift             #   green palette + Color(hex:) + language chips
+      Theme.swift             #   earthy palette + Color(hex:) + kind icons
       HomeWidgetCard.swift    #   iOS home-widget layouts (shared w/ in-app preview)
     MicrOasis-iOS/                # iOS / iPadOS app (SwiftUI)
       MicrOasisApp.swift, RootView.swift, TimetableView.swift,
@@ -63,10 +63,9 @@ xcodebuild -project MicrOasis.xcodeproj -scheme MicrOasisWatch \
 
 ## Features
 
-**iOS / iPadOS** — green theme matching the PWA:
-- Continuous, time-proportional **timetable** (per-day): fixed hour gutter,
-  horizontally scrollable stage columns, language chips on workshops, live
-  "now" line.
+**iOS** — same earthy theme as the PWA:
+- Continuous, time-proportional **timetable**: fixed hour gutter, horizontally
+  scrollable stage columns, dimmed break blocks, live "now" line.
 - **Now** tab: per-stage now-playing + up-next, with a pre-festival countdown.
 - **Settings**: drag to reorder stages, eye toggle to hide them.
 - HU/EN toggle (HU default).

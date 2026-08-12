@@ -97,9 +97,9 @@ disclaimer with `-microasis.disclaimerSeen 1`.
   devices) mirrors the app's language, the favorite slugs (`microasis.favorites`),
   the QA `microasis.debugNow` clock (DEBUG/TestFlight only), and — same group
   container — **one schedule disk cache** (the widget reuses the app's fetch).
-- **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, `1.4.0`) bumped per
-  release; `CURRENT_PROJECT_VERSION` (integer, currently `14`) bumped per TestFlight
-  upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
+- **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, currently `1.0.0`)
+  bumped per release; `CURRENT_PROJECT_VERSION` (integer, currently `1`) bumped per
+  TestFlight upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
   plist or the bump won't reach the binary.
 - **Bundle IDs:** `ai.torma.microasis.2026` (iOS) · `.widget` (iOS widget) ·
   `.watchkitapp` (watch) · `.watchkitapp.widget` (watch widget). Team `5HW26FBLH4`,
@@ -166,18 +166,17 @@ disclaimer with `-microasis.disclaimerSeen 1`.
   hard-fails on any date shape outside the two the API emits. See `../CLAUDE.md` §2
   before any date-related edit.
 - **Schedule endpoint only.** `APIClient.baseURL` is `…/api` and the only call is
-  `schedule` — the web app serves no other endpoint (the map feature was removed
-  repo-wide).
+  `schedule` — the web app serves no other endpoint.
 - **Offline cache lives in Application Support** (not Caches) so the OS won't purge it
   under storage pressure — important for watch offline-after-first-load. All four
   targets are entitled to the App Group, so it sits in the **group container**
   (`…/AppGroup/…/Library/Application Support/microasis-schedule.json`, shared between an
-  app and its widget extension on the same device); the old per-process location is
-  still read as a fallback after an update. A 200 rewrites `microasis-schedule.json` +
+  app and its widget extension on the same device); each target's own container is
+  read as a fallback when the group container is unavailable. A 200 rewrites `microasis-schedule.json` +
   its `.etag` sidecar; an ETag-matching refetch is a bodyless 304 that leaves the
   cache untouched.
-- **No stages hidden by default** (`AppState.swift` `?? []`) — kept in sync with web,
-  see `../CLAUDE.md`. Bowl was default-hidden until its poster shipped.
+- **The Yoga Terrace is hidden by default** (`AppState.swift` `?? ["terrace"]`) —
+  kept in sync with web, see `../CLAUDE.md`.
 - **Debug tooling is gated to DEBUG/TestFlight** (`AppEnv.debugToolsEnabled`, an
   `appStoreReceiptURL` check) and compiled out of App Store builds. Drive it from
   the simulator:
@@ -219,5 +218,5 @@ disclaimer with `-microasis.disclaimerSeen 1`.
   AppEntity identifier", metadata fetch via linkd fails, Apple parser faults on a
   corrupt `to-0.0` AppEnum case) → the widget falls back to the default stage.
   Reproduced on two sims, fresh installs, with `ENABLE_DEBUG_DYLIB=NO` too. Stage
-  configs **work on a real device** (verified 2026-07-06) — don't chase the
+  configs **work on a real device** — don't chase the
   default-stage fallback on the simulator.

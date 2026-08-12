@@ -13,7 +13,7 @@ import { AndroidInstalledBadge } from "./AndroidInstalledBadge";
 // there — the button is deliberately Android-exclusive). Android is detected by
 // UA (post-hydration state, so SSR stays the badge with no mismatch), NOT by
 // `beforeinstallprompt` — in-app WebViews (Facebook & co.) never fire it, and
-// exactly there the App Store badge used to show to Android users. The tap
+// gating on it would show the App Store badge to Android users there. The tap
 // itself degrades gracefully via installAndroid(): native prompt → Chrome
 // intent escape → help sheet.
 export function InstallCta({

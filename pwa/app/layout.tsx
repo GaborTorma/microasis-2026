@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   },
   // Apple Smart App Banner: native "open in App Store" strip Safari shows on iOS.
   // Covers real Safari; InstallPrompt covers the in-app / non-Safari iOS cases.
-  itunes: { appId: "6782099675" },
+  itunes: { appId: "6800753437" },
   formatDetection: { telephone: false },
 };
 

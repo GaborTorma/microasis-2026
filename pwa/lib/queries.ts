@@ -6,8 +6,6 @@ import { FESTIVAL } from "./festival";
 const dayFmt = new Intl.DateTimeFormat("en-CA", { timeZone: FESTIVAL.timezone });
 export const festivalDay = (d: Date) => dayFmt.format(d); // YYYY-MM-DD
 
-export type ScheduleResponse = Awaited<ReturnType<typeof getSchedule>>;
-
 export async function getSchedule() {
   const [stageRows, eventRows] = await Promise.all([
     db.select().from(schema.stages).orderBy(asc(schema.stages.sortOrder)),
