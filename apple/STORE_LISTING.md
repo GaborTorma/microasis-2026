@@ -79,7 +79,7 @@ Guide for MicrOasis 2026 is an independent companion app for visitors to the Mic
 THE WHOLE PROGRAMME
 - Browse the complete timetable across every stage: Oasis, Wadi and the Yoga Terrace.
 - A time-proportional grid on iPhone lays the day out to scale, so overlaps and gaps are easy to see at a glance.
-- Every act shows its performer and a type icon — live music, ceremonies, sound baths, drums, yoga, workshops and more — so the day is easy to read.
+- Every set shows its start and end time, so the night reads at a glance; breaks are marked and dimmed rather than left as blank gaps.
 - Scroll horizontally between stages and tap any act for the details.
 
 NOW VIEW
@@ -132,7 +132,7 @@ A Guide for MicrOasis 2026 egy független kísérőalkalmazás a magyarországi 
 A TELJES PROGRAM
 - Böngészd a teljes időrendet minden színpadon: Oasis, Wadi és a Yoga Terrace.
 - iPhone-on idő-arányos rács mutatja a napot, így az átfedések és a szünetek egy pillantással átláthatók.
-- Minden programnál ott a fellépő neve és egy típus-ikon — élő zene, szertartások, hangfürdő, dobok, jóga, workshopok és még több —, így a nap könnyen olvasható.
+- Minden szettnél ott a kezdés és a vég, így az éjszaka egy pillantással átlátható; a szüneteket jelöljük és halványítjuk, nem üres résként hagyjuk.
 - Görgess vízszintesen a színpadok között, és koppints bármelyik fellépőre a részletekért.
 
 MOST NÉZET
@@ -176,121 +176,13 @@ Ezt az alkalmazást egy független rajongó készítette, és nem a hivatalos fe
 
 Kérdés vagy visszajelzés? Írj a microasis2026@torma.ai címre.
 
-## What's New — v1.4 (current, ≤4000)
+## What's New
 
-### English (579 chars)
+1.0 is the first release, so App Store Connect does not accept a "What's New"
+text for it (the field is read-only until an update). Write one here when 1.1
+comes around; the entries the Manas app accumulated were removed, since none of
+them describe this app.
 
-What's new in 1.4:
-
-- Favourites: tap an act to heart it. Your picks stand out in the timetable and Now view, sync automatically between iPhone and Apple Watch, and are marked in the widgets — stored only on your devices, no account needed.
-- Home-screen widgets: small and medium widgets show what is playing now and what is up next on a stage of your choice. Add one per stage — a tap opens the app right at that stage.
-- Small polish throughout the widgets and event blocks.
-
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
-
-### Magyar (666 chars)
-
-Újdonságok az 1.4-ben:
-
-- Kedvencek: koppints egy programra, és jelöld szívvel. A kedvenceid kiemelkednek az időrendben és a Most nézetben, automatikusan szinkronizálódnak iPhone és Apple Watch között, és a widgetekben is jelölve vannak — csak a készülékeiden tárolódnak, fiók nélkül.
-- Kezdőképernyő-widgetek: kicsi és közepes widgetek mutatják, mi szól éppen és mi következik a választott színpadon. Adj hozzá színpadonként egyet — egy koppintás az appot pont annál a színpadnál nyitja.
-- Apróbb csiszolások a widgeteken és az esemény-blokkokon.
-
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
-
-## What's New — v1.3 (history)
-
-### English (558 chars)
-
-What's new in 1.3:
-
-- Faster, lighter updates: the app now checks for schedule changes instead of re-downloading everything, so refreshes are quicker and use less data — handy on festival Wi-Fi.
-- Apple Watch improvements: the watch app and its widgets now share one schedule, so widgets stay in step with the app and update more efficiently.
-- The share screen on the watch is easier to read, and the widget card scales more gracefully across watch sizes.
-
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
-
-### Magyar (625 chars)
-
-Újdonságok az 1.3-ban:
-
-- Gyorsabb, könnyebb frissítés: az app mostantól csak a változásokat ellenőrzi a teljes program újratöltése helyett, így a frissítés gyorsabb és kevesebb adatot használ — jól jön a fesztiválos térerőnél.
-- Apple Watch fejlesztések: az óra-app és a widgetek mostantól közös programot használnak, így a widgetek együtt mozognak az appal és hatékonyabban frissülnek.
-- Az óra megosztás-képernyője könnyebben olvasható, a widget-kártya pedig szebben skálázódik a különböző óraméreteken.
-
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
-
-## What's New — v1.2 (history)
-
-### English (579 chars)
-
-What's new in 1.2:
-
-- Artists, front and centre: each act now shows the performer's name alongside the title, so you can see who is playing at a glance.
-- A clearer programme: every type of happening has its own icon — live music, ceremonies, sound baths and singing bowls, drums and handpan, yoga, workshops, dance, theatre and talks.
-- A more refined Apple Watch layout: the now-playing card gives the artist and title more room, with a subtle festival watermark behind them.
-
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
-
-### Magyar (593 chars)
-
-Újdonságok az 1.2-ben:
-
-- A fellépők a középpontban: minden program mostantól a cím mellett a fellépő nevét is mutatja, így egy pillantással látod, ki játszik.
-- Átláthatóbb program: minden programtípusnak saját ikonja van — élő zene, szertartások, hangfürdő és hangtálak, dobok és handpan, jóga, workshopok, tánc, színház és előadások.
-- Csiszoltabb Apple Watch elrendezés: az éppen játszó kártyán több hely jut a fellépőnek és a címnek, mögöttük finom fesztivál-vízjellel.
-
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
-
-## What's New — v1.1 (history)
-
-### English (567 chars)
-
-What's new in 1.1:
-
-- Share the app on the spot: a new Share tab with a QR code a friend can scan — App Store on iPhone, the web app on anything else — plus the system share sheet. On Apple Watch a share QR now lives in the toolbar.
-- The Now view comes alive around the edges of the festival: an opening-day welcome while the camp goes up, and a closing scene once the music ends.
-- Polish throughout, including a softer, festival-toned background.
-
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
-
-### Magyar (593 chars)
-
-Újdonságok az 1.1-ben:
-
-- Add tovább helyben: új Megosztás fül QR-kóddal, amit a barátod beolvasva azonnal megkapja az appot — iPhone-on az App Store, máson a webes verzió —, plusz a rendszer megosztási lapja. Apple Watch-on a megosztó QR mostantól az eszköztárban.
-- A Most nézet életre kel a fesztivál szélein: nyitónapi köszöntés a tábor építése közben, a zene után pedig záró jelenet.
-- Apróbb csiszolások, köztük egy lágyabb, fesztiválhangulatú háttér.
-
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
-
-## What's New — v1.0 (history)
-
-### English (565 chars)
-
-First release.
-
-- Full festival timetable across all stages (Oasis, Wadi, Yoga Terrace) on a time-proportional grid.
-- "Now" view: playing now, up next, and a pre-festival countdown.
-- Apple Watch app to browse one stage at a time, plus Smart Stack widgets and complications.
-- Works offline after the first load.
-- Bilingual Hungarian and English; all times in Budapest time.
-- Optional on-device location to auto-select the nearest stage.
-
-This is an unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
-
-### Magyar (654 chars)
-
-Első kiadás.
-
-- Teljes fesztiválidőrend minden színpadon (Oasis, Wadi, Yoga Terrace) idő-arányos rácson.
-- „Most" nézet: mi szól éppen, mi következik, és visszaszámlálás a fesztivál kezdetéig.
-- Apple Watch-alkalmazás egy színpad böngészéséhez, valamint Smart Stack widgetek és óraszámlap-kiegészítők.
-- Az első betöltés után offline is működik.
-- Kétnyelvű: magyar és angol; minden időpont budapesti idő szerint.
-- Opcionális, kizárólag a készüléken használt helymeghatározás a legközelebbi színpad kiválasztásához.
-
-Ez egy nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
 
 ## Notes for Review
 
