@@ -35,11 +35,11 @@ limits. The privacy/support URLs point at the deployed pwa.
 ## Promotional text (≤170, editable without resubmission)
 - **EN** (150):
 
-Unofficial fan-made guide to MicrOasis 2026: full timetable, live Now view, favourites synced iPhone↔Watch, home-screen widgets, offline — share it by QR.
+Unofficial fan-made guide to MicrOasis 2026: full timetable, live Now view, favourites synced between iPhone and Watch, home-screen widgets, offline — share it by QR.
 
 - **HU** (156):
 
-Nem hivatalos rajongói kalauz a MicrOasis 2026-hoz: teljes időrend, élő Most nézet, kedvencek iPhone↔Watch szinkronnal, widgetek, offline — QR-ral továbbadható.
+Nem hivatalos rajongói kalauz a MicrOasis 2026-hoz: teljes időrend, élő Most nézet, kedvencek iPhone és Watch között, widgetek, offline — QR-ral továbbadható.
 
 ## Description (≤4000)
 
