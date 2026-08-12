@@ -124,11 +124,11 @@ const WADI: Entry[] = [
   { d: "2026-08-21", s: "17:30", title: t("ADX & D365") },
   { d: "2026-08-21", s: "19:30", title: t("Varis") },
   { d: "2026-08-21", s: "21:00", title: t("Pau Perez") },
-  { d: "2026-08-21", s: "22:30", title: t("1SU") },
+  { d: "2026-08-21", s: "22:30", title: t("ISU") },
   // Saturday 08/22
   { d: "2026-08-22", s: "00:00", title: t("Mode & Valens") },
   { d: "2026-08-22", s: "02:00", title: t("Azami") },
-  { d: "2026-08-22", s: "03:30", title: t("Aga2l") },
+  { d: "2026-08-22", s: "03:30", title: t("Aga2L") },
   { d: "2026-08-22", s: "05:00", title: t("BLZS") },
   { d: "2026-08-22", s: "06:30", title: BREAK, kind: "break" },
   { d: "2026-08-22", s: "15:00", title: t("Sabani") },
@@ -139,7 +139,7 @@ const WADI: Entry[] = [
   { d: "2026-08-22", s: "22:30", title: t("Maron") },
   // Sunday 08/23
   { d: "2026-08-23", s: "00:00", title: t("Justine Perry") },
-  { d: "2026-08-23", s: "02:00", title: t("Réka Zalán") },
+  { d: "2026-08-23", s: "02:00", title: t("Reka Zalan") },
   { d: "2026-08-23", s: "04:00", title: t("Mankind") },
   { d: "2026-08-23", s: "05:30", title: t("Faktor X") },
   { d: "2026-08-23", s: "07:00", title: BREAK, kind: "break" },
@@ -160,7 +160,7 @@ const OASIS: Entry[] = [
   { d: "2026-08-20", s: "23:30", title: t("Constratti") }, // runs to 02:00 on Friday
   // Friday 08/21
   { d: "2026-08-21", s: "02:00", title: t("Pauli (live)") },
-  { d: "2026-08-21", s: "04:00", title: t("Spy C & Révész Bálint") },
+  { d: "2026-08-21", s: "04:00", title: t("Spy C & Revesz Balint") },
   { d: "2026-08-21", s: "06:00", title: t("Octave") },
   { d: "2026-08-21", s: "08:30", title: t("Lakidani & Moh") },
   { d: "2026-08-21", s: "10:30", title: BREAK, kind: "break" },
