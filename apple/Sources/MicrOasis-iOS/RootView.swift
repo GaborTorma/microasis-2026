@@ -186,7 +186,7 @@ struct HeaderBar: View {
                     .tracking(2)
                     .foregroundStyle(Theme.cream.opacity(0.85))
                     .lineLimit(1)
-                Text(L.t("app.title", settings.locale).uppercased())
+                Text(L.t("app.short", settings.locale).uppercased())
                     .font(.system(size: 22, weight: .heavy, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(colors: [Theme.cream, Theme.sun, Theme.ember],

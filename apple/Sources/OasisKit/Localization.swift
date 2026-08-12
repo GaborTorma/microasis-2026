@@ -14,6 +14,9 @@ public extension I18nText {
 public enum L {
     private static let table: [String: (hu: String, en: String)] = [
         "app.title": ("MicrOasis 2026", "MicrOasis 2026"),
+        // Short form for the app chrome, where the year only costs room —
+        // mirrors `app.short` in the web messages files.
+        "app.short": ("MicrOasis", "MicrOasis"),
         // Intentionally English in both locales — matches the App Store name
         // "Guide for MicrOasis 2026" and frames the name as referential (nominative) use.
         "app.guidefor": ("Guide for", "Guide for"),

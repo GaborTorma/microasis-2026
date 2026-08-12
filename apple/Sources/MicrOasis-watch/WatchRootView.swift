@@ -150,7 +150,7 @@ struct WatchRootView: View {
             VStack(alignment: .leading, spacing: 1) {
                 // Quiet wordmark so the watch screen says what it is on its own —
                 // a stage name alone doesn't reveal whose schedule this is.
-                Text(L.t("app.title", settings.locale).uppercased())
+                Text(L.t("app.short", settings.locale).uppercased())
                     .font(.system(size: 9, weight: .bold, design: .rounded))
                     .tracking(1)
                     .foregroundStyle(Theme.cream.opacity(0.5))

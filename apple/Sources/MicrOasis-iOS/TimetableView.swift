@@ -117,7 +117,7 @@ struct TimetableView: View {
                     }
                     .onAppear {
                         location.refresh(stages: stages)
-                        selectNearestColumn(stages)
+                        selectNearestColumn(stages, effCols: effCols)
                         consumeStageJump(stages, effCols: effCols)   // after nearest, so the tap wins
                         guard !didScroll else { return }
                         didScroll = true
@@ -132,7 +132,7 @@ struct TimetableView: View {
                     if phase == .active { jumpToNow(vproxy, g, data); location.refresh(stages: stages) }
                 }
                 // Nearest stage (within 150 m) becomes the left column.
-                .onChange(of: location.nearestSlug) { _, _ in selectNearestColumn(stages) }
+                .onChange(of: location.nearestSlug) { _, _ in selectNearestColumn(stages, effCols: effCols) }
                 .onChange(of: settings.debugCoord) { _, _ in location.refresh(stages: stages) }
                 // Re-snap the paged columns when the zoom (column count) changes,
                 // so zooming while scrolled never leaves a half-column showing.
@@ -159,10 +159,15 @@ struct TimetableView: View {
         favorites.toggle(slug)
     }
 
-    /// Make the stage nearest the device (within 150 m) the left-most column.
-    private func selectNearestColumn(_ stages: [StageDTO]) {
-        guard let slug = location.nearestSlug, stages.contains(where: { $0.slug == slug }) else { return }
-        leadingStage = slug
+    /// Make the stage nearest the device the left-most column. Clamped exactly
+    /// like `consumeStageJump`: the scroll cannot go past the last full page, so
+    /// an unclamped target would leave the header naming one stage while the
+    /// grid shows another. With two visible stages and two columns that is every
+    /// time the second stage is the nearest one.
+    private func selectNearestColumn(_ stages: [StageDTO], effCols: Int) {
+        guard let slug = location.nearestSlug,
+              let idx = stages.firstIndex(where: { $0.slug == slug }) else { return }
+        leadingStage = stages[min(idx, max(stages.count - effCols, 0))].slug
     }
 
     /// Widget deep link: bring the tapped widget's stage on screen, as the
