@@ -22,7 +22,7 @@ public struct FavState: Codable, Equatable, Sendable {
 @MainActor
 public final class FavoritesStore: ObservableObject {
     /// UserDefaults key for the full per-slug state dict (JSON `Data`).
-    public static let statesKey = "manas.favoriteStates"
+    public static let statesKey = "microasis.favoriteStates"
 
     /// Slugs currently favorited — what the UI binds to.
     @Published public private(set) var favorites: Set<String> = []
@@ -39,14 +39,14 @@ public final class FavoritesStore: ObservableObject {
             states = decoded
         }
         // Screenshot-harness override (DEBUG/TestFlight): a PRESENT
-        // `-manas.startFavorites "slug1,slug2"` replaces the set for THIS launch
+        // `-microasis.startFavorites "slug1,slug2"` replaces the set for THIS launch
         // only (empty value → no favorites) — nothing is persisted, so shots stay
-        // deterministic (like manas.debugNow). It also disables WCSession sync
+        // deterministic (like microasis.debugNow). It also disables WCSession sync
         // below: a paired simulator's stale applicationContext once merged a
         // watch shot's favorite into the next run's iPhone shots.
         var harnessRun = false
         if AppEnv.debugToolsEnabled,
-           let raw = defaults.string(forKey: "manas.startFavorites") {
+           let raw = defaults.string(forKey: "microasis.startFavorites") {
             harnessRun = true
             let now = Date().timeIntervalSince1970
             states = Dictionary(uniqueKeysWithValues: raw.split(separator: ",").map {

@@ -41,11 +41,11 @@ public enum Geo {
         coordinate(for: stage).map { "\($0.latitude),\($0.longitude)" }
     }
 
-    /// QA-only test coordinate ("lat,lng" in `manas.debugCoord`), gated like the
+    /// QA-only test coordinate ("lat,lng" in `microasis.debugCoord`), gated like the
     /// debug clock. Compiled-out behaviour for App Store releases.
     public static var debugCoordinate: CLLocationCoordinate2D? {
         guard AppEnv.debugToolsEnabled,
-              let s = UserDefaults.standard.string(forKey: "manas.debugCoord") else { return nil }
+              let s = UserDefaults.standard.string(forKey: "microasis.debugCoord") else { return nil }
         return parseCoord(s)
     }
 

@@ -2,7 +2,7 @@
 
 > ⚠️ A parity-állapot **egyetlen forrása**. A `❓` cellákat és minden nem-`✅` cella **MIÉRT**-jét töltsd ki. Feature-rel egy körben frissül. (Auto-generálva: `multi-platform-parity:init` — az oszlopok a felderített platformok, a sorok a feature-leltár.)
 >
-> **Felderített platformok** (`apple/project.yml` + `pwa/`): **PWA** (Next.js 16 web + API), **iOS** (`Manas` target, iPhone-only `TARGETED_DEVICE_FAMILY "1"`), **watchOS** (`ManasWatch` app + `ManasWatchWidget` WidgetKit-extension). Nincs iPad-target és nincs Android → ezek az oszlopok kihagyva. A watch-widget a watchOS oszlop alatt, külön feature-sorokként jelenik meg.
+> **Felderített platformok** (`apple/project.yml` + `pwa/`): **PWA** (Next.js 16 web + API), **iOS** (`MicrOasis` target, iPhone-only `TARGETED_DEVICE_FAMILY "1"`), **watchOS** (`MicrOasisWatch` app + `MicrOasisWatchWidget` WidgetKit-extension). Nincs iPad-target és nincs Android → ezek az oszlopok kihagyva. A watch-widget a watchOS oszlop alatt, külön feature-sorokként jelenik meg.
 
 | Feature                                  | PWA | iOS | watchOS | Megjegyzés / MIÉRT                                                                                          |
 | ---------------------------------------- | --- | --- | ------- | ---------------------------------------------------------------------------------------------------------- |
@@ -16,7 +16,7 @@
 | Legközelebbi színpad (geolokáció)        | ✅  | ✅  | ✅      | PWA `useNearestStage` (Timetable+Now), iOS/watch `LocationStore`; MicrOasis-on 50 m-es geofence.            |
 | Offline cache                            | ✅  | ✅  | ✅      | PWA SW + localStorage (ETag/304 revalidálás); iOS saját lemez-cache; watch app + widget közös App Group cache (<6 h friss → widget fetch nélkül).     |
 | PWA install / Add to Home                | ✅  | ➖  | ➖      | `InstallPrompt`/`AddToHomeButton`; natív appnál nem értelmezett.                                            |
-| Privacy / Support oldal                  | ✅  | ✅  | ❌      | PWA route-ok; iOS Settings linkel ki (`manas.torma.ai/privacy` `/support`); watch Settings nem linkel.     |
+| Privacy / Support oldal                  | ✅  | ✅  | ❌      | PWA route-ok; iOS Settings linkel ki (`microasis.torma.ai/privacy` `/support`); watch Settings nem linkel.     |
 | „Nem hivatalos” disclaimer               | ✅  | ✅  | ✅      | PWA `DisclaimerGate`, iOS/watch Settings „about” + disclaimer-sheet.                                        |
 | Widget: now-playing complication         | ➖  | ❌  | ✅      | `NowWidget` (`.accessoryRectangular`), per-színpad konfigurálható. iOS-en nincs widget-target megépítve.    |
 | Widget: launcher complication            | ➖  | ❌  | ✅      | `LaunchWidget` (circular/inline/corner). watchOS-specifikus complication-felület.                          |

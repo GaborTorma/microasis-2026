@@ -90,7 +90,7 @@ public struct HomeWidgetContent: View {
 
     @ViewBuilder private var nowBlock: some View {
         HStack(spacing: 5) {
-            Text(entry.stage?.name.uppercased() ?? "MANAS")
+            Text(entry.stage?.name.uppercased() ?? "MICROASIS")
                 .font(.system(size: m.stage, weight: .heavy, design: .rounded))
                 .foregroundStyle(entry.accentColor)
                 .lineLimit(1).minimumScaleFactor(0.7)

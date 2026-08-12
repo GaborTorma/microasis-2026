@@ -9,15 +9,15 @@ public let maxColumns = 5
 /// app's chosen language. Backed by an App Group on the watch app + widget;
 /// falls back to `.standard` on targets without the entitlement (e.g. iOS).
 public enum SharedDefaults {
-    public static let appGroupID = "group.ai.torma.manas.2026"
+    public static let appGroupID = "group.ai.torma.microasis.2026"
     public static let suite = UserDefaults(suiteName: appGroupID) ?? .standard
-    public static let localeKey = "manas.locale"
+    public static let localeKey = "microasis.locale"
     /// QA debug clock, mirrored here so the watch widget (its own process) sees
     /// the same overridden "now" as the app. nil/absent ⇒ real time.
-    public static let debugNowKey = "manas.debugNow"
+    public static let debugNowKey = "microasis.debugNow"
     /// Sorted array of favorited event slugs, mirrored by `FavoritesStore` so
     /// the watch widget (its own process) can badge favorited acts.
-    public static let favoritesKey = "manas.favorites"
+    public static let favoritesKey = "microasis.favorites"
 }
 
 /// Canonical outbound links. The native share sheet hands out `share` (the `/app`
@@ -25,19 +25,19 @@ public enum SharedDefaults {
 /// App Store, anything else → the web app. Apple ID matches `apple/CLAUDE.md`.
 public enum AppLinks {
     public static let appStore = URL(string: "https://apps.apple.com/app/id6782099675")!
-    public static let share = URL(string: "https://manas.torma.ai/app")!
-    // Baked into the watch share asset (Sources/Manas-watch/Assets.xcassets/ShareQR…)
+    public static let share = URL(string: "https://microasis.torma.ai/app")!
+    // Baked into the watch share asset (Sources/MicrOasis-watch/Assets.xcassets/ShareQR…)
     // since watchOS has no CoreImage. Change this → re-run apple/scripts/build_share_qr.py.
-    public static let qr = URL(string: "https://manas.torma.ai/get")!
-    public static let privacy = URL(string: "https://manas.torma.ai/privacy")!
-    public static let support = URL(string: "https://manas.torma.ai/support")!
+    public static let qr = URL(string: "https://microasis.torma.ai/get")!
+    public static let privacy = URL(string: "https://microasis.torma.ai/privacy")!
+    public static let support = URL(string: "https://microasis.torma.ai/support")!
     /// The app maker's site, linked from the "Made by" credit in settings.
     public static let maker = URL(string: "https://torma.ai")!
 
     /// Custom scheme for widget → app deep links (registered in `project.yml`
     /// on the iOS app target).
-    public static let scheme = "manas"
-    /// `manas://stage/<slug>` — tapping a home widget opens the timetable with
+    public static let scheme = "microasis"
+    /// `microasis://stage/<slug>` — tapping a home widget opens the timetable with
     /// that stage as the leading column (`RootView.onOpenURL`).
     public static func stageDeepLink(_ slug: String) -> URL? {
         URL(string: "\(scheme)://stage/\(slug)")
@@ -51,9 +51,9 @@ public enum AppLinks {
 public final class Settings: ObservableObject {
     private let defaults = UserDefaults.standard
     private enum Key {
-        static let order = "manas.order", hidden = "manas.hidden", locale = SharedDefaults.localeKey
-        static let columns = "manas.columns", fontSize = "manas.fontSize", debugNow = "manas.debugNow"
-        static let debugCoord = "manas.debugCoord"
+        static let order = "microasis.order", hidden = "microasis.hidden", locale = SharedDefaults.localeKey
+        static let columns = "microasis.columns", fontSize = "microasis.fontSize", debugNow = "microasis.debugNow"
+        static let debugCoord = "microasis.debugCoord"
     }
 
     @Published public var order: [String] { didSet { defaults.set(order, forKey: Key.order) } }
@@ -64,7 +64,7 @@ public final class Settings: ObservableObject {
     /// Text-size step 1…5 — drives both the font scale and the block heights.
     @Published public var fontSize: Int { didSet { defaults.set(fontSize, forKey: Key.fontSize) } }
     /// QA-only override for "now" (TestFlight/DEBUG); nil = real time. Shares
-    /// the `manas.debugNow` defaults key with `Fmt.now`.
+    /// the `microasis.debugNow` defaults key with `Fmt.now`.
     @Published public var debugNow: Date? {
         didSet {
             if let d = debugNow {
@@ -79,7 +79,7 @@ public final class Settings: ObservableObject {
         }
     }
     /// QA-only override for the device coordinate ("lat,lng"); nil = real
-    /// CoreLocation. Shares the `manas.debugCoord` key with `Geo.debugCoordinate`.
+    /// CoreLocation. Shares the `microasis.debugCoord` key with `Geo.debugCoordinate`.
     @Published public var debugCoord: String? {
         didSet {
             if let c = debugCoord { defaults.set(c, forKey: Key.debugCoord) }
@@ -95,7 +95,7 @@ public final class Settings: ObservableObject {
         locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
         // `integer(forKey:)` (not `object as? Int`) so a value injected via the
         // launch-argument domain — a string, e.g. the screenshot harness's
-        // `-manas.columns 3` — is parsed too; absence still falls back to 3.
+        // `-microasis.columns 3` — is parsed too; absence still falls back to 3.
         columns = defaults.object(forKey: Key.columns) != nil ? defaults.integer(forKey: Key.columns) : 3
         fontSize = defaults.object(forKey: Key.fontSize) != nil ? defaults.integer(forKey: Key.fontSize) : 3
         debugNow = defaults.string(forKey: Key.debugNow).flatMap(Fmt.parseDateTime)

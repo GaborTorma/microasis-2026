@@ -1,4 +1,4 @@
-# App Store listing — Guide for MANAS 2026
+# App Store listing — Guide for MicrOasis 2026
 
 Copy-paste source for App Store Connect. Character counts shown against Apple's
 limits. The privacy/support URLs point at the deployed pwa.
@@ -7,9 +7,9 @@ limits. The privacy/support URLs point at the deployed pwa.
 > it is the official festival app. See `../CLAUDE.md` and the in-app disclaimer.
 
 ## URLs
-- **Privacy Policy URL:** https://manas.torma.ai/privacy
-- **Support URL:** https://manas.torma.ai/support
-- **Marketing URL:** https://manas.torma.ai/app
+- **Privacy Policy URL:** https://microasis.torma.ai/privacy
+- **Support URL:** https://microasis.torma.ai/support
+- **Marketing URL:** https://microasis.torma.ai/app
 
 ## App information (app-level)
 - **Primary category:** Entertainment
@@ -18,36 +18,36 @@ limits. The privacy/support URLs point at the deployed pwa.
   developer, NOT the festival); no © symbol, no "Copyright" word. Match your Apple
   account's legal name if it differs.
 - **Content rights:** does not contain third-party content (the schedule is public
-  info; "MANAS 2026" used referentially). Answer accordingly.
+  info; "MicrOasis 2026" used referentially). Answer accordingly.
 - **Age rating:** 4+ (complete the questionnaire; no objectionable content).
 
 ## App name & subtitle
-- **App Name** (≤30): `Guide for MANAS 2026`  — 20 chars
+- **App Name** (≤30): `Guide for MicrOasis 2026`  — 20 chars
 - **Subtitle — EN** (≤30): `Unofficial guide & timetable`  — 28 chars
 - **Subtitle — HU** (≤30): `Nem hivatalos program-kalauz`  — 28 chars
 
 > App Name is English in both locales (matches the in-app lockup).
 
 ## Keywords (≤100, comma-separated, no spaces)
-- **EN** (88): `manas,festival,2026,schedule,timetable,lineup,guide,unofficial,stages,nowplaying,offline`
-- **HU** (93): `manas,fesztivál,2026,időrend,program,fellépők,kalauz,nemhivatalos,színpad,mostjátszik,offline`
+- **EN** (88): `microasis,festival,2026,schedule,timetable,lineup,guide,unofficial,stages,nowplaying,offline`
+- **HU** (93): `microasis,fesztivál,2026,időrend,program,fellépők,kalauz,nemhivatalos,színpad,mostjátszik,offline`
 
 ## Promotional text (≤170, editable without resubmission)
 - **EN** (150):
 
-Unofficial fan-made guide to Manas 2026: full timetable, live Now view, favourites synced iPhone↔Watch, home-screen widgets, offline — share it by QR.
+Unofficial fan-made guide to MicrOasis 2026: full timetable, live Now view, favourites synced iPhone↔Watch, home-screen widgets, offline — share it by QR.
 
 - **HU** (156):
 
-Nem hivatalos rajongói kalauz a Manas 2026-hoz: teljes időrend, élő Most nézet, kedvencek iPhone↔Watch szinkronnal, widgetek, offline — QR-ral továbbadható.
+Nem hivatalos rajongói kalauz a MicrOasis 2026-hoz: teljes időrend, élő Most nézet, kedvencek iPhone↔Watch szinkronnal, widgetek, offline — QR-ral továbbadható.
 
 ## Description (≤4000)
 
 ### English (3257 chars)
 
-This is an unofficial, fan-made guide. It is not affiliated with, endorsed by, or sponsored by the MANAS festival or its organizers.
+This is an unofficial, fan-made guide. It is not affiliated with, endorsed by, or sponsored by the MicrOasis festival or its organizers.
 
-Guide for MANAS 2026 is an independent companion app for visitors to the Manas 2026 festival in Hungary (July 2026). It puts the full programme in your pocket — on iPhone and on your wrist — so you always know what is on, where, and when.
+Guide for MicrOasis 2026 is an independent companion app for visitors to the MicrOasis 2026 festival in Hungary (July 2026). It puts the full programme in your pocket — on iPhone and on your wrist — so you always know what is on, where, and when.
 
 THE WHOLE PROGRAMME
 - Browse the complete timetable across every stage: Portal, Field, Bowl, Terrace and Mandala.
@@ -92,15 +92,15 @@ PRIVATE BY DESIGN
 - The schedule is fetched read-only over a secure connection and cached locally.
 
 A NOTE ON AFFILIATION
-This app is made by an independent fan and is not the official festival app. "MANAS 2026" is referenced only to describe which festival this guide is for. For official information, always refer to the festival's own channels.
+This app is made by an independent fan and is not the official festival app. "MicrOasis 2026" is referenced only to describe which festival this guide is for. For official information, always refer to the festival's own channels.
 
-Questions or feedback? Email manas2026@torma.ai
+Questions or feedback? Email microasis2026@torma.ai
 
 ### Magyar (3585 chars)
 
-Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MANAS fesztivállal vagy annak szervezőivel, azok nem támogatják és nem szponzorálják.
+Ez egy nem hivatalos, rajongók által készített kalauz. Nem áll kapcsolatban a MicrOasis fesztivállal vagy annak szervezőivel, azok nem támogatják és nem szponzorálják.
 
-A Guide for MANAS 2026 egy független kísérőalkalmazás a magyarországi Manas 2026 fesztivál látogatóinak (2026. július). A teljes programot a zsebedbe teszi — iPhone-on és a csuklódon is —, hogy mindig tudd, mi, hol és mikor zajlik.
+A Guide for MicrOasis 2026 egy független kísérőalkalmazás a magyarországi MicrOasis 2026 fesztivál látogatóinak (2026. július). A teljes programot a zsebedbe teszi — iPhone-on és a csuklódon is —, hogy mindig tudd, mi, hol és mikor zajlik.
 
 A TELJES PROGRAM
 - Böngészd a teljes időrendet minden színpadon: Portal, Field, Bowl, Terrace és Mandala.
@@ -145,9 +145,9 @@ ALAPVETŐEN ADATVÉDŐ
 - Az időrend csak olvasásra, biztonságos kapcsolaton keresztül töltődik le, és helyben tárolódik.
 
 MEGJEGYZÉS A KAPCSOLATRÓL
-Ezt az alkalmazást egy független rajongó készítette, és nem a hivatalos fesztiválalkalmazás. A „MANAS 2026" megnevezés csak azt jelzi, melyik fesztiválhoz készült ez a kalauz. Hivatalos információkért mindig a fesztivál saját csatornáit nézd.
+Ezt az alkalmazást egy független rajongó készítette, és nem a hivatalos fesztiválalkalmazás. A „MicrOasis 2026" megnevezés csak azt jelzi, melyik fesztiválhoz készült ez a kalauz. Hivatalos információkért mindig a fesztivál saját csatornáit nézd.
 
-Kérdés vagy visszajelzés? Írj a manas2026@torma.ai címre.
+Kérdés vagy visszajelzés? Írj a microasis2026@torma.ai címre.
 
 ## What's New — v1.4 (current, ≤4000)
 
@@ -159,7 +159,7 @@ What's new in 1.4:
 - Home-screen widgets: small and medium widgets show what is playing now and what is up next on a stage of your choice. Add one per stage — a tap opens the app right at that stage.
 - Small polish throughout the widgets and event blocks.
 
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
 
 ### Magyar (666 chars)
 
@@ -169,7 +169,7 @@ Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome a
 - Kezdőképernyő-widgetek: kicsi és közepes widgetek mutatják, mi szól éppen és mi következik a választott színpadon. Adj hozzá színpadonként egyet — egy koppintás az appot pont annál a színpadnál nyitja.
 - Apróbb csiszolások a widgeteken és az esemény-blokkokon.
 
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
 
 ## What's New — v1.3 (history)
 
@@ -181,7 +181,7 @@ What's new in 1.3:
 - Apple Watch improvements: the watch app and its widgets now share one schedule, so widgets stay in step with the app and update more efficiently.
 - The share screen on the watch is easier to read, and the widget card scales more gracefully across watch sizes.
 
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
 
 ### Magyar (625 chars)
 
@@ -191,7 +191,7 @@ Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome a
 - Apple Watch fejlesztések: az óra-app és a widgetek mostantól közös programot használnak, így a widgetek együtt mozognak az appal és hatékonyabban frissülnek.
 - Az óra megosztás-képernyője könnyebben olvasható, a widget-kártya pedig szebben skálázódik a különböző óraméreteken.
 
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
 
 ## What's New — v1.2 (history)
 
@@ -203,7 +203,7 @@ What's new in 1.2:
 - A clearer programme: every type of happening has its own icon — live music, ceremonies, sound baths and singing bowls, drums and handpan, yoga, workshops, dance, theatre and talks.
 - A more refined Apple Watch layout: the now-playing card gives the artist and title more room, with a subtle festival watermark behind them.
 
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
 
 ### Magyar (593 chars)
 
@@ -213,7 +213,7 @@ Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome a
 - Átláthatóbb program: minden programtípusnak saját ikonja van — élő zene, szertartások, hangfürdő és hangtálak, dobok és handpan, jóga, workshopok, tánc, színház és előadások.
 - Csiszoltabb Apple Watch elrendezés: az éppen játszó kártyán több hely jut a fellépőnek és a címnek, mögöttük finom fesztivál-vízjellel.
 
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
 
 ## What's New — v1.1 (history)
 
@@ -225,7 +225,7 @@ What's new in 1.1:
 - The Now view comes alive around the edges of the festival: an opening-day welcome while the camp goes up, and a closing scene once the music ends.
 - Polish throughout, including a softer, festival-toned background.
 
-Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
 
 ### Magyar (593 chars)
 
@@ -235,7 +235,7 @@ Unofficial, fan-made guide, not affiliated with the festival. Feedback welcome a
 - A Most nézet életre kel a fesztivál szélein: nyitónapi köszöntés a tábor építése közben, a zene után pedig záró jelenet.
 - Apróbb csiszolások, köztük egy lágyabb, fesztiválhangulatú háttér.
 
-Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+Nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
 
 ## What's New — v1.0 (history)
 
@@ -250,7 +250,7 @@ First release.
 - Bilingual Hungarian and English; all times in Budapest time.
 - Optional on-device location to auto-select the nearest stage.
 
-This is an unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at manas2026@torma.ai
+This is an unofficial, fan-made guide, not affiliated with the festival. Feedback welcome at microasis2026@torma.ai
 
 ### Magyar (654 chars)
 
@@ -263,17 +263,17 @@ Első kiadás.
 - Kétnyelvű: magyar és angol; minden időpont budapesti idő szerint.
 - Opcionális, kizárólag a készüléken használt helymeghatározás a legközelebbi színpad kiválasztásához.
 
-Ez egy nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a manas2026@torma.ai címre várunk.
+Ez egy nem hivatalos, rajongói kalauz, nem áll kapcsolatban a fesztivállal. Visszajelzést a microasis2026@torma.ai címre várunk.
 
 ## Notes for Review
 
-Unofficial, fan-made companion guide for the Manas 2026 music festival (Hungary, July 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MANAS 2026" is used referentially to indicate which festival this guide covers.
+Unofficial, fan-made companion guide for the MicrOasis 2026 music festival (Hungary, July 2026). Not affiliated with, endorsed by, or sponsored by the festival or its organizers; "MicrOasis 2026" is used referentially to indicate which festival this guide covers.
 
 New in this version (1.4): favourites and iPhone home-screen widgets. Favourites are hearts the user taps onto acts; they are stored locally on the device and synced directly between the user's own iPhone and Apple Watch via Apple's WatchConnectivity framework — nothing is sent to any server, there is no account, and no data is collected. The home-screen widgets (WidgetKit, small/medium) show the same public schedule as the app for a chosen stage. No new permissions; the App Privacy answers are unchanged.
 
 No account or login required — no sign-up, no authentication of any kind. The app is free with no ads and no in-app purchases.
 
-It only displays publicly available schedule information, fetched read-only over HTTPS from https://manas2026.vercel.app/api/schedule and cached on the device for offline use. No analytics, no tracking, no third-party SDKs, and no personal data is collected or transmitted off the device.
+It only displays publicly available schedule information, fetched read-only over HTTPS from https://microasis.torma.ai/api/schedule and cached on the device for offline use. No analytics, no tracking, no third-party SDKs, and no personal data is collected or transmitted off the device.
 
 Location use is optional and on-device only: if the user grants permission, the device location is used solely to auto-select the nearest festival stage. The location is never transmitted off the device and is never shared.
 

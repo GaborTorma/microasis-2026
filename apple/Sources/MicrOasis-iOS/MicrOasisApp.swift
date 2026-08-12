@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 @main
-struct ManasApp: App {
+struct MicrOasisApp: App {
     @StateObject private var store = ScheduleStore()
     @StateObject private var settings = Settings()
     @StateObject private var location = LocationStore()
@@ -36,11 +36,11 @@ struct ManasApp: App {
 
     /// Screenshot-only (DEBUG/TestFlight): render the home-screen widgets
     /// full-screen so the harness can capture a marketing shot of them. Set
-    /// `manas.startWidgetPreview` to one or two stage slugs ("bowl,terrace":
+    /// `microasis.startWidgetPreview` to one or two stage slugs ("bowl,terrace":
     /// medium gets the first, small the second). No-op in App Store builds.
     private var widgetPreviewSlugs: [String]? {
         guard AppEnv.debugToolsEnabled,
-              let raw = UserDefaults.standard.string(forKey: "manas.startWidgetPreview"),
+              let raw = UserDefaults.standard.string(forKey: "microasis.startWidgetPreview"),
               !raw.isEmpty else { return nil }
         return raw.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
     }

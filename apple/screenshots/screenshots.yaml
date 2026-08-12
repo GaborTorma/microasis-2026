@@ -1,7 +1,7 @@
-# Manas 2026 — App Store / landing-page screenshot definitions.
+# MicrOasis 2026 — App Store / landing-page screenshot definitions.
 #
 # Each shot is rendered once per language. A line maps directly to simulator
-# `defaults` keys the app reads (manas.*), so there is no UI tapping involved.
+# `defaults` keys the app reads (microasis.*), so there is no UI tapping involved.
 # Run with:  python3 make_screenshots.py            (all shots, all languages)
 #            python3 make_screenshots.py --only 05  (just matching shots)
 #            python3 make_screenshots.py --no-build --lang hu
@@ -10,7 +10,7 @@
 # automatically. The shots use the app's built-in debug overrides, which are
 # compiled into Debug simulator builds and no-op in App Store builds.
 
-api: https://manas2026.vercel.app/api/schedule   # source of truth for stage lat,lng
+api: https://microasis.torma.ai/api/schedule   # source of truth for stage lat,lng
 out_dir: .                                        # language sub-folders created here
 settle: 7                                         # seconds to wait after launch before capture
 appearance: dark                                  # simulator UI style (status bar glyphs)
@@ -27,34 +27,34 @@ devices:
   iphone:
     name: "iPhone 14 Plus"                        # 6.5" App Store slot (1284×2778)
     platform: ios
-    scheme: Manas
-    bundle: ai.torma.manas.2026
+    scheme: MicrOasis
+    bundle: ai.torma.microasis.2026
   watch:
     name: "Apple Watch Ultra 3 (49mm)"            # 422×514 watch slot
     platform: watchos
-    scheme: ManasWatch
-    bundle: ai.torma.manas.2026.watchkitapp
+    scheme: MicrOasisWatch
+    bundle: ai.torma.microasis.2026.watchkitapp
 
 # view:     timetable | now | share | settings  (iPhone tab / sheet to open)
 #           widget                                (render widget card(s) full-screen —
 #                                                  watch: one stage's Smart Stack card;
 #                                                  iPhone: medium + small home widget)
-# stage:    stage slug, required for view: widget -> manas.startWidgetPreview
+# stage:    stage slug, required for view: widget -> microasis.startWidgetPreview
 #           (iPhone takes "medium,small" slugs, e.g. "bowl,terrace")
-# time:     "yyyy-MM-dd HH:mm" Budapest-local -> manas.debugNow
-# location: stage slug -> that stage's lat,lng -> manas.debugCoord (selects the
+# time:     "yyyy-MM-dd HH:mm" Budapest-local -> microasis.debugNow
+# location: stage slug -> that stage's lat,lng -> microasis.debugCoord (selects the
 #           nearest stage: left column on iPhone, shown stage on watch). Omit for
 #           "no stage nearby".
-# columns:  iPhone timetable zoom (1…5) -> manas.columns  (default 3)
-# font:     text-size zoom (1…5)         -> manas.fontSize (default 3)
-# empty:    true -> watch: force the "nothing on" card  (manas.startNoProgram)
-# favorites: comma-separated event slugs -> manas.startFavorites (red hearts;
+# columns:  iPhone timetable zoom (1…5) -> microasis.columns  (default 3)
+# font:     text-size zoom (1…5)         -> microasis.fontSize (default 3)
+# empty:    true -> watch: force the "nothing on" card  (microasis.startNoProgram)
+# favorites: comma-separated event slugs -> microasis.startFavorites (red hearts;
 #            per-launch only, nothing persists; slugs must be acts visible at
 #            the shot's `time` — check the live API /api/schedule for slugs).
 #            The harness pins the key on EVERY shot (omitted -> empty -> no
 #            hearts) and its presence disables WCSession sync, so a paired
 #            simulator can never bleed favorites into a shot.
-# favfilter: true -> manas.startFavFilter (timetable favorites dim-filter:
+# favfilter: true -> microasis.startFavFilter (timetable favorites dim-filter:
 #            non-favorited blocks fade, header heart fills — needs `favorites:`)
 shots:
   - name: "01-timetable-thursday"
@@ -135,7 +135,7 @@ shots:
     device: watch
     time: "2026-07-12 02:00"
     location: mandala
-    empty: true                 # force the "nothing on" card (manas.startNoProgram)
+    empty: true                 # force the "nothing on" card (microasis.startNoProgram)
 
   # Smart Stack "now playing" widget cards, rendered full-screen for marketing.
   - name: "04-widget-portal"

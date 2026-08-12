@@ -35,7 +35,7 @@ public extension ScheduleData {
 public struct TentArt: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     // Render motionless for Reduce Motion — and for marketing captures: the
-    // screenshot harness sets `manas.hideTestUI`, so the tent shows fully
+    // screenshot harness sets `microasis.hideTestUI`, so the tent shows fully
     // pitched instead of a random animation frame.
     private var still: Bool { reduceMotion || AppEnv.hideTestUI }
 

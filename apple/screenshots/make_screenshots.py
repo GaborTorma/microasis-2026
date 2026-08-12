@@ -3,10 +3,10 @@
 # requires-python = ">=3.10"
 # dependencies = ["pyyaml"]
 # ///
-"""Config-driven App Store / landing-page screenshot generator for Manas 2026.
+"""Config-driven App Store / landing-page screenshot generator for MicrOasis 2026.
 
 Drives the iOS and watchOS simulators entirely through `xcrun simctl`: it writes
-the app's debug-override defaults (manas.debugNow / debugCoord / locale / columns
+the app's debug-override defaults (microasis.debugNow / debugCoord / locale / columns
 / startView / hideTestUI), launches a Debug build, and captures the
 screen. No fastlane, no UITest target — see screenshots.yaml for the shot list.
 
@@ -32,19 +32,19 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parent          # apple/screenshots
 APPLE = ROOT.parent                             # apple/
-PROJECT = APPLE / "Manas.xcodeproj"
+PROJECT = APPLE / "MicrOasis.xcodeproj"
 DERIVED = APPLE / "build" / "dd"
 
 FAR_COORD = "46.6900,17.6800"   # mirrors Geo.farTestCoord — outside every stage radius
 
-# manas.* defaults reset before every shot so a value never leaks across shots.
+# microasis.* defaults reset before every shot so a value never leaks across shots.
 RESET_KEYS = [
-    "manas.locale", "manas.debugNow", "manas.debugCoord", "manas.columns",
-    "manas.fontSize", "manas.order", "manas.hidden", "manas.startView",
-    "manas.hideTestUI", "manas.disclaimerSeen",
+    "microasis.locale", "microasis.debugNow", "microasis.debugCoord", "microasis.columns",
+    "microasis.fontSize", "microasis.order", "microasis.hidden", "microasis.startView",
+    "microasis.hideTestUI", "microasis.disclaimerSeen",
     # Manually-tapped favorites persist here; clear them so only a shot's
-    # `favorites:` (-manas.startFavorites, per-launch) shows hearts.
-    "manas.favoriteStates",
+    # `favorites:` (-microasis.startFavorites, per-launch) shows hearts.
+    "microasis.favoriteStates",
 ]
 
 
@@ -137,39 +137,39 @@ def launch_args(shot: dict, lang: str, coords: dict) -> list[str]:
     launch is deterministic — unlike `defaults write`, which lags behind rapid
     relaunches and bleeds settings across shots."""
     a = [
-        "-manas.locale", lang,
-        "-manas.hideTestUI", "YES",      # hide the in-app Testing section
-        "-manas.disclaimerSeen", "YES",  # skip the first-launch modal
+        "-microasis.locale", lang,
+        "-microasis.hideTestUI", "YES",      # hide the in-app Testing section
+        "-microasis.disclaimerSeen", "YES",  # skip the first-launch modal
     ]
     if t := shot.get("time"):
-        a += ["-manas.debugNow", str(t)]
+        a += ["-microasis.debugNow", str(t)]
     loc = shot.get("location")
     if loc and loc not in coords:
         sys.exit(f"shot {shot['name']}: unknown stage {loc!r} (have {', '.join(coords)})")
     # Always pin a coordinate so a previous shot's stage can't linger as the
     # selected/leading stage: the requested stage, or a point far from every
     # stage for "no stage nearby".
-    a += ["-manas.debugCoord", coords[loc] if loc else FAR_COORD]
+    a += ["-microasis.debugCoord", coords[loc] if loc else FAR_COORD]
     # Always pin zoom (columns) + text size (font) so neither lingers from a
     # previous shot; both default to the app's own default of 3.
-    a += ["-manas.columns", str(shot.get("columns", 3))]
-    a += ["-manas.fontSize", str(shot.get("font", 3))]
+    a += ["-microasis.columns", str(shot.get("columns", 3))]
+    a += ["-microasis.fontSize", str(shot.get("font", 3))]
     if shot.get("empty"):                       # watch: force the "nothing on" card
-        a += ["-manas.startNoProgram", "YES"]
+        a += ["-microasis.startNoProgram", "YES"]
     # Always pin favorites (comma-separated event slugs → hearts; empty = none):
     # a present key also makes FavoritesStore skip WCSession sync, so a paired
     # simulator's stale applicationContext can't bleed hearts into a shot.
-    a += ["-manas.startFavorites", str(shot.get("favorites", ""))]
+    a += ["-microasis.startFavorites", str(shot.get("favorites", ""))]
     if shot.get("favfilter"):                   # timetable favorites dim-filter on
-        a += ["-manas.startFavFilter", "YES"]
+        a += ["-microasis.startFavFilter", "YES"]
     view = shot.get("view")
     if view in ("timetable", "now", "share", "settings"):
-        a += ["-manas.startView", view]
+        a += ["-microasis.startView", view]
     elif view == "widget":
         stage = shot.get("stage")
         if not stage:
             sys.exit(f"shot {shot['name']}: view: widget needs a `stage:` slug")
-        a += ["-manas.startWidgetPreview", str(stage)]
+        a += ["-microasis.startWidgetPreview", str(stage)]
     return a
 
 
@@ -213,7 +213,7 @@ def fetch_coords(api: str) -> dict:
 # ── main ───────────────────────────────────────────────────────────────────
 
 def main():
-    ap = argparse.ArgumentParser(description="Generate Manas 2026 App Store screenshots.")
+    ap = argparse.ArgumentParser(description="Generate MicrOasis 2026 App Store screenshots.")
     ap.add_argument("--config", default=str(ROOT / "screenshots.yaml"))
     ap.add_argument("--no-build", action="store_true", help="skip xcodebuild + install (reuse what's on the sim)")
     ap.add_argument("--lang", action="append", help="limit to language(s); repeatable")

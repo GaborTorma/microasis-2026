@@ -3,13 +3,13 @@ import SwiftUI
 
 /// Tiny, static widget whose only job is to open the app — useful as a
 /// watch-face complication (circular / inline / corner).
-struct ManasLaunchWidget: Widget {
+struct MicrOasisLaunchWidget: Widget {
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: "ManasLaunch", provider: LaunchProvider()) { _ in
+        StaticConfiguration(kind: "MicrOasisLaunch", provider: LaunchProvider()) { _ in
             LaunchWidgetView()
         }
-        .configurationDisplayName("Manas")
-        .description("Koppints a Manas megnyitásához.")
+        .configurationDisplayName("MicrOasis")
+        .description("Koppints a MicrOasis megnyitásához.")
         .supportedFamilies([.accessoryCircular, .accessoryInline, .accessoryCorner])
     }
 }
@@ -34,14 +34,14 @@ struct LaunchWidgetView: View {
         switch family {
         case .accessoryInline:
             // Inline is a single text line — a logo can't render here.
-            Text("Manas")
+            Text("MicrOasis")
         case .accessoryCorner:
-            ManasMark()
-                .widgetLabel("Manas")
+            OasisMark()
+                .widgetLabel("MicrOasis")
         default: // accessoryCircular — the app logo fills the dial.
             ZStack {
                 AccessoryWidgetBackground()
-                ManasMark()
+                OasisMark()
             }
         }
     }

@@ -9,7 +9,7 @@ struct RootView: View {
     @State private var compactHeader = false   // landscape: hide app header on scroll
     @State private var favFilter = false       // timetable: dim non-favorited acts
     @State private var stageJump: String?      // widget deep link: stage slug to lead with
-    @AppStorage("manas.disclaimerSeen") private var disclaimerSeen = false
+    @AppStorage("microasis.disclaimerSeen") private var disclaimerSeen = false
     @State private var showDisclaimer = false
 
     var body: some View {
@@ -69,7 +69,7 @@ struct RootView: View {
                 if !disclaimerSeen { showDisclaimer = true }
                 applyScreenshotOverrides()
             }
-            // Widget deep link: manas://stage/<slug> → timetable tab with that
+            // Widget deep link: microasis://stage/<slug> → timetable tab with that
             // stage as the leading column (TimetableView consumes `stageJump`).
             .onOpenURL { url in
                 guard url.scheme == AppLinks.scheme, url.host() == "stage",
@@ -81,21 +81,21 @@ struct RootView: View {
     }
 
     /// Screenshot-harness hook (DEBUG/TestFlight only) so a capture can target any
-    /// screen without UI taps: `manas.startView` names the view to open —
+    /// screen without UI taps: `microasis.startView` names the view to open —
     /// `timetable` / `now` / `share` (tabs) or `settings` (the sheet) — and
-    /// `manas.startFavFilter` turns on the timetable's favorites dim-filter (pair
-    /// it with `manas.startFavorites`, or the empty-favorites reset undoes it).
+    /// `microasis.startFavFilter` turns on the timetable's favorites dim-filter (pair
+    /// it with `microasis.startFavorites`, or the empty-favorites reset undoes it).
     /// Invisible defaults, no-op in App Store builds.
     private func applyScreenshotOverrides() {
         guard AppEnv.debugToolsEnabled else { return }
-        switch UserDefaults.standard.string(forKey: "manas.startView") {
+        switch UserDefaults.standard.string(forKey: "microasis.startView") {
         case "timetable": tab = 0
         case "now": tab = 1
         case "share": tab = 2
         case "settings": showSettings = true
         default: break
         }
-        if UserDefaults.standard.bool(forKey: "manas.startFavFilter") { favFilter = true }
+        if UserDefaults.standard.bool(forKey: "microasis.startFavFilter") { favFilter = true }
     }
 }
 
@@ -180,7 +180,7 @@ struct HeaderBar: View {
         HStack(alignment: .center, spacing: 8) {
             VStack(alignment: .leading, spacing: 1) {
                 // Referential "Guide for" kicker above the festival name so the
-                // lockup reads as one unit — "Guide for MANAS 2026".
+                // lockup reads as one unit — "Guide for MicrOasis 2026".
                 Text(L.t("app.guidefor", settings.locale).uppercased())
                     .font(.system(size: 12, weight: .bold, design: .rounded))
                     .tracking(2)

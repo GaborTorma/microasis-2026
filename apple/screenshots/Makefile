@@ -1,4 +1,4 @@
-# Manas 2026 — App Store / landing-page screenshots.
+# MicrOasis 2026 — App Store / landing-page screenshots.
 # Run from apple/screenshots:
 #   make           full build + every shot (HU + EN)
 #   make fast      regenerate without rebuilding (reuse the installed app)

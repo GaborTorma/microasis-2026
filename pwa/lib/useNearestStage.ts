@@ -8,7 +8,7 @@ import { nearestStageSlug } from "./geo";
  * A GPS fix is only trusted when it is both accurate and fresh — a weak-signal
  * or cached coordinate would light up (or auto-select) the wrong stage, and no
  * stage beats the wrong stage. Mirrors the iOS gate in
- * apple/Sources/ManasKit/Location.swift (`Geo.maxFixAccuracyM`/`maxFixAgeS`) —
+ * apple/Sources/OasisKit/Location.swift (`Geo.maxFixAccuracyM`/`maxFixAgeS`) —
  * keep the thresholds in sync.
  */
 const MAX_FIX_ACCURACY_M = 100;

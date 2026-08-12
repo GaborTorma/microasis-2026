@@ -6,7 +6,7 @@ watch can't generate the QR on device. The encoded URL is fixed, so we pre-rende
 once into the watch asset catalog and the watch just displays the image.
 
 KEEP IN SYNC: `URL` below must equal `AppLinks.qr` in
-`Sources/ManasKit/AppState.swift` (https://manas.torma.ai/get). If that link ever
+`Sources/OasisKit/AppState.swift` (https://microasis.torma.ai/get). If that link ever
 changes, re-run this script. Colours + error-correction match the iOS `QRCode` enum
 (ink #0c1611 modules on cream #edf4ec, correction level M) so both clients look alike.
 
@@ -19,11 +19,11 @@ from pathlib import Path
 import qrcode
 from qrcode.constants import ERROR_CORRECT_M
 
-URL = "https://manas.torma.ai/get"  # == AppLinks.qr
+URL = "https://microasis.torma.ai/get"  # == AppLinks.qr
 INK = "#0c1611"   # dark modules
 CREAM = "#edf4ec"  # light field
 OUT = Path(__file__).resolve().parent.parent / (
-    "Sources/Manas-watch/Assets.xcassets/ShareQR.imageset/share-qr.png"
+    "Sources/MicrOasis-watch/Assets.xcassets/ShareQR.imageset/share-qr.png"
 )
 
 

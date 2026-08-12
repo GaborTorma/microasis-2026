@@ -147,7 +147,7 @@ public struct NowWidgetContent: View {
     private func content(_ s: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 3 * s) {
             HStack(spacing: 4 * s) {
-                Text(entry.stage?.name.uppercased() ?? "MANAS")
+                Text(entry.stage?.name.uppercased() ?? "MICROASIS")
                     .font(.system(size: 13 * s, weight: .heavy, design: .rounded))
                     .foregroundStyle(accent)
                     .lineLimit(1).minimumScaleFactor(0.7)

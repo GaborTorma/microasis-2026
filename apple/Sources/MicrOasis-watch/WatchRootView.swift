@@ -15,7 +15,7 @@ struct WatchRootView: View {
     @State private var didInit = false
     @State private var showSettings = false
     @State private var showShare = false
-    @AppStorage("manas.disclaimerSeen") private var disclaimerSeen = false
+    @AppStorage("microasis.disclaimerSeen") private var disclaimerSeen = false
     @State private var showDisclaimer = false
     @State private var now = Fmt.now
     /// Fixed time the left/right navigation pivots around. Only a vertical
@@ -46,10 +46,10 @@ struct WatchRootView: View {
     /// Screenshot-only (DEBUG/TestFlight): force the empty "nothing on" card for
     /// a marketing capture, anchored on the debug clock — the geofence path
     /// (`resetToNow`) always lands on an act, so the empty state is otherwise
-    /// only reachable by hand. Set `manas.startNoProgram`. No-op in App Store
+    /// only reachable by hand. Set `microasis.startNoProgram`. No-op in App Store
     /// builds; doesn't affect normal browsing.
     private var screenshotEmpty: Bool {
-        AppEnv.debugToolsEnabled && UserDefaults.standard.bool(forKey: "manas.startNoProgram")
+        AppEnv.debugToolsEnabled && UserDefaults.standard.bool(forKey: "microasis.startNoProgram")
     }
     /// True when the card shows the "nothing on" state (real, or forced for a shot).
     private var showsNoProgram: Bool { noProgramAtAnchor || screenshotEmpty }
@@ -100,8 +100,8 @@ struct WatchRootView: View {
             .onAppear {
                 initIfNeeded(); location.refresh(stages: stages)
                 // Screenshot-only (DEBUG/TestFlight): open the share sheet for a
-                // marketing capture. Set `manas.startShare`. No-op in App Store builds.
-                if AppEnv.debugToolsEnabled, UserDefaults.standard.bool(forKey: "manas.startShare") {
+                // marketing capture. Set `microasis.startShare`. No-op in App Store builds.
+                if AppEnv.debugToolsEnabled, UserDefaults.standard.bool(forKey: "microasis.startShare") {
                     showShare = true
                 } else if !disclaimerSeen {
                     showDisclaimer = true

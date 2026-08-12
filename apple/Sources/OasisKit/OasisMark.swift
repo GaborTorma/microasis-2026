@@ -1,13 +1,13 @@
 import SwiftUI
 
-/// The Manas flower mark, drawn with plain SwiftUI shapes (mirrors the petal
+/// The MicrOasis mark, drawn with plain SwiftUI shapes (mirrors the petal
 /// geometry of `pwa/public/icon.svg`, minus the dark square background).
 ///
 /// Drawn rather than shipped as a raster image because a full-colour PNG does
 /// **not** render inside watchOS accessory complications — those expect
 /// SF Symbols / vector shapes, which also tint correctly in every widget
 /// rendering mode. Transparent background, so it sits on any complication well.
-public struct ManasMark: View {
+public struct OasisMark: View {
     public init() {}
 
     public var body: some View {

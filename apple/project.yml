@@ -1,6 +1,6 @@
-name: Manas
+name: MicrOasis
 options:
-  bundleIdPrefix: ai.torma.manas.2026
+  bundleIdPrefix: ai.torma.microasis.2026
   deploymentTarget:
     iOS: "17.0"
     watchOS: "10.0"
@@ -10,8 +10,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "1.4.0"
-    CURRENT_PROJECT_VERSION: "14"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
     CODE_SIGN_STYLE: Automatic
     # Apple Developer Team (a Team ID is not a secret; safe to commit).
     DEVELOPMENT_TEAM: "5HW26FBLH4"
@@ -23,27 +23,27 @@ settings:
 
 targets:
   # ── iOS / iPadOS app (embeds the watch app) ───────────────────────
-  Manas:
+  MicrOasis:
     type: application
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: Sources/ManasKit
-      - path: Sources/Manas-iOS
+      - path: Sources/OasisKit
+      - path: Sources/MicrOasis-iOS
     dependencies:
-      - target: ManasWatch
+      - target: MicrOasisWatch
         embed: true
-      - target: ManasWidget
+      - target: MicrOasisWidget
         embed: true
     # App Group: share the chosen language, the QA debug clock and the schedule
     # disk cache (+ .etag sidecar) with the home-screen widget extension.
     entitlements:
-      path: Sources/Manas-iOS/Manas.entitlements
+      path: Sources/MicrOasis-iOS/MicrOasis.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.ai.torma.manas.2026
+          - group.ai.torma.microasis.2026
     info:
-      path: Sources/Manas-iOS/Info.plist
+      path: Sources/MicrOasis-iOS/Info.plist
       properties:
         # Feed the single-source-of-truth build settings into the bundle.
         # Without these (and with no GENERATE_INFOPLIST_FILE) an explicit
@@ -53,12 +53,12 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         # On-device name (home screen, app switcher, Safari "‹ <app>" back button).
         # Kept short so the home-screen label doesn't truncate; the App Store
-        # listing name is the longer "Guide for MANAS 2026".
-        CFBundleDisplayName: "MANAS 2026"
-        # Widget → app deep links (manas://stage/<slug>), see AppLinks.scheme.
+        # listing name is the longer "Guide for MicrOasis 2026".
+        CFBundleDisplayName: MicrOasis
+        # Widget → app deep links (microasis://stage/<slug>), see AppLinks.scheme.
         CFBundleURLTypes:
-          - CFBundleURLName: ai.torma.manas.2026
-            CFBundleURLSchemes: [manas]
+          - CFBundleURLName: ai.torma.microasis.2026
+            CFBundleURLSchemes: [microasis]
         UILaunchScreen: {}
         ITSAppUsesNonExemptEncryption: false
         NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."
@@ -68,127 +68,127 @@ targets:
           - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026
-        PRODUCT_NAME: Manas
+        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.microasis.2026
+        PRODUCT_NAME: MicrOasis
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   # ── watchOS app (embedded companion, embeds the widget extension) ──
-  ManasWatch:
+  MicrOasisWatch:
     type: application
     platform: watchOS
     deploymentTarget: "10.0"
     sources:
-      - path: Sources/ManasKit
-      - path: Sources/Manas-watch
+      - path: Sources/OasisKit
+      - path: Sources/MicrOasis-watch
     dependencies:
-      - target: ManasWatchWidget
+      - target: MicrOasisWatchWidget
         embed: true
     # App Group: share the chosen language and the schedule disk cache
     # (+ .etag sidecar) with the embedded widget extension.
     entitlements:
-      path: Sources/Manas-watch/ManasWatch.entitlements
+      path: Sources/MicrOasis-watch/MicrOasisWatch.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.ai.torma.manas.2026
+          - group.ai.torma.microasis.2026
     info:
-      path: Sources/Manas-watch/Info.plist
+      path: Sources/MicrOasis-watch/Info.plist
       properties:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         WKApplication: true
-        WKCompanionAppBundleIdentifier: ai.torma.manas.2026
-        CFBundleDisplayName: Manas
+        WKCompanionAppBundleIdentifier: ai.torma.microasis.2026
+        CFBundleDisplayName: MicrOasis
         NSLocationWhenInUseUsageDescription: "A helyzeted alapján kiválasztjuk a hozzád legközelebbi színpadot."
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.watchkitapp
-        PRODUCT_NAME: ManasWatch
+        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.microasis.2026.watchkitapp
+        PRODUCT_NAME: MicrOasisWatch
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   # ── iOS home-screen widgets ────────────────────────────────────────
   # WidgetKit extension embedded in the iOS app. The same configurable
   # per-stage "now playing" widget as the watch, in the three home-screen
   # sizes (small / medium / large). Provider + intent come from
-  # Sources/Manas-widget-shared, shared with the watch extension.
-  ManasWidget:
+  # Sources/MicrOasis-widget-shared, shared with the watch extension.
+  MicrOasisWidget:
     type: app-extension
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: Sources/ManasKit
-      - path: Sources/Manas-widget-shared
-      - path: Sources/Manas-iOS-widget
+      - path: Sources/OasisKit
+      - path: Sources/MicrOasis-widget-shared
+      - path: Sources/MicrOasis-iOS-widget
     # App Group: read the iOS app's chosen language (shared UserDefaults)
     # and its schedule disk cache.
     entitlements:
-      path: Sources/Manas-iOS-widget/ManasWidget.entitlements
+      path: Sources/MicrOasis-iOS-widget/MicrOasisWidget.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.ai.torma.manas.2026
+          - group.ai.torma.microasis.2026
     info:
-      path: Sources/Manas-iOS-widget/Info.plist
+      path: Sources/MicrOasis-iOS-widget/Info.plist
       properties:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
-        CFBundleDisplayName: "MANAS 2026"
+        CFBundleDisplayName: MicrOasis
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.widget
-        PRODUCT_NAME: ManasWidget
+        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.microasis.2026.widget
+        PRODUCT_NAME: MicrOasisWidget
         TARGETED_DEVICE_FAMILY: "1"
 
   # ── watchOS widgets (Smart Stack + watch-face complications) ───────
   # WidgetKit extension embedded in the watch app. One configurable
   # "now playing" rectangular widget (pin each instance to a stage and
   # scroll the Smart Stack between them) + a small launcher complication.
-  ManasWatchWidget:
+  MicrOasisWatchWidget:
     type: app-extension
     platform: watchOS
     deploymentTarget: "10.0"
     sources:
-      - path: Sources/ManasKit
-      - path: Sources/Manas-widget-shared
-      - path: Sources/Manas-watch-widget
+      - path: Sources/OasisKit
+      - path: Sources/MicrOasis-widget-shared
+      - path: Sources/MicrOasis-watch-widget
     # App Group: read the watch app's chosen language (shared UserDefaults)
     # and its schedule disk cache.
     entitlements:
-      path: Sources/Manas-watch-widget/ManasWatchWidget.entitlements
+      path: Sources/MicrOasis-watch-widget/MicrOasisWatchWidget.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.ai.torma.manas.2026
+          - group.ai.torma.microasis.2026
     info:
-      path: Sources/Manas-watch-widget/Info.plist
+      path: Sources/MicrOasis-watch-widget/Info.plist
       properties:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
-        CFBundleDisplayName: Manas
+        CFBundleDisplayName: MicrOasis
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.manas.2026.watchkitapp.widget
-        PRODUCT_NAME: ManasWatchWidget
+        PRODUCT_BUNDLE_IDENTIFIER: ai.torma.microasis.2026.watchkitapp.widget
+        PRODUCT_NAME: MicrOasisWatchWidget
 
 # Shared schemes, declared so `xcodegen generate` emits them deterministically —
 # XcodeGen does not create schemes on its own, and the previously-present ones were
 # an Xcode-created artifact that didn't survive a clean regenerate. Without these,
 # headless `xcodebuild -scheme …` and the screenshot harness have nothing to build.
 schemes:
-  Manas:
+  MicrOasis:
     build:
       targets:
-        Manas: all
+        MicrOasis: all
     run:
       config: Debug
     archive:
       config: Release
-  ManasWatch:
+  MicrOasisWatch:
     build:
       targets:
-        ManasWatch: all
+        MicrOasisWatch: all
     run:
       config: Debug
     archive:

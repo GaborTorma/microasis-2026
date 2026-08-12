@@ -16,7 +16,7 @@ type Settings = {
   columns: number;
 };
 // The Yoga Terrace has no published programme yet, so it starts hidden (kept in
-// sync with ManasKit/AppState.swift — see ../CLAUDE.md). Users can show it, and
+// sync with OasisKit/AppState.swift — see ../CLAUDE.md). Users can show it, and
 // any other stage, in settings.
 const DEFAULT: Settings = { order: [], hidden: ["terrace"], scale: 1, columns: 3 };
 const KEY = "microasis-settings-v1";

@@ -13,9 +13,9 @@ public extension I18nText {
 /// few chrome labels). HU first, EN second.
 public enum L {
     private static let table: [String: (hu: String, en: String)] = [
-        "app.title": ("Manas 2026", "Manas 2026"),
+        "app.title": ("MicrOasis 2026", "MicrOasis 2026"),
         // Intentionally English in both locales — matches the App Store name
-        // "Guide for MANAS 2026" and frames the name as referential (nominative) use.
+        // "Guide for MicrOasis 2026" and frames the name as referential (nominative) use.
         "app.guidefor": ("Guide for", "Guide for"),
         "app.unofficial": ("Nem hivatalos", "Unofficial"),
         "nav.timetable": ("Időrend", "Timetable"),
@@ -51,8 +51,8 @@ public enum L {
         "settings.privacy": ("Adatvédelem", "Privacy Policy"),
         "settings.support": ("Támogatás", "Support"),
         "about.disclaimer": (
-            "Ez egy nem hivatalos, csak egy lelkes fesztiválozó által készített app — nem a MANAS Fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
-            "This is an unofficial app made by an enthusiastic festival-goer — not the official software or product of the MANAS Festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it."),
+            "Ez egy nem hivatalos, csak egy lelkes fesztiválozó által készített app — nem a MicrOasis fesztivál hivatalos szoftvere vagy terméke. Nem áll kapcsolatban a fesztivállal vagy annak szervezőivel; a szervezőség nem vállal érte felelősséget.",
+            "This is an unofficial app made by an enthusiastic festival-goer — not the official software or product of the MicrOasis festival. It is not affiliated with the festival or its organizers, who accept no responsibility for it."),
         "about.madeprefix": ("Készítette:", "Made by"),
         "about.makername": ("Torma Gábor", "Gábor Torma"),
         "disclaimer.title": ("Nem hivatalos alkalmazás", "Unofficial app"),
@@ -63,7 +63,7 @@ public enum L {
             "Olvastasd be valakivel ezt a kódot,\nés már meg is osztottad az appot.",
             "Let a friend scan this code,\nand you've shared the app."),
         "share.button": ("Megosztás", "Share"),
-        "share.invite": ("Nézd meg a MANAS 2026 programját 🎶", "Check out the MANAS 2026 schedule 🎶"),
+        "share.invite": ("Nézd meg a MicrOasis 2026 programját 🎶", "Check out the MicrOasis 2026 schedule 🎶"),
         "settings.testing": ("Teszt", "Testing"),
         "settings.testTime": ("Teszt idő", "Test time"),
         "settings.testLocation": ("Teszt hely", "Test location"),

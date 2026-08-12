@@ -223,7 +223,7 @@ public func madeByCredit(_ locale: AppLocale) -> AttributedString {
     return prefix + name
 }
 
-/// Manas green palette, mirroring the web app's CSS tokens.
+/// MicrOasis palette, mirroring the web app's CSS tokens.
 public enum Theme {
     public static let ink = Color(hex: "#0c1611")
     public static let ink2 = Color(hex: "#122017")

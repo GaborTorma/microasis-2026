@@ -92,7 +92,7 @@ public extension JSONDecoder {
     /// Decoder tolerant of the two ISO-8601 shapes the API emits:
     /// `2026-07-08T15:30:00.000Z` (events) and `2026-07-08T18:30:00+02:00`
     /// (festival window). Built once — the two formatters live in the closure.
-    static let manas: JSONDecoder = {
+    static let microasis: JSONDecoder = {
         let decoder = JSONDecoder()
         let withFraction = ISO8601DateFormatter()
         withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]

@@ -11,13 +11,13 @@ public enum AppEnv {
         #endif
     }()
 
-    /// Screenshot-only escape hatch: when `manas.hideTestUI` is set the in-app
+    /// Screenshot-only escape hatch: when `microasis.hideTestUI` is set the in-app
     /// "Testing" settings section is hidden even in DEBUG/TestFlight, so App
     /// Store / marketing captures don't show the QA time/location controls. The
     /// clock and coordinate overrides themselves keep working — only the UI is
     /// hidden. Undocumented, invisible default written by the screenshot harness.
     public static var hideTestUI: Bool {
-        UserDefaults.standard.bool(forKey: "manas.hideTestUI")
+        UserDefaults.standard.bool(forKey: "microasis.hideTestUI")
     }
 }
 
@@ -40,11 +40,11 @@ public enum Fmt {
     }
 
     /// Current instant. In DEBUG it can be overridden for simulator testing:
-    ///   xcrun simctl spawn <udid> defaults write <bundle> manas.debugNow "2026-07-09 00:15"
+    ///   xcrun simctl spawn <udid> defaults write <bundle> microasis.debugNow "2026-07-09 00:15"
     /// (also accepts a full ISO-8601 string). Compiled out of release builds.
     public static var now: Date {
         if AppEnv.debugToolsEnabled,
-           let s = UserDefaults.standard.string(forKey: "manas.debugNow"),
+           let s = UserDefaults.standard.string(forKey: "microasis.debugNow"),
            let d = parseDateTime(s) {
             return d
         }

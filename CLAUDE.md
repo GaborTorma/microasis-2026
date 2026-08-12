@@ -1,6 +1,6 @@
-# Manas 2026 — monorepo
+# MicrOasis 2026 — monorepo
 
-Unofficial companion apps for the **Manas 2026** festival: a Next.js PWA and native
+Unofficial companion apps for the **MicrOasis 2026** festival: a Next.js PWA and native
 Apple (iOS + watchOS) apps. Both clients render the same schedule; the **database is
 the single source of truth** and the web app is the only backend.
 
@@ -16,11 +16,11 @@ them is the **wire contract** below.
 ## The web ↔ apple wire contract (read this before editing data shapes)
 
 The apple apps fetch JSON straight from the deployed web API
-(`https://manas2026.vercel.app/api/schedule`). The DTOs are **hand-maintained in two
+(`https://microasis.torma.ai/api/schedule`). The DTOs are **hand-maintained in two
 places that must stay byte-for-byte compatible**:
 
 - web: `pwa/lib/types.ts` (`ScheduleData`, `FestivalDTO`, `StageDTO`, `EventDTO`)
-- apple: `apple/Sources/ManasKit/Models.swift` (same structs, `Codable`)
+- apple: `apple/Sources/OasisKit/Models.swift` (same structs, `Codable`)
 
 Rules a future edit must respect:
 
@@ -35,7 +35,7 @@ Rules a future edit must respect:
    the repo.** `pwa/lib/queries.ts` emits event `startsAt`/`endsAt` via
    `.toISOString()` → `2026-08-21T15:30:00.000Z` (UTC, fractional seconds, `Z`),
    while `pwa/lib/festival.ts` stores the festival window as `+02:00`-offset literals
-   (`2026-08-20T12:00:00+02:00`). `JSONDecoder.manas` in `Models.swift` tolerates
+   (`2026-08-20T12:00:00+02:00`). `JSONDecoder.microasis` in `Models.swift` tolerates
    **exactly those two ISO-8601 shapes and hard-fails the whole decode on anything
    else.** Never change date serialization on the web side without updating the Swift
    decoder.
@@ -64,15 +64,15 @@ Rules a future edit must respect:
   iOS Safari often lists English ahead of Hungarian on a Hungarian device, so
   first-tag-only wrongly served EN.) A user's explicit toggle persists and always wins. Implemented independently in
   web (`pwa/i18n/request.ts`, `i18n/config.ts` `DEFAULT_LOCALE='hu'`) and apple
-  (`ManasKit/AppState.swift` device default). The **widgets** (watch Smart Stack +
+  (`OasisKit/AppState.swift` device default). The **widgets** (watch Smart Stack +
   iOS home screen) read their host app's chosen language through an **App Group**
-  (`group.ai.torma.manas.2026`, `ManasKit/AppState.swift` `SharedDefaults`; the apps
-  mirror `manas.locale` there and reload timelines on change), falling back to
+  (`group.ai.torma.microasis.2026`, `OasisKit/AppState.swift` `SharedDefaults`; the apps
+  mirror `microasis.locale` there and reload timelines on change), falling back to
   device language until the app sets one.
 - **The Yoga Terrace is hidden by default on every client**, because it has no
   published programme yet. Both defaults must flip together when it gets one —
   `pwa/components/settings/SettingsContext.tsx` `hidden: ["terrace"]` and
-  `ManasKit/AppState.swift` `?? ["terrace"]`. Note: a default change only reaches
+  `OasisKit/AppState.swift` `?? ["terrace"]`. Note: a default change only reaches
   *new* installs/visitors; anyone who already persisted a hidden set keeps it
   until they toggle it in settings.
 - **Stage `slug`** (`oasis`, `wadi`, `terrace`) is the stable cross-platform key.
@@ -84,29 +84,30 @@ Rules a future edit must respect:
   entries' edits must not shift it); only a same-title-same-stage-same-day group
   also gets `-HHmm`. Editing an event's title or moving it across days orphans its
   favorites; a time-of-day correction doesn't. Favorites storage is deliberately
-  split: web keeps them device-local (`manas-favorites-v1` localStorage — NO
+  split: web keeps them device-local (`microasis-favorites-v1` localStorage — NO
   web↔apple sync, no accounts); iPhone↔watch sync via WatchConnectivity
-  (`ManasKit/Favorites.swift`, per-slug last-writer-wins); the watch widget reads
-  the App Group mirror (`manas.favorites`). Breaks (`kind == "break"`) are never
+  (`OasisKit/Favorites.swift`, per-slug last-writer-wins); the watch widget reads
+  the App Group mirror (`microasis.favorites`). Breaks (`kind == "break"`) are never
   favoritable.
 - **A GPS fix is only trusted when accurate and fresh** (horizontal accuracy
   ≤ 100 m, fix age ≤ 60 s — thresholds must match across
-  `pwa/lib/useNearestStage.ts` and `ManasKit/Location.swift`
+  `pwa/lib/useNearestStage.ts` and `OasisKit/Location.swift`
   `Geo.maxFixAccuracyM`/`maxFixAgeS`). A coarse/stale/failed fix *clears* the
   nearest-stage state instead of keeping the previous value — no stage beats
   the wrong stage — and consumers must treat that nil as "don't move", never
   as "jump to the default stage". iOS retries the one-shot request a couple
   of times first, because CoreLocation usually serves a stale cached fix
   while the GPS warms up (the browser's `maximumAge` already prevents that
-  on web). Known limit: 100 m cannot disambiguate the tightest stage pair
-  (portal↔terrace ≈ 97 m) — accepted.
+  on web). Known limit: the 100 m accuracy gate cannot disambiguate the tightest
+  stage pair (oasis↔terrace ≈ 90 m) — accepted. Stage geofences themselves are
+  50 m.
 - **All times display in `Europe/Budapest`**, hardcoded on both sides
-  (`pwa/lib/queries.ts`/`format.ts`, `ManasKit/Formatting.swift`).
+  (`pwa/lib/queries.ts`/`format.ts`, `OasisKit/Formatting.swift`).
 
 ## Conventions
 
 - **Commits:** Conventional Commits with a scope: `feat(watch):`, `fix(ios):`,
-  `feat(bowl):`, `build(ios):`, `feat(web):`. Imperative, lowercase, no trailing
+  `feat(wadi):`, `build(ios):`, `feat(web):`. Imperative, lowercase, no trailing
   period. End the commit message with the `Co-Authored-By: Claude ...` trailer.
 - **Language:** code, comments, and these CLAUDE.md files are English (matches the
   existing READMEs); UI strings are bilingual HU/EN.

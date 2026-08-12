@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "manas-pwa",
+      "name": "microasis-pwa",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--dir", "pwa", "dev"],
       "port": 3000,

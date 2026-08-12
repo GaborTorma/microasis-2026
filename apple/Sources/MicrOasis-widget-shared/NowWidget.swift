@@ -3,7 +3,7 @@ import SwiftUI
 import AppIntents
 
 /// "Now playing" timeline for the configured stage. `NowEntry`, the entry
-/// builder, and the views live in `ManasKit/NowWidgetCard.swift` so the in-app
+/// builder, and the views live in `OasisKit/NowWidgetCard.swift` so the in-app
 /// widget-preview screen renders identically; this file is the WidgetKit glue.
 struct NowProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> NowEntry {
@@ -68,7 +68,7 @@ struct NowProvider: AppIntentTimelineProvider {
 /// rectangular Smart Stack card on the watch; on iOS the small and medium
 /// home-screen sizes, both showing the watch card's "now" block with the Now
 /// tab's "up next" row beneath (medium is the wide variant).
-struct ManasNowWidget: Widget {
+struct MicrOasisNowWidget: Widget {
     #if os(watchOS)
     private let families: [WidgetFamily] = [.accessoryRectangular]
     #else
@@ -76,7 +76,7 @@ struct ManasNowWidget: Widget {
     #endif
 
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: "ManasNow", intent: StageIntent.self, provider: NowProvider()) { entry in
+        AppIntentConfiguration(kind: "MicrOasisNow", intent: StageIntent.self, provider: NowProvider()) { entry in
             #if os(watchOS)
             NowWidgetView(entry: entry)
             #else

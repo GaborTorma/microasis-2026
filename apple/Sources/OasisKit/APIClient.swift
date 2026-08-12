@@ -2,15 +2,15 @@ import Foundation
 
 /// Talks to the same Neon-backed JSON API the PWA uses.
 public struct APIClient: Sendable {
-    /// QA override (`-manas.apiBase http://localhost:3000/api`) so a simulator
+    /// QA override (`-microasis.apiBase http://localhost:3000/api`) so a simulator
     /// can exercise a local dev server; DEBUG/TestFlight only, like the debug clock.
     public static let baseURL: URL = {
         if AppEnv.debugToolsEnabled,
-           let raw = UserDefaults.standard.string(forKey: "manas.apiBase"),
+           let raw = UserDefaults.standard.string(forKey: "microasis.apiBase"),
            let url = URL(string: raw) {
             return url
         }
-        return URL(string: "https://manas2026.vercel.app/api")!
+        return URL(string: "https://microasis.torma.ai/api")!
     }()
 
     private let session: URLSession
@@ -35,7 +35,7 @@ public struct APIClient: Sendable {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
         if http.statusCode == 304 {
-            if let cached = Self.readCache(name), let value = try? JSONDecoder.manas.decode(T.self, from: cached) {
+            if let cached = Self.readCache(name), let value = try? JSONDecoder.microasis.decode(T.self, from: cached) {
                 // Revalidated = fresh: rewrite so the file's modification date
                 // re-arms maxAge readers (the widget's shared-cache window) —
                 // and a body read from the legacy path migrates to the group.
@@ -52,7 +52,7 @@ public struct APIClient: Sendable {
         guard (200..<300).contains(http.statusCode) else {
             throw URLError(.badServerResponse)
         }
-        let value = try JSONDecoder.manas.decode(T.self, from: data)
+        let value = try JSONDecoder.microasis.decode(T.self, from: data)
         // Pair the writes: an etag must never outlive the body it validates,
         // or the next revalidation would 304 against a different body.
         if Self.writeCache(data, name: name), let etag = http.value(forHTTPHeaderField: "ETag") {
@@ -78,7 +78,7 @@ public struct APIClient: Sendable {
         }
         let dir = group.appendingPathComponent("Library/Application Support", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent("manas-\(name)")
+        return dir.appendingPathComponent("microasis-\(name)")
     }
 
     /// The pre-App-Group location (each process's own container) — still the
@@ -87,7 +87,7 @@ public struct APIClient: Sendable {
     private static func legacyCacheURL(_ name: String) -> URL? {
         try? FileManager.default
             .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            .appendingPathComponent("manas-\(name)")
+            .appendingPathComponent("microasis-\(name)")
     }
 
     private static func readCache(_ name: String, maxAge: TimeInterval? = nil) -> Data? {
@@ -114,7 +114,7 @@ public struct APIClient: Sendable {
     /// the watch app just refreshed instead of fetching its own.
     public func cachedSchedule(maxAge: TimeInterval? = nil) -> ScheduleData? {
         guard let data = Self.readCache("schedule.json", maxAge: maxAge) else { return nil }
-        return try? JSONDecoder.manas.decode(ScheduleData.self, from: data)
+        return try? JSONDecoder.microasis.decode(ScheduleData.self, from: data)
     }
 
     // MARK: ETag sidecar (same directory as the cached body)

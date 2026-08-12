@@ -24,7 +24,7 @@ struct TimetableView: View {
     /// fade so the favorited ones pop.
     var favFilter: Bool = false
     @Binding var compactHeader: Bool
-    /// Widget deep link (`manas://stage/<slug>`): pending stage to lead with.
+    /// Widget deep link (`microasis://stage/<slug>`): pending stage to lead with.
     @Binding var stageJump: String?
     @Environment(\.scenePhase) private var scenePhase
 
