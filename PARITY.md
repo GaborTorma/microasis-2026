@@ -14,7 +14,7 @@
 | Megosztás (QR + share link)               | ✅  | ✅  | ✅      | PWA `/share`, iOS „Add tovább" tab, watch QR-sheet (előre renderelt asset — watchOS-en nincs CoreImage).      |
 | „Töltsd le az appot" showcase (`/app`)    | ✅  | ➖  | ➖      | Web-only marketing landing; natív appoknál nem értelmezett (a Share tab a natív analóg).                      |
 | Nyelvváltó HU/EN                          | ✅  | ✅  | ✅      | Mindkét widget a saját host appja nyelvét örökli App Group-on át (saját váltó nélkül); amíg az app nem állít nyelvet, az eszköz nyelve. |
-| Színpad elrejtés / sorrend                | ✅  | ✅  | ✅      | Beállítás mindhárom kliensen; eszközönként független perzisztencia (nincs iCloud/pairing). A Yoga Terrace alapból rejtett. |
+| Színpad elrejtés / sorrend                | ✅  | ✅  | ✅      | Beállítás mindhárom kliensen; eszközönként független perzisztencia (nincs iCloud/pairing). Alapból egy színpad sem rejtett; a korábbi „Terrace rejtve" defaultot mindkét kliensen egyszeri migráció bontja le. |
 | Timetable zoom (oszlopszám + szövegméret) | ✅  | ✅  | ➖      | watch: nincs rács → nem értelmezett. iOS `effectiveColumns` + `fontScale`, web `columns`+`scale` tükrözi.      |
 | Legközelebbi színpad (geolokáció)         | ✅  | ✅  | ✅      | PWA `useNearestStage`, iOS/watch `LocationStore`. 50 m-es stage-geofence; a fix csak ≤100 m pontosság és ≤60 s kor mellett érvényes. |
 | Offline cache                             | ✅  | ✅  | ✅      | PWA SW + localStorage (ETag/304 revalidálás). Apple: közös lemez-cache az App Group konténerben (`…/Library/Application Support/microasis-schedule.json` + `.etag`), app és widget között — a widget <6 h friss másolatnál nem hálózik. |

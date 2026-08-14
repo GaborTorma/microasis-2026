@@ -1,8 +1,8 @@
 /**
  * Seed the MicrOasis 2026 schedule into Neon.
  *
- * Data transcribed from the printed WADI and OASIS timetable posters.
- * Times are festival-local (Europe/Budapest = CEST = UTC+02:00 in August).
+ * Data transcribed from the printed OASIS, WADI and YOGA TERRACE timetable
+ * posters. Times are festival-local (Europe/Budapest = CEST = UTC+02:00 in August).
  *
  * Run: pnpm db:seed   (idempotent — wipes and re-inserts)
  *
@@ -112,7 +112,7 @@ const WADI: Entry[] = [
   { d: "2026-08-20", s: "16:30", title: t("Baazs") },
   { d: "2026-08-20", s: "18:00", title: t("Borish & Szoa") },
   { d: "2026-08-20", s: "20:00", title: t("SNP") },
-  { d: "2026-08-20", s: "21:30", title: t("Route 8") },
+  { d: "2026-08-20", s: "21:30", title: t("Maron") },
   { d: "2026-08-20", s: "23:00", title: t("Lau") }, // runs to 00:30 on Friday
   // Friday 08/21
   { d: "2026-08-21", s: "00:30", title: t("3en & Daniel Moritz") },
@@ -136,7 +136,7 @@ const WADI: Entry[] = [
   { d: "2026-08-22", s: "18:00", title: t("Stipo") },
   { d: "2026-08-22", s: "19:30", title: t("Tolo") },
   { d: "2026-08-22", s: "21:00", title: t("Jaffa Surfa") },
-  { d: "2026-08-22", s: "22:30", title: t("Maron") },
+  { d: "2026-08-22", s: "22:30", title: t("Route 8") },
   // Sunday 08/23
   { d: "2026-08-23", s: "00:00", title: t("Justine Perry") },
   { d: "2026-08-23", s: "02:00", title: t("Reka Zalan") },
@@ -196,10 +196,51 @@ const OASIS: Entry[] = [
 ];
 
 // ──────────────────────────────────────────────────────── YOGA TERRACE ──
-// Third stage, announced but with no published programme yet. Seeded so the
-// stage exists (settings, geofence); hidden by default on every client until
-// it has acts.
-const TERRACE: Entry[] = [];
+// Fri/Sat/Sun daytime only (nothing on Thursday), two-hour blocks back to back.
+// The last block of each day carries an explicit end — the chain would otherwise
+// run it into the next morning's first class. `kind` splits the poster by what
+// the session is: `yoga` where the name says yoga, `workshop` for the movement,
+// dance and breathwork sessions — it only picks the icon.
+const TERRACE: Entry[] = [
+  // Friday 08/21
+  { d: "2026-08-21", s: "08:00", kind: "yoga",
+    title: { hu: "Hatha Jóga", en: "Hatha Yoga" }, a: "Pinke Roland" },
+  { d: "2026-08-21", s: "10:00", kind: "workshop",
+    title: { hu: "Megtestesült Jelenlét", en: "Embodied Presence" }, a: "Szabó Emma" },
+  { d: "2026-08-21", s: "12:00", kind: "yoga",
+    title: { hu: "Shadow Jóga", en: "Shadow Yoga" }, a: "Fáy Zsolt" },
+  { d: "2026-08-21", s: "14:00", kind: "workshop",
+    title: { hu: "Érezd.Engedd.Éld.", en: "Feel.Release.Live." }, a: "Németh Kitti" },
+  { d: "2026-08-21", s: "16:00", kind: "workshop",
+    title: { hu: "Testtudat és szabadtánc", en: "Body Awareness & Free Dance" }, a: "Grecsó Zoltán" },
+  { d: "2026-08-21", s: "18:00", e: "20:00", kind: "workshop",
+    title: { hu: "Transzformatív mélylégzés", en: "Transformative Deep Breathing" }, a: "Pinke Roland" },
+  // Saturday 08/22
+  { d: "2026-08-22", s: "10:00", kind: "workshop",
+    title: { hu: "Megtestesült Jelenlét", en: "Embodied Presence" }, a: "Szabó Emma" },
+  { d: "2026-08-22", s: "12:00", kind: "yoga",
+    title: t("Hatha flow Yoga"), a: "Kovács Olívia" },
+  { d: "2026-08-22", s: "14:00", kind: "yoga",
+    title: t("Yin & Yang Flow Yoga"), a: "Üveges Csenge" },
+  { d: "2026-08-22", s: "16:00", kind: "yoga",
+    title: t("Yoga & Pranayama"), a: "Nagy Norman" },
+  { d: "2026-08-22", s: "18:00", kind: "workshop",
+    title: { hu: "Testtudat és szabadtánc", en: "Body Awareness & Free Dance" }, a: "Grecsó Zoltán" },
+  { d: "2026-08-22", s: "20:00", e: "22:00", kind: "yoga",
+    title: t("Indi-Yoga"), a: "Kovács Endre" },
+  // Sunday 08/23
+  { d: "2026-08-23", s: "10:00", kind: "yoga",
+    title: { hu: "Hatha Jóga filozófiával kísérve", en: "Hatha Yoga with Philosophy" }, a: "Sipos László" },
+  { d: "2026-08-23", s: "12:00", kind: "workshop",
+    title: { hu: "Compás a térben", en: "Compás in Space" }, a: "Bajnay Beáta" },
+  { d: "2026-08-23", s: "14:00", kind: "workshop",
+    title: { hu: "Érezd.Engedd.Éld.", en: "Feel.Release.Live." }, a: "Németh Kitti" },
+  { d: "2026-08-23", s: "16:00", kind: "workshop",
+    title: { hu: "Visszhang – Közös játék mozgásban", en: "Echo – A Shared Game in Movement" },
+    a: "Lipták Boglárka" },
+  { d: "2026-08-23", s: "18:00", e: "20:00", kind: "yoga",
+    title: t("Indi-Yoga"), a: "Kovács Endre" },
+];
 
 async function main() {
   // Build + validate every event row up front — a slug collision must abort

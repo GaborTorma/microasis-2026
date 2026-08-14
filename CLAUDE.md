@@ -69,12 +69,15 @@ Rules a future edit must respect:
   (`group.ai.torma.microasis.2026`, `OasisKit/AppState.swift` `SharedDefaults`; the apps
   mirror `microasis.locale` there and reload timelines on change), falling back to
   device language until the app sets one.
-- **The Yoga Terrace is hidden by default on every client**, because it has no
-  published programme yet. Both defaults must flip together when it gets one —
-  `pwa/components/settings/SettingsContext.tsx` `hidden: ["terrace"]` and
-  `OasisKit/AppState.swift` `?? ["terrace"]`. Note: a default change only reaches
-  *new* installs/visitors; anyone who already persisted a hidden set keeps it
-  until they toggle it in settings.
+- **No stage is hidden by default** — `hidden: []` in
+  `pwa/components/settings/SettingsContext.tsx` and `?? []` in
+  `OasisKit/AppState.swift`, which must stay in step. The Yoga Terrace *was*
+  hidden until its programme was published, and because a default only reaches
+  *new* installs/visitors, both clients carry a **one-shot migration** that
+  removes `"terrace"` from an already-persisted hidden set exactly once
+  (localStorage `microasis-terrace-programmed-v1` on web, `microasis.terraceProgrammed`
+  in `UserDefaults` on apple). Both are disposable after the festival. Any stage
+  the user hid themselves is left untouched.
 - **Stage `slug`** (`oasis`, `wadi`, `terrace`) is the stable cross-platform key.
   Never repurpose a slug.
 - **Event `slug` is the favorites key on every client** — event serial ids renumber

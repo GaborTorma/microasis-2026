@@ -3,7 +3,7 @@
    - navigations   : network-first, fall back to cached page (or "/")
    - static assets : cache-first
 */
-const VERSION = "microasis-v1";
+const VERSION = "microasis-v2";
 const SHELL = `${VERSION}-shell`;
 const API = `${VERSION}-api`;
 

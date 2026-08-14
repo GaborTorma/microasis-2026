@@ -175,8 +175,9 @@ disclaimer with `-microasis.disclaimerSeen 1`.
   read as a fallback when the group container is unavailable. A 200 rewrites `microasis-schedule.json` +
   its `.etag` sidecar; an ETag-matching refetch is a bodyless 304 that leaves the
   cache untouched.
-- **The Yoga Terrace is hidden by default** (`AppState.swift` `?? ["terrace"]`) —
-  kept in sync with web, see `../CLAUDE.md`.
+- **No stage is hidden by default** (`AppState.swift` `?? []`), and a one-shot
+  `microasis.terraceProgrammed` migration un-hides the Yoga Terrace for devices
+  that persisted the old default. Kept in sync with web, see `../CLAUDE.md`.
 - **Debug tooling is gated to DEBUG/TestFlight** (`AppEnv.debugToolsEnabled`, an
   `appStoreReceiptURL` check) and compiled out of App Store builds. Drive it from
   the simulator:

@@ -22,8 +22,8 @@ public struct StageDTO: Codable, Identifiable, Hashable, Sendable {
 }
 
 /// Event kinds are kept as raw strings for forward-compatibility with the API.
-/// `music` is a DJ set or live act and `break` is a marked gap; the rest are
-/// there for anything the Yoga Terrace eventually programmes. Mirrors
+/// `music` is a DJ set or live act, `break` a marked gap, and `yoga`/`workshop`
+/// split the Yoga Terrace programme; `ceremony` is unused so far. Mirrors
 /// `pwa/lib/types.ts` EventKind — new values decode fine (raw String).
 public enum EventKind {
     public static let music = "music"

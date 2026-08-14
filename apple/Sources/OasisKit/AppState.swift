@@ -55,6 +55,7 @@ public final class Settings: ObservableObject {
         static let order = "microasis.order", hidden = "microasis.hidden", locale = SharedDefaults.localeKey
         static let columns = "microasis.columns", fontSize = "microasis.fontSize", debugNow = "microasis.debugNow"
         static let debugCoord = "microasis.debugCoord"
+        static let terraceProgrammed = "microasis.terraceProgrammed"
     }
 
     @Published public var order: [String] { didSet { defaults.set(order, forKey: Key.order) } }
@@ -90,9 +91,20 @@ public final class Settings: ObservableObject {
 
     public init() {
         order = defaults.stringArray(forKey: Key.order) ?? []
-        // The Yoga Terrace has no published programme yet, so it starts hidden
-        // (kept in sync with the web SettingsContext — see ../../CLAUDE.md).
-        hidden = Set(defaults.stringArray(forKey: Key.hidden) ?? ["terrace"])
+        // Every stage starts visible (kept in sync with the web SettingsContext
+        // — see ../../CLAUDE.md).
+        var persistedHidden = Set(defaults.stringArray(forKey: Key.hidden) ?? [])
+        // One-shot migration: the Yoga Terrace shipped hidden because it had no
+        // published programme, and that default is already persisted on devices
+        // running an earlier build. Drop it exactly once, leaving stages the user
+        // hid themselves alone. `didSet` does not fire during init, so the
+        // write-back is explicit.
+        if !defaults.bool(forKey: Key.terraceProgrammed) {
+            defaults.set(true, forKey: Key.terraceProgrammed)
+            persistedHidden.remove("terrace")
+            defaults.set(Array(persistedHidden), forKey: Key.hidden)
+        }
+        hidden = persistedHidden
         locale = AppLocale(rawValue: defaults.string(forKey: Key.locale) ?? "") ?? Settings.deviceDefaultLocale
         // `integer(forKey:)` (not `object as? Int`) so a value injected via the
         // launch-argument domain — a string, e.g. the screenshot harness's

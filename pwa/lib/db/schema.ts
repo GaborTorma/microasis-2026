@@ -35,10 +35,10 @@ export const stages = pgTable("stages", {
 });
 
 /**
- * kind discriminates rendering. `music` is a DJ set or live act, `break` is a
- * gap the poster marks explicitly. The rest exist for anything the Yoga Terrace
- * eventually programmes. Open string on the wire (Swift keeps it raw), so
- * widening needs no DB migration.
+ * kind discriminates rendering (it only picks the icon). `music` is a DJ set or
+ * live act, `break` is a gap the poster marks explicitly, and `yoga`/`workshop`
+ * split the Yoga Terrace programme. `ceremony` is unused so far. Open string on
+ * the wire (Swift keeps it raw), so widening needs no DB migration.
  */
 export type EventKind = "music" | "break" | "workshop" | "yoga" | "ceremony";
 /** Spoken-language badge for talk-like events: both / english only / hungarian only. */

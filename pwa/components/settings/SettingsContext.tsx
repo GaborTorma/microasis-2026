@@ -15,11 +15,17 @@ type Settings = {
   /** Portrait-mobile column-count zoom: how many stage columns fill the width. */
   columns: number;
 };
-// The Yoga Terrace has no published programme yet, so it starts hidden (kept in
-// sync with OasisKit/AppState.swift — see ../CLAUDE.md). Users can show it, and
-// any other stage, in settings.
-const DEFAULT: Settings = { order: [], hidden: ["terrace"], scale: 1, columns: 3 };
+// Every stage starts visible (kept in sync with OasisKit/AppState.swift — see
+// ../CLAUDE.md). Users can hide any of them in settings.
+const DEFAULT: Settings = { order: [], hidden: [], scale: 1, columns: 3 };
 const KEY = "microasis-settings-v1";
+// One-shot migration. The Yoga Terrace shipped hidden by default because it had
+// no published programme; now it has one. Flipping DEFAULT only reaches new
+// visitors — anyone who loaded the site before persisted the old hidden set and
+// would never see the stage. Drop "terrace" from it exactly once, leaving every
+// stage the user hid themselves alone. Delete this once the audience has turned
+// over (it is dead weight after the festival).
+const TERRACE_UNHIDE_KEY = "microasis-terrace-programmed-v1";
 
 /** Timetable text/width zoom levels (−25% … +50%, 25% steps). */
 export const SCALE_LEVELS = [0.75, 1, 1.25, 1.5] as const;
@@ -43,7 +49,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) setSettings({ ...DEFAULT, ...JSON.parse(raw) });
+      let next: Settings = raw ? { ...DEFAULT, ...JSON.parse(raw) } : DEFAULT;
+      if (!localStorage.getItem(TERRACE_UNHIDE_KEY)) {
+        localStorage.setItem(TERRACE_UNHIDE_KEY, "1");
+        next = { ...next, hidden: next.hidden.filter((s) => s !== "terrace") };
+      }
+      setSettings(next);
     } catch {
       /* ignore */
     }

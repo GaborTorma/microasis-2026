@@ -34,9 +34,9 @@ const festivalDay = (d: Date) => dayFmt.format(d);
 const floorHour = (ms: number) => Math.floor(ms / HOUR) * HOUR;
 const ceilHour = (ms: number) => Math.ceil(ms / HOUR) * HOUR;
 
-// Language coding for talk-like events. Unused by the current all-music
-// programme (langAvailability is null everywhere) but kept wired, so a future
-// Yoga Terrace workshop only needs the seed field set.
+// Language coding for talk-like events. Unused so far — no poster states the
+// spoken language, so langAvailability is null on every event — but kept wired,
+// so a session that does declare one only needs the seed field set.
 const LANG_CHIPS: Record<string, { labels: string[]; bg: string; fg: string }> = {
   both: { labels: ["EN+HU"], bg: "#e0b93a", fg: "#170c0b" },
   en: { labels: ["EN"], bg: "#9d6fc4", fg: "#ffffff" },
