@@ -33,6 +33,35 @@ this API version, and it must show **Published**, not just filled in.
 
 The watch slot `APP_WATCH_ULTRA` does accept the Ultra 3's 422×514 captures.
 
+## Replacing assets on a version that is already READY_FOR_REVIEW
+
+A version sitting in `READY_FOR_REVIEW` is **frozen**: creating or deleting a
+screenshot returns `409 STATE_ERROR — "Can't Create Screenshot while Ready For
+Review appScreenshots"`. The freeze comes from the open review submission, not
+from the version itself. To edit:
+
+1. `DELETE /v1/reviewSubmissionItems/<itemId>` — the version drops back to
+   `PREPARE_FOR_SUBMISSION` and its assets unfreeze. (The failed deletes are
+   safe: a 409 changes nothing, so the old screenshots survive.)
+2. Swap the assets, attach the new build.
+3. `POST /v1/reviewSubmissionItems` with the same `reviewSubmission` +
+   `appStoreVersion` relationships — the version returns to `READY_FOR_REVIEW`,
+   one button away from submission.
+
+`reviewSubmissions` themselves allow only CREATE/GET/UPDATE — **there is no
+DELETE**, so an empty submission created by mistake cannot be cleaned up. It is
+harmless with zero items, but don't create spares.
+
+Two more API quirks around a new build:
+
+- `betaBuildLocalizations` already exist for a freshly processed build — POST
+  returns `409 "There is an entity with same 'locale'"`. **PATCH** them instead.
+- Adding a build to an **internal** TestFlight group returns `422 "Cannot add
+  internal group to a build"`: internal groups receive every build automatically.
+- The age rating lives at `/v1/appInfos/<appInfoId>/ageRatingDeclaration` —
+  `/v1/apps/<id>/ageRatingDeclaration` does **not** exist, so a check against it
+  reports a false "missing".
+
 ## URLs
 - **Privacy Policy URL:** https://microasis.torma.ai/privacy
 - **Support URL:** https://microasis.torma.ai/support

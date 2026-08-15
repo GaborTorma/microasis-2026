@@ -98,13 +98,15 @@ disclaimer with `-microasis.disclaimerSeen 1`.
   the QA `microasis.debugNow` clock (DEBUG/TestFlight only), and — same group
   container — **one schedule disk cache** (the widget reuses the app's fetch).
 - **Versioning** (`project.yml`): `MARKETING_VERSION` (semver, currently `1.0.0`)
-  bumped per release; `CURRENT_PROJECT_VERSION` (integer, currently `1`) bumped per
+  bumped per release; `CURRENT_PROJECT_VERSION` (integer, currently `2`) bumped per
   TestFlight upload. Both flow into Info.plist via `$(…)` substitution — never hardcode them in a
   plist or the bump won't reach the binary.
 - **Bundle IDs:** `ai.torma.microasis.2026` (iOS) · `.widget` (iOS widget) ·
   `.watchkitapp` (watch) · `.watchkitapp.widget` (watch widget). Team `5HW26FBLH4`,
   deployment targets iOS 17 / watchOS 10.
-- **App Store:** record created, not yet submitted for review. Apple ID
+- **App Store:** `1.0` is staged and `READY_FOR_REVIEW` with build `1.0.0 (2)`
+  attached — everything filled in, deliberately **not** submitted (that button is
+  the developer's to press). Apple ID
   `6800753437` (`Guide for MicrOasis 2026`, SKU `microasis2026`). The id lives in
   two mirrored places: `AppLinks.appStore` and the web's `APP_STORE_URL`.
 - **Commits** follow the repo-wide Conventional Commits with scope (`feat(watch):`,

@@ -101,6 +101,16 @@ shots:
     view: now
     time: "2026-08-20 13:00"      # gates open, camp going up, first acts teased
 
+  # The Yoga Terrace on its own — one wide column, so the class names and the
+  # teachers stay readable. Saturday afternoon runs yoga back to back.
+  - name: "08-timetable-terrace"
+    device: iphone
+    view: timetable
+    time: "2026-08-22 14:30"
+    columns: 1
+    font: 2
+    location: terrace
+
   # Home-screen widgets: medium (Oasis) + small (Wadi), both live with a
   # full up-next list at this time.
   - name: "09-widgets"
@@ -108,7 +118,7 @@ shots:
     view: widget
     stage: "oasis,wadi"
     time: "2026-08-22 20:30"
-    favorites: "oasis-electricano-0822,wadi-maron-0822"
+    favorites: "oasis-electricano-0822,wadi-route-8-0822"
 
   # Saturday night with the favorites dim-filter on: the hearted acts pop,
   # everything else fades — the landing page's favorites section.
@@ -133,8 +143,6 @@ shots:
     location: wadi
 
   # The Wadi's long Sunday daytime break — a real "nothing on right now" card.
-  # (The Yoga Terrace would be the other candidate, but it is hidden by default
-  # on every client, so it cannot be the shown stage.)
   - name: "03-now-quiet"
     device: watch
     time: "2026-08-23 12:00"
