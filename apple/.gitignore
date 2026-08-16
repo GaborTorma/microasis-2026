@@ -15,3 +15,7 @@ build/
 *.xcuserstate
 *.xcuserdatad/
 .DS_Store
+
+# Python (scripts/ run via `uv run`, so nothing here is committed)
+__pycache__/
+.venv/

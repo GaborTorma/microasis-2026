@@ -29,6 +29,10 @@ Sources/
   MicrOasis-iOS-widget/      iOS WidgetKit ext: MicrOasisIOSWidgetBundle, HomeWidgets
                          (glue; layouts live in OasisKit/HomeWidgetCard.swift)
   MicrOasis-watch-widget/    watchOS WidgetKit ext: MicrOasisWidgetBundle, LaunchWidget
+scripts/                 release plumbing — App Store Connect API (asc*.py), share QR.
+                         See scripts/README.md
+notes/                   TestFlight "What to Test" text per build
+screenshots/             App Store / landing-page capture harness. See screenshots/README.md
 ```
 
 ## Build & run

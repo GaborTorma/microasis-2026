@@ -11,6 +11,9 @@ limits. The privacy/support URLs point at the deployed pwa.
 copy below is what shipped; everything from here on is reference for the next
 version.
 
+`scripts/asc_preflight.py` checks most of the below automatically —
+`uv run scripts/asc_preflight.py` from `apple/`. See `scripts/README.md`.
+
 ## Submission checklist (the things the API cannot tell you are missing)
 
 These all bit once on the way to 1.0. The API reports "appStoreVersions … is not
