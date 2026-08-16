@@ -104,9 +104,9 @@ disclaimer with `-microasis.disclaimerSeen 1`.
 - **Bundle IDs:** `ai.torma.microasis.2026` (iOS) · `.widget` (iOS widget) ·
   `.watchkitapp` (watch) · `.watchkitapp.widget` (watch widget). Team `5HW26FBLH4`,
   deployment targets iOS 17 / watchOS 10.
-- **App Store:** `1.0` is staged and `READY_FOR_REVIEW` with build `1.0.0 (2)`
-  attached — everything filled in, deliberately **not** submitted (that button is
-  the developer's to press). Apple ID
+- **App Store:** **`1.0` is live** (`READY_FOR_SALE`, released 2026-08-16) with
+  build `1.0.0 (2)`. Any further change now ships as a new version — bump
+  `MARKETING_VERSION`, write a "What's New", and submit again. Apple ID
   `6800753437` (`Guide for MicrOasis 2026`, SKU `microasis2026`). The id lives in
   two mirrored places: `AppLinks.appStore` and the web's `APP_STORE_URL`.
 - **Commits** follow the repo-wide Conventional Commits with scope (`feat(watch):`,

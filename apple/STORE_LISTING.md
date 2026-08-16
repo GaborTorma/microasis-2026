@@ -6,10 +6,17 @@ limits. The privacy/support URLs point at the deployed pwa.
 > **Unofficial fan app.** Keep all wording referential ("guide for"); never imply
 > it is the official festival app. See `../CLAUDE.md` and the in-app disclaimer.
 
+**Status: `1.0` (build 2) is live on the App Store since 2026-08-16.**
+[apps.apple.com/app/id6800753437](https://apps.apple.com/app/id6800753437). The
+copy below is what shipped; everything from here on is reference for the next
+version.
+
 ## Submission checklist (the things the API cannot tell you are missing)
 
-The API reports "appStoreVersions … is not in valid state" for *every* missing
-piece, without saying which. Check these:
+These all bit once on the way to 1.0. The API reports "appStoreVersions … is not
+in valid state" for *every* missing piece, without saying which — most are
+one-time, app-level settings that a second version inherits, but re-check them
+if a submission is refused for no visible reason:
 
 1. **App availability was never set** — a brand-new app record has no territories
    at all (`GET /v2/appAvailabilities/<id>` → 404). Set it before anything else.
@@ -207,9 +214,9 @@ Kérdés vagy visszajelzés? Írj a microasis2026@torma.ai címre.
 
 ## What's New
 
-1.0 is the first release, so App Store Connect does not accept a "What's New"
-text for it — the field is read-only until an update. Write one here when 1.1
-comes around.
+1.0 shipped without one: App Store Connect keeps the field read-only for a
+first release. A **1.1 must have it** in both locales — write it here first,
+and keep it about what the festival-goer notices, not the internals.
 
 
 ## Notes for Review
