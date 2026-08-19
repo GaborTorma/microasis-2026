@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
-import { chromeIntentUrl, isInAppBrowser } from "@/lib/platform";
+import { chromeIntentUrl, isInAppBrowser, isSamsungInternet } from "@/lib/platform";
 import { openAndroidInstallHelp, useAndroidInstallHelp } from "@/lib/useInstallPrompt";
 import { AndroidIcon } from "./showcase/AndroidIcon";
 
@@ -65,10 +65,19 @@ export function AndroidInstallSheet() {
           <AndroidIcon size={17} />
           {t("chrome")}
         </a>
-        {/* In-app WebViews (FB/IG/Messenger) have no "Add to Home screen" — their
-            menu offers "Open in external browser" instead, so the copy differs. */}
+        {/* Three different "if the button didn't work" paths. Samsung Internet
+            must NOT be told to use its own menu: that installs the same blocked
+            WebAPK the Chrome jump exists to avoid. In-app WebViews (FB/IG/
+            Messenger) have no "Add to Home screen" at all — their menu offers
+            "Open in external browser" instead. */}
         <p className="mt-3 text-xs leading-snug text-cream-faint">
-          {t(isInAppBrowser() ? "manualInApp" : "manual")}
+          {t(
+            isSamsungInternet()
+              ? "manualSamsung"
+              : isInAppBrowser()
+                ? "manualInApp"
+                : "manual",
+          )}
         </p>
         <p className="mt-1 text-xs leading-snug text-cream-faint">{t("installed")}</p>
       </div>

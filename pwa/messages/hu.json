@@ -93,6 +93,7 @@
       "chrome": "Megnyitás Chrome-ban",
       "manual": "Vagy a böngésző menüjéből: ⋮ → Hozzáadás a kezdőképernyőhöz.",
       "manualInApp": "Vagy a menüből: ⋮ → Megnyitás külső böngészőben.",
+      "manualSamsung": "A Samsung böngésző telepítője jelenleg olyan appot készít, amit az Android letilt — ezért a Chrome. Enélkül sem maradsz le semmiről: az oldal böngészőből is teljes, offline is.",
       "installed": "Ha már telepítetted, az appot a kezdőképernyődön találod.",
       "dismiss": "Bezárás"
     },

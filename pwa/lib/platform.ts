@@ -56,6 +56,17 @@ export function isInAppBrowser(): boolean {
   return /fban|fbav|fb_iab|instagram|messenger|line\/|micromessenger|twitter|gsa\//i.test(ua());
 }
 
+// Samsung Internet. Chromium-based, so it fires `beforeinstallprompt` and will
+// happily install — but the WebAPK Samsung mints carries a stale
+// targetSdkVersion, and Android then blocks the finished app on first launch
+// ("built for an older version of Android and doesn't include the latest privacy
+// protections"). Nothing a page can do fixes the generated APK, so install has to
+// be routed to Chrome instead; see installAndroid() in useInstallPrompt.ts. The
+// UA also contains "Chrome/", hence matching on SamsungBrowser specifically.
+export function isSamsungInternet(): boolean {
+  return /samsungbrowser/i.test(ua());
+}
+
 // Android intent:// URL that reopens `path` (on our canonical host) in Chrome —
 // the escape hatch out of in-app WebViews where install is impossible. If Chrome
 // is missing, Android follows the embedded fallback URL instead of erroring; the

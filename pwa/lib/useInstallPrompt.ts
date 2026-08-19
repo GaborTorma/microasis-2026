@@ -1,7 +1,13 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { chromeIntentUrl, isAndroid, isInAppBrowser, isStandalone } from "./platform";
+import {
+  chromeIntentUrl,
+  isAndroid,
+  isInAppBrowser,
+  isSamsungInternet,
+  isStandalone,
+} from "./platform";
 
 // Shared Android/PWA install state. A single module-level listener captures the
 // browser's `beforeinstallprompt` and preventDefault()s it, so the browser's own
@@ -132,15 +138,20 @@ export function useInstallPrompt() {
   }
 
   // The one-tap Android install action, in order of preference:
-  // 1. captured `beforeinstallprompt` → native install dialog (Chrome/Edge/Samsung),
+  // 1. Samsung Internet → intent:// jump to Chrome, ALWAYS, even though it does
+  //    offer a native prompt: the WebAPK Samsung mints is blocked by Android on
+  //    first launch (see isSamsungInternet). Its install is worse than no
+  //    install — the user ends up with a dead icon and a scary Play Protect
+  //    warning naming this app;
+  // 2. captured `beforeinstallprompt` → native install dialog (Chrome/Edge),
   //    waiting out a short grace period first — on a first Chrome visit the event
   //    lands only after the SW registers, seconds after the CTA is tappable;
-  // 2. in-app WebView → intent:// jump to Chrome's /app page, where 1. works
+  // 3. in-app WebView → intent:// jump to Chrome's /app page, where 2. works
   //    (if the WebView swallows the intent, the page stays visible and we fall
   //    back to the help sheet after a grace period);
-  // 3. anything else (Firefox, already-installed Chrome) → help sheet.
+  // 4. anything else (Firefox, already-installed Chrome) → help sheet.
   async function installAndroid(): Promise<AndroidInstallOutcome> {
-    if (isInAppBrowser() && !deferred) {
+    if (isSamsungInternet() || (isInAppBrowser() && !deferred)) {
       window.location.href = chromeIntentUrl("/app");
       setTimeout(() => {
         if (document.visibilityState === "visible") openAndroidInstallHelp();

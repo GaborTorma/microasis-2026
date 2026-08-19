@@ -93,6 +93,7 @@
       "chrome": "Open in Chrome",
       "manual": "Or from your browser menu: ⋮ → Add to Home screen.",
       "manualInApp": "Or from the menu: ⋮ → Open in external browser.",
+      "manualSamsung": "Samsung Internet currently builds an app Android blocks — that is why we send you to Chrome. You lose nothing without it: the site is complete in the browser, offline too.",
       "installed": "Already installed? You'll find the app on your home screen.",
       "dismiss": "Dismiss"
     },

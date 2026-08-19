@@ -95,5 +95,14 @@ pnpm icons               # regenerate every icon from the oasis mark (web + appl
   endpoint. `lib/geo.ts` + `lib/useNearestStage.ts` are not map code — they only
   resolve which stage the device is standing at, from the stage rows' own
   `lat/lng/radiusM`.
+- **Samsung Internet must never install the PWA itself.** It is Chromium, so it
+  fires `beforeinstallprompt` and looks like Chrome to feature detection — but the
+  WebAPK Samsung mints carries a stale `targetSdkVersion`, and Android blocks the
+  finished app with a Play Protect warning naming *this app*. A page cannot
+  influence the generated APK, so `installAndroid()` (`lib/useInstallPrompt.ts`)
+  routes Samsung to Chrome via `intent://` **even though a native prompt is
+  available**, and the help sheet must not fall back to "use the browser menu"
+  there — that installs the same broken WebAPK. Re-test if Samsung ships a fix;
+  the gate is `isSamsungInternet()` in `lib/platform.ts`.
 - **Date serialization is a cross-platform contract** — see `../CLAUDE.md` §2 before
   touching `.toISOString()` in `queries.ts` or the offset literals in `festival.ts`.
